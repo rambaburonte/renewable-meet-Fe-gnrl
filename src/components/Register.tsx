@@ -377,22 +377,25 @@ const Register: React.FC<{
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
+  // Call pricing API immediately on combo change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    // If registrationType is changed to registrationOnly, reset guests and nights to 1
     if (name === 'registrationType' && value === 'registrationOnly') {
-      setRegisterFormData((prev) => ({
-        ...prev,
-        [name]: value,
-        guests: 1,
-        nights: 1,
-      }));
+      setRegisterFormData((prev) => {
+        const updated = { ...prev, [name]: value, guests: 1, nights: 1 };
+        setTimeout(fetchPricing, 0); // Call API after state update
+        return updated;
+      });
       validateField(name, value);
       return;
     }
-    setRegisterFormData((prev) => ({ ...prev, [name]: parseInt(value) || value }));
+    setRegisterFormData((prev) => {
+      const updated = { ...prev, [name]: parseInt(value) || value };
+      setTimeout(fetchPricing, 0); // Call API after state update
+      return updated;
+    });
     validateField(name, value);
   };
 
