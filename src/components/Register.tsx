@@ -277,6 +277,11 @@ const Register: React.FC<{
   const [pricing, setPricing] = useState<PricingConfig[] | null>(null);
   const [pricingError, setPricingError] = useState<string>('');
 
+  // Clear pricing error when user changes combo fields
+  useEffect(() => {
+    setPricingError('');
+  }, [registerFormData.registrationType, registerFormData.presentationType, registerFormData.nights, registerFormData.guests]);
+
   const fetchPricing = async () => {
     if (!registerFormData.registrationType || !registerFormData.presentationType) {
       setPricing(null);
