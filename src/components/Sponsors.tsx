@@ -1,6 +1,6 @@
 import React from 'react';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
-import c from '@/assets/images/c.png';
+// import c from '@/assets/images/c.png'; // Removed missing image import
 import amazon from '@/assets/images/amazon.png';
 import apple from '@/assets/images/apple.png';
 import ibm from '@/assets/images/ibm.png';
@@ -8,7 +8,7 @@ import Microsoft from '@/assets/images/Microsoft.png';
 
 const Sponsors: React.FC = () => {
   const sponsors = [
-    { name: 'Energy Corp', logo: c },
+    // { name: 'Energy Corp', logo: c }, // Removed missing sponsor
     { name: 'Green Future', logo: amazon },
     { name: 'Sustainable Power', logo: apple },
     { name: 'EcoEnergy', logo: ibm },
