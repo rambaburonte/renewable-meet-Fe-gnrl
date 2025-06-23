@@ -27,8 +27,19 @@ const AppWrapper = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const { adminUser, setAdminUser } = useAdminUserContext();
 
-  const { adminUser } = useAdminUserContext();
+  // On mount, restore adminUser from sessionStorage if available
+  useEffect(() => {
+    if (!adminUser) {
+      const stored = sessionStorage.getItem('adminUser');
+      if (stored) {
+        try {
+          setAdminUser(JSON.parse(stored));
+        } catch {}
+      }
+    }
+  }, [adminUser, setAdminUser]);
 
   // Redirect if admin route accessed without login, except /admin-login
   useEffect(() => {
@@ -53,7 +64,7 @@ const AppWrapper = () => {
           <Route path="/conference-topics" element={<ConferenceTopics />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register#abstract" element={<Register />} />
-       \
+          {/* Admin Routes */}
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/admin-accommodations" element={<AdminAccommodations />} />
