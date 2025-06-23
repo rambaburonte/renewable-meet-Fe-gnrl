@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
-import { BASE_URL } from '../config';
 
 interface AbstractSubmission {
   id: number;
@@ -20,7 +19,7 @@ const AdminAbstractSubmissions = () => {
   const [submissions, setSubmissions] = useState<AbstractSubmission[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = BASE_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     const fetchSubmissions = async () => {

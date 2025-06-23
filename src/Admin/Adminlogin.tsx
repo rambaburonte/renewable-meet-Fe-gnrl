@@ -1,21 +1,20 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminUserContext } from '../Context/AdminUserContext';
-import { BASE_URL } from '../config';
-
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const baseUrl = import.meta.env.VITE_BASE_URL;
   const { setAdminUser } = useAdminUserContext();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await fetch(`${BASE_URL}/admin/api/admin/login`, {
+      const response = await fetch(`${baseUrl}/admin/api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,6 +38,7 @@ const AdminLogin = () => {
 
       // Redirect to dashboard or admin page
       navigate('/admin-dashboard');
+
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Login failed');
@@ -48,9 +48,7 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <div className="w-full max-w-md bg-[#111111] rounded-2xl shadow-lg p-8 border border-yellow-600">
-        <h2 className="text-3xl font-bold text-center text-yellow-400 mb-6">
-          Admin Login
-        </h2>
+        <h2 className="text-3xl font-bold text-center text-yellow-400 mb-6">Admin Login</h2>
 
         {error && (
           <div className="bg-red-600 text-white p-3 rounded-md mb-4 text-center">

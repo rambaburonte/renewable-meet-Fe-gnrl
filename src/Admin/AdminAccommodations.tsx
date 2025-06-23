@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
-import { BASE_URL } from '../config';
 
 const AdminCombos = () => {
   const [combos, setCombos] = useState([]);
@@ -11,7 +10,7 @@ const AdminCombos = () => {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const baseUrl = BASE_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
 
   // Fetch all combos
   const fetchCombos = async () => {
