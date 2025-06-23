@@ -5,10 +5,11 @@ import { BASE_URL } from '../config';
 
 interface Session {
   id: number;
-  title: string;
-  speaker: string;
-  time: string;
-  description: string;
+  title?: string;
+  sessionName?: string;
+  speaker?: string;
+  time?: string;
+  description?: string;
 }
 
 const AdminManageEvents = () => {
@@ -17,6 +18,7 @@ const AdminManageEvents = () => {
   const [speaker, setSpeaker] = useState('');
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const fetchSessions = async () => {
     try {
@@ -33,26 +35,35 @@ const AdminManageEvents = () => {
   }, []);
 
   const addSession = async () => {
-  if (!title.trim()) return;
-
-  try {
-    const res = await fetchWithAuth(`${BASE_URL}/admin/sessions`, {
-      method: 'POST',
-      body: JSON.stringify({ sessionOption: title }), // send only the sessionOption
-    });
-
-    if (res.ok) {
-      setTitle('');
-      fetchSessions(); // refresh sessions list if needed
-    } else {
-      const errText = await res.text();
-      console.error('Failed to add session:', errText);
+    if (!title.trim()) return;
+    setError(null);
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/admin/sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          speaker,
+          time,
+          description
+        }),
+      });
+      if (res.ok) {
+        setTitle('');
+        setSpeaker('');
+        setTime('');
+        setDescription('');
+        fetchSessions();
+      } else {
+        const errText = await res.text();
+        setError('Failed to add session: ' + errText);
+        console.error('Failed to add session:', errText);
+      }
+    } catch (err) {
+      setError('Network error');
+      console.error('Network error:', err);
     }
-  } catch (err) {
-    console.error('Network error:', err);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen flex bg-black text-white">
@@ -103,6 +114,7 @@ const AdminManageEvents = () => {
           >
             Add Session
           </button>
+          {error && <p className="text-red-400 mt-2">{error}</p>}
         </div>
 
         {/* Sessions List */}
@@ -114,9 +126,9 @@ const AdminManageEvents = () => {
                 className="bg-[#1a1a1a] border border-yellow-700 p-4 rounded-lg flex justify-between items-start"
               >
                 <div>
-                  <h3 className="text-lg font-semibold text-yellow-300">{session.sessionName}</h3>
-                  <p className="text-gray-300">Speaker: {session.speaker}</p>
-                  <p className="text-gray-400 text-sm">Time: {session.time}</p>
+                  <h3 className="text-lg font-semibold text-yellow-300">{session.sessionName || session.title}</h3>
+                  {session.speaker && <p className="text-gray-300">Speaker: {session.speaker}</p>}
+                  {session.time && <p className="text-gray-400 text-sm">Time: {session.time}</p>}
                   {session.description && (
                     <p className="text-gray-500 text-sm mt-1">{session.description}</p>
                   )}
