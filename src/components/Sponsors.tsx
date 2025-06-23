@@ -1,10 +1,10 @@
 import React from 'react';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
-import c from '../images/c.png';
-import amazon from '../images/amazon.png';
-import apple from '../images/apple.png';
-import ibm from '../images/ibm.png';
-import Microsoft from '../images/Microsoft.png';
+import c from '@/assets/images/c.png';
+import amazon from '@/assets/images/amazon.png';
+import apple from '@/assets/images/apple.png';
+import ibm from '@/assets/images/ibm.png';
+import Microsoft from '@/assets/images/Microsoft.png';
 
 const Sponsors: React.FC = () => {
   const sponsors = [

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import  Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
+import { BASE_URL } from '../config';
 
 type Booking = {
   id: number;
@@ -30,7 +31,7 @@ const AdminBookings = () => {
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'with' | 'without'>('with');
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
 
   useEffect(() => {
     const fetchBookings = async () => {

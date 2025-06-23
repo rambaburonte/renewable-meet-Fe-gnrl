@@ -1,15 +1,5 @@
 import React from 'react';
 
-// Import speaker images using correct relative paths
-import KenjiUchino from '../images/Renewable-2026 Speaker/Keynote/1/Kenji UchinoThe.jpg';
-import TinaShoa from '../images/Renewable-2026 Speaker/Keynote/2/Tina ShoaSimon.jpg';
-import JerryZeyuGao from '../images/Renewable-2026 Speaker/Keynote/3/Jerry Zeyu Gao.jpg';
-import MichaelPatt from '../images/Renewable-2026 Speaker/Keynote/4/Michael Patt.jpg';
-import DemisHassabis from '../images/Renewable-2026 Speaker/Plenary/1/Demis Hassabis.jpg';
-import YinguangJu from '../images/Renewable-2026 Speaker/Plenary/2/Yinguang Ju.jpg';
-import BenjaminSovacool from '../images/Renewable-2026 Speaker/Plenary/3/Benjamin Sovacool.jpg';
-import MaurizoAcciarri from '../images/Renewable-2026 Speaker/Plenary/4/Maurizo Acciarri.jpg';
-
 interface Speaker {
   name: string;
   title: string;
@@ -24,28 +14,28 @@ const speakers: Speaker[] = [
     name: "Dr. Kenji Uchino",
     title: "Keynote Speaker",
     university: "Pennsylvania State University",
-    image: KenjiUchino,
+    image: "/src/assets/images/Renewable-2026 Speaker/Keynote/1/Kenji UchinoThe.jpg",
     category: "keynote"
   },
   {
     name: "Dr. Tina Shoa",
     title: "Keynote Speaker",
     university: "Fraser University, Canada",
-    image: TinaShoa,
+    image: "/src/assets/images/Renewable-2026 Speaker/Keynote/2/Tina ShoaSimon.jpg",
     category: "keynote"
   },
   {
     name: "Dr. Jerry Zeyu Gao",
     title: "Keynote Speaker",
     university: "San Jose State University",
-    image: JerryZeyuGao,
+    image: "/src/assets/images/Renewable-2026 Speaker/Keynote/3/Jerry Zeyu Gao.jpg",
     category: "keynote"
   },
   {
     name: "Dr. Michael Patt",
     title: "Keynote Speaker",
     university: "Kempten University of Applied Sciences",
-    image: MichaelPatt,
+    image: "/src/assets/images/Renewable-2026 Speaker/Keynote/4/Michael Patt.jpg",
     category: "keynote"
   },
 
@@ -54,28 +44,28 @@ const speakers: Speaker[] = [
     name: "Dr. Demis Hassabis",
     title: "Plenary Speaker",
     university: "University of Cambridge",
-    image: DemisHassabis,
+    image: "/src/assets/images/Renewable-2026 Speaker/Plenary/1/Demis Hassabis.jpg",
     category: "plenary"
   },
   {
     name: "Dr. Yinguang Ju",
     title: "Plenary Speaker",
     university: "Princeton University",
-    image: YinguangJu,
+    image: "/src/assets/images/Renewable-2026 Speaker/Plenary/2/Yinguang Ju.jpg",
     category: "plenary"
   },
   {
     name: "Dr. Benjamin Sovacool",
     title: "Plenary Speaker",
     university: "Aarhus University",
-    image: BenjaminSovacool,
+    image: "/src/assets/images/Renewable-2026 Speaker/Plenary/3/Benjamin Sovacool.jpg",
     category: "plenary"
   },
   {
     name: "Dr. Maurizo Acciarri",
     title: "Plenary Speaker",
     university: "University of Milano",
-    image: MaurizoAcciarri,
+    image: "/src/assets/images/Renewable-2026 Speaker/Plenary/4/Maurizo Acciarri.jpg",
     category: "plenary"
   }
 ];
