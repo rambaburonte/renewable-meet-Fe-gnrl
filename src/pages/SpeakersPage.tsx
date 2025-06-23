@@ -25,38 +25,38 @@
 
 import React from 'react';
 
-const placeholder = '/assets/images/Renewable-2026-Speaker/placeholder.jpg';
+const placeholder = '/images/Renewable-2026-Speaker/placeholder.jpg';
 
 const keynoteSpeakers = [
   {
     name: 'Dr. Kenji UchinoThe',
     affiliation: 'Pennsylvania State University, USA',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/1/Kenji UchinoThe.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/1/Kenji UchinoThe.jpg',
   },
   {
     name: 'Dr. Tina ShoaSimon',
     affiliation: 'Fraser University, Canada',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/2/Tina ShoaSimon.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/2/Tina ShoaSimon.jpg',
   },
   {
     name: 'Dr. Jerry Zeyu Gao',
     affiliation: 'San Jose State University, USA',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/3/Jerry Zeyu Gao.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/3/Jerry Zeyu Gao.jpg',
   },
   {
     name: 'Dr. Michael Patt',
     affiliation: 'Kempten University of Applied Sciences, Germany',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/4/Michael Patt.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/4/Michael Patt.jpg',
   },
   {
     name: 'Dr. John Willian',
     affiliation: 'Sheffield Purdue University, USA',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/5/John Willian.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/5/John Willian.jpg',
   },
   {
     name: 'Dr. Hanshen Li',
     affiliation: 'Shanghai Jiao Tong University, China',
-    img: '/src/assets/images/Renewable-2026 Speaker/Keynote/6/Hanshen Li.jpg',
+    img: '/images/Renewable-2026 Speaker/Keynote/6/Hanshen Li.jpg',
   },
 ];
 
@@ -64,48 +64,48 @@ const plenarySpeakers = [
   {
     name: 'Dr. Demis Hassabis',
     affiliation: 'University of Cambridge, UK',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/1/Demis Hassabis.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/1/Demis Hassabis.jpg',
     style: { objectPosition: 'top' },
   },
   {
     name: 'Dr. Yiguang Ju',
     affiliation: 'Princeton University, USA',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/2/Yinguang Ju.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/2/Yinguang Ju.jpg',
   },
   {
     name: 'Dr. Benjamin Sovacool',
     affiliation: 'Aarhus University, Denmark',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/3/Benjamin Sovacool.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/3/Benjamin Sovacool.jpg',
   },
   {
     name: 'Dr. Maurizo Acciarri',
     affiliation: 'University of Milano, Italy',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/4/Maurizo Acciarri.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/4/Maurizo Acciarri.jpg',
   },
   {
     name: 'Dr. Yang Han',
     affiliation: 'University of Electronic Science Technology of China, China',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/5/Yang Han.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/5/Yang Han.jpg',
   },
   {
     name: 'Dr. Hwai Chyuan Ong',
     affiliation: 'Sunway University, Malaysia',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/6/Hwai Chyuan Ong.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/6/Hwai Chyuan Ong.jpg',
   },
   {
     name: 'Dr. Wenye Lin',
     affiliation: 'Chinese Academy of Science, China',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/7/Wenye Lin.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/7/Wenye Lin.jpg',
   },
   {
     name: 'Dr. Alexander Baklanov',
     affiliation: 'University of Copenhagen, Denmark',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/8/Alexander Baklanov.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/8/Alexander Baklanov.jpg',
   },
   {
     name: 'Dr. Jieshan Qiu',
     affiliation: 'Beijing University of Chemical Technology, China',
-    img: '/src/assets/images/Renewable-2026 Speaker/Plenary/9/Jieshan Qiu.jpg',
+    img: '/images/Renewable-2026 Speaker/Plenary/9/Jieshan Qiu.jpg',
   },
 ];
 
