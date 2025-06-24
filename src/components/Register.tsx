@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'; // Add useLocation
 import { FaSyncAlt } from 'react-icons/fa';
-import { BASE_URL } from '../config';
 
 interface RegisterFormData {
   title: string;
@@ -285,7 +284,7 @@ const Register: React.FC<{
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/registration/get-pricing-config`, {
+      const response = await fetch('https://renewable-be.onrender.com/api/registration/get-pricing-config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -321,7 +320,7 @@ const Register: React.FC<{
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/registration/register`, {
+      const response = await fetch('https://renewable-be.onrender.com/api/registration/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -690,12 +689,12 @@ const AbstractRegistration: React.FC<{
 
   useEffect(() => {
     // Fetch interested in options
-    fetch(`${BASE_URL}/api/form-submission/get-interested-in-options`)
+    fetch('https://renewable-be.onrender.com/api/form-submission/get-interested-in-options')
       .then(res => res.json())
       .then(data => setInterestedInOptions(data || []))
       .catch(() => setInterestedInOptions([]));
     // Fetch session options
-    fetch(`${BASE_URL}/api/form-submission/get-session-options`)
+    fetch('https://renewable-be.onrender.com/api/form-submission/get-session-options')
       .then(res => res.json())
       .then(data => setSessionOptions(data || []))
       .catch(() => setSessionOptions([]));
@@ -776,7 +775,7 @@ const AbstractRegistration: React.FC<{
     formData.append("country", abstractFormData.country);
 
     try {
-      const response = await fetch(`${BASE_URL}/api/form-submission/submit`, {
+      const response = await fetch("https://renewable-be.onrender.com/api/form-submission/submit", {
         method: "POST",
         body: formData,
       });

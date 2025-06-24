@@ -1,9 +1,9 @@
 import React from 'react';
 
-// Correct local imports for images
-import feature1 from '../images/feature1.jpg';
-import feature2 from '../images/feature2.jpg';
-import feature3 from '../images/feature3.jpg';
+// Use correct local imports (adjust path if needed)
+import feature1 from '@/assets/images/feature1.jpg';
+import feature2 from '@/assets/images/feature2.jpg';
+import feature3 from '@/assets/images/feature3.jpg';
 
 const Features: React.FC = () => {
   return (
