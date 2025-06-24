@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
+import { BASE_URL } from '../config';
+import { isAdmin } from '../lib/authUtils';
 
 interface AbstractSubmission {
   id: number;
@@ -19,12 +21,10 @@ const AdminAbstractSubmissions = () => {
   const [submissions, setSubmissions] = useState<AbstractSubmission[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
-
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await fetchWithAuth(`${baseUrl}/admin/api/admin/abstract-submissions`);
+        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/abstract-submissions`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         setSubmissions(data);
@@ -35,6 +35,18 @@ const AdminAbstractSubmissions = () => {
 
     fetchSubmissions();
   }, []);
+
+  // Role check: block access if not admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+          <p className="text-gray-300">You do not have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-black text-white">

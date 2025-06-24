@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
+import { BASE_URL } from '../config';
+import { isAdmin } from '../lib/authUtils';
 
 interface Session {
   id: number;
@@ -19,7 +21,7 @@ const AdminManageEvents = () => {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/form-submission/get-session-options`);
+      const res = await fetch(`${BASE_URL}/api/form-submission/get-session-options`);
       const data = await res.json();
       setSessions(data);
     } catch (err) {
@@ -35,7 +37,7 @@ const AdminManageEvents = () => {
   if (!title.trim()) return;
 
   try {
-    const res = await fetchWithAuth(`${import.meta.env.VITE_BASE_URL}/admin/sessions`, {
+    const res = await fetchWithAuth(`${BASE_URL}/admin/sessions`, {
       method: 'POST',
       body: JSON.stringify({ sessionOption: title }), // send only the sessionOption
     });
@@ -52,6 +54,18 @@ const AdminManageEvents = () => {
   }
 };
 
+
+  // Role check: block access if not admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+          <p className="text-gray-300">You do not have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-black text-white">

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
+import { BASE_URL } from '../config';
+import { isAdmin } from '../lib/authUtils';
 
 const AdminInterests = () => {
   const [interests, setInterests] = useState<string[]>([]);
@@ -12,7 +14,7 @@ const AdminInterests = () => {
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/form-submission/get-interested-in-options`, {
+        const response = await fetch(`${BASE_URL}/api/form-submission/get-interested-in-options`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -41,7 +43,7 @@ const AdminInterests = () => {
   const addInterest = async () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
       try {
-        const response = await fetchWithAuth(`${import.meta.env.VITE_BASE_URL}/admin/interested-in`, {
+        const response = await fetchWithAuth(`${BASE_URL}/admin/interested-in`, {
           method: 'POST',
           body: JSON.stringify({ interestedInOption: newInterest.trim() }),
         });
@@ -59,6 +61,18 @@ const AdminInterests = () => {
       }
     }
   };
+
+  // Role check: block access if not admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+          <p className="text-gray-300">You do not have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-black text-white">

@@ -1,9 +1,23 @@
 import React from 'react';
 import Sidebar from './AdminSidebar';
 import { useNavigate } from 'react-router-dom';
+import { isAdmin } from '../lib/authUtils';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  
+  // Role check: block access if not admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+          <p className="text-gray-300">You do not have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex bg-black text-white">
       {/* Sidebar */}

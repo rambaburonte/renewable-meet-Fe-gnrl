@@ -1,20 +1,21 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminUserContext } from '../Context/AdminUserContext';
+import { BASE_URL } from '../config';
+
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_BASE_URL;
   const { setAdminUser } = useAdminUserContext();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await fetch(`${baseUrl}/admin/api/admin/login`, {
+      const response = await fetch(`${BASE_URL}/admin/api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

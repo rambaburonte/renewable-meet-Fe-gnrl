@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import  Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
+import { BASE_URL } from '../config';
+import { isAdmin } from '../lib/authUtils';
 
 type Booking = {
   id: number;
@@ -27,15 +29,12 @@ type Booking = {
 const AdminBookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<'with' | 'without'>('with');
-
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const [error, setError] = useState<string | null>(null);  const [view, setView] = useState<'with' | 'without'>('with');
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetchWithAuth(`${baseUrl}/admin/api/admin/registration-forms`, {
+        const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/registration-forms`, {
           method: 'POST',
           body: JSON.stringify({}),
         });
@@ -50,7 +49,7 @@ const AdminBookings = () => {
     };
 
     fetchBookings();
-  }, [baseUrl]);
+  }, []);
 
   const bookingsWithAccommodation = bookings.filter(
     b => b.pricingConfig?.accommodationOption
@@ -58,6 +57,18 @@ const AdminBookings = () => {
   const bookingsWithoutAccommodation = bookings.filter(
     b => !b.pricingConfig?.accommodationOption
   );
+
+  // Role check: block access if not admin
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+          <p className="text-gray-300">You do not have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
   <div className="min-h-screen flex bg-gray-950 text-white">
