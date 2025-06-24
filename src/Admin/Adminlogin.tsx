@@ -27,12 +27,19 @@ const AdminLogin = () => {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Login failed');
-      }
+      }      const responseData = await response.json();
 
-      const adminData = await response.json();
+      // Handle different response formats (for production compatibility)
+      const adminData = responseData.user || responseData;
+      const token = responseData.token;
 
-      // Store only admin data (JWT is now in HttpOnly cookie)
+      // Store admin data in sessionStorage
       sessionStorage.setItem('adminUser', JSON.stringify(adminData));
+      
+      // Store token if provided (for production deployment)
+      if (token) {
+        sessionStorage.setItem('adminToken', token);
+      }
 
       // Update user context
       setAdminUser(adminData);
