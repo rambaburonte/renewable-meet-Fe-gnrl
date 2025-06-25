@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useEnterpriseSession } from '../Context/EnterpriseSessionContext';
+import { BASE_URL } from '../config';
 
 const navItems = [
   { label: 'Dashboard', path: '/admin-dashboard' },
@@ -14,24 +16,17 @@ const navItems = [
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout, user: adminUser, sessionInfo } = useEnterpriseSession();
+
   const handleLogout = async () => {
-    // Clear session storage
-    sessionStorage.removeItem('adminUser');
-    
-    // Clear the HttpOnly cookie by calling logout endpoint (optional)
     try {
-      await fetch('/admin/api/admin/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await logout();
+      navigate('/admin-login');
     } catch (error) {
-      console.warn('Logout endpoint not available, clearing locally');
+      console.error('Logout error:', error);
+      // Force navigation even if logout fails
+      navigate('/admin-login');
     }
-    
-    // Clear cookie manually (for non-HttpOnly cookies, but this won't work for HttpOnly)
-    document.cookie = 'admin_jwt=; Max-Age=0; path=/; SameSite=Lax';
-    
-    navigate('/admin-login');
   };
 
   return (
@@ -52,15 +47,28 @@ const AdminSidebar = () => {
               {label}
             </button>
           ))}
-        </nav>
+        </nav>      </div>      {/* User Info */}
+      <div className="mt-auto">
+        {adminUser && (
+          <div className="mb-4 p-3 bg-gray-800 rounded-lg">
+            <p className="text-yellow-400 font-semibold text-sm">Logged in as:</p>
+            <p className="text-white text-sm">{adminUser.name || adminUser.email}</p>
+            <p className="text-gray-400 text-xs">{adminUser.role}</p>
+            {sessionInfo && (
+              <p className="text-blue-400 text-xs mt-1">
+                Session: {Math.round(sessionInfo.timeUntilExpiry / 60)}m left
+              </p>
+            )}
+          </div>
+        )}
+        
+        <button
+          onClick={handleLogout}
+          className="w-full py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+        >
+          Logout
+        </button>
       </div>
-
-      <button
-        onClick={handleLogout}
-        className="mt-10 py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700"
-      >
-        Logout
-      </button>
     </aside>
   );
 };

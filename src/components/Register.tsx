@@ -350,6 +350,9 @@ const Register: React.FC<{
   };
 
   useEffect(() => {
+    // Clear pricing and error immediately on combo change
+    setPricing(null);
+    setPricingError('');
     fetchPricing();
   }, [
     registerFormData.registrationType,

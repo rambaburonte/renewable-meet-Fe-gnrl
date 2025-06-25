@@ -1,33 +1,26 @@
 // Authentication utility functions
+import { enterpriseSessionManager } from './enterpriseSessionManager';
 
 export const isAdmin = (): boolean => {
-  try {
-    const adminUser = JSON.parse(sessionStorage.getItem('adminUser') || '{}');
-    return adminUser && adminUser.role === 'ADMIN';
-  } catch {
-    return false;
-  }
+  return enterpriseSessionManager.isAuthenticated();
 };
 
 export const getAdminUser = () => {
-  try {
-    return JSON.parse(sessionStorage.getItem('adminUser') || '{}');
-  } catch {
-    return null;
-  }
+  return enterpriseSessionManager.getUser();
 };
 
 export const clearAdminSession = () => {
-  sessionStorage.removeItem('adminUser');
-  sessionStorage.removeItem('adminToken');
+  enterpriseSessionManager.clearSession();
 };
 
 export const getAdminToken = (): string | null => {
-  return sessionStorage.getItem('adminToken');
+  return enterpriseSessionManager.getAccessToken();
 };
 
 export const isAuthenticated = (): boolean => {
-  const adminUser = getAdminUser();
-  const token = getAdminToken();
-  return (adminUser && adminUser.role === 'ADMIN') || !!token;
+  return enterpriseSessionManager.isAuthenticated();
+};
+
+export const checkAndCleanExpiredSession = (): boolean => {
+  return enterpriseSessionManager.isAuthenticated();
 };

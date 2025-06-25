@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
 import Header from './components/Header';
@@ -12,49 +12,32 @@ import GalleryPage from './pages/GalleryPage';
 import PartnersPage from './pages/PartnersPage';
 import ContactPage from './pages/ContactPage';
 import ConferenceTopics from './pages/ConferenceTopics';
-import AdminLogin from './Admin/Adminlogin';
-import AdminDashboard from './Admin/AdminDashboard';
-import AdminAccommodations from './Admin/AdminAccommodations';
-import AdminBookings from './Admin/AdminBookings';
-import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
-import AdminManageEvents from './Admin/AdminManageEvents';
-import AdminInterests from './Admin/AdminInterests';
 import PreviousEdition from './pages/PreviousEdition';
 import Register from './components/Register';
-import { useAdminUserContext } from './Context/AdminUserContext';
+import AdminWrapper from './AdminWrapper';
+import { EnterpriseSessionProvider } from './Context/EnterpriseSessionContext';
+import SessionMonitor from './components/SessionMonitor';
 
 const AppWrapper = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith('/admin');
-  const { adminUser, setAdminUser } = useAdminUserContext();
 
-  // On mount, restore adminUser from sessionStorage if available
-  useEffect(() => {
-    if (!adminUser) {
-      const stored = sessionStorage.getItem('adminUser');
-      if (stored) {
-        try {
-          setAdminUser(JSON.parse(stored));
-        } catch {}
-      }
-    }
-  }, [adminUser, setAdminUser]);
+  // For admin routes, wrap with session provider and use AdminWrapper
+  if (isAdminRoute) {
+    return (
+      <EnterpriseSessionProvider>
+        <AdminWrapper />
+        <SessionMonitor position="bottom-right" compact={true} />
+      </EnterpriseSessionProvider>
+    );
+  }
 
-  // Redirect if admin route accessed without login, except /admin-login
-  useEffect(() => {
-    const isProtectedAdminRoute = isAdminRoute && location.pathname !== '/admin-login';
-    if (isProtectedAdminRoute && !adminUser) {
-      navigate('/admin-login');
-    }
-  }, [location.pathname, adminUser, isAdminRoute, navigate]);
-
+  // For public routes, use simple routing without session management
   return (
     <div className="min-h-screen flex flex-col">
-      {!isAdminRoute && <Header />}
+      <Header />
       <main className="flex-grow">
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/speakers" element={<SpeakersPage />} />
           <Route path="/agenda" element={<AgendaPage />} />
@@ -64,19 +47,12 @@ const AppWrapper = () => {
           <Route path="/conference-topics" element={<ConferenceTopics />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register#abstract" element={<Register />} />
-          {/* Admin Routes */}
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/admin-accommodations" element={<AdminAccommodations />} />
-          <Route path="/admin-bookings" element={<AdminBookings />} />
-          <Route path="/admin-abstract-submissions" element={<AdminAbstractSubmissions />} />
-          <Route path="/admin-manage-events" element={<AdminManageEvents />} />
           <Route path="/previous-edition" element={<PreviousEdition />} />
-          <Route path="/admin-interests" element={<AdminInterests />} />
         </Routes>
       </main>
-      {!isAdminRoute && <Footer />}
+      <Footer />
     </div>
   );
 };
+
 export default AppWrapper;
