@@ -1,39 +1,35 @@
 import React from "react";
 import {
-  AirplaneTilt,
+  Lightning,
+  Sun,
+  PlugsConnected,
+  Scan,
+  BatteryCharging,
   Car,
-  Brain,
-  TestTube,
-  Briefcase,
-  Heart,
-  ShieldCheck,
-  BookOpen,
-  Code,
-  UserCircle,
+  Buildings,
   Coins,
-  UsersThree,
-  CurrencyCircleDollar,
-  Stamp,
+  BookOpen,
+  TestTube,
+  Scales,
+  Lightbulb,
 } from "phosphor-react";
 import { Calendar, MapPin, Clock, FileText, Users, Star } from "lucide-react";
 import { useLucideDrawerAnimation } from "../components/ui/lucide-icon-drawer";
 import { motion } from "framer-motion";
 
 const industries = [
-  { icon: <AirplaneTilt size={40} color="#00a3ff" />, label: "Aerospace" },
-  { icon: <Car size={40} color="#fc5c65" />, label: "Automotive" },
-  { icon: <Brain size={40} color="#ff7f50" />, label: "AI & Robotics" },
-  { icon: <TestTube size={40} color="#fc5c65" />, label: "R&D" },
-  { icon: <Briefcase size={40} color="#1e90ff" />, label: "Business & Consulting" },
-  { icon: <Heart size={40} color="#ff4757" />, label: "Healthcare" },
-  { icon: <ShieldCheck size={40} color="#1abc9c" />, label: "Cybersecurity" },
-  { icon: <BookOpen size={40} color="#576574" />, label: "Academia & Research" },
-  { icon: <Code size={40} color="#ffa502" />, label: "Software Development" },
-  { icon: <UserCircle size={40} color="#747d8c" />, label: "Human Resources" },
-  { icon: <Coins size={40} color="#f1c40f" />, label: "Finance" },
-  { icon: <UsersThree size={40} color="#3742fa" />, label: "Public Sector" },
-  { icon: <CurrencyCircleDollar size={40} color="#2ed573" />, label: "Investment" },
-  { icon: <Stamp size={40} color="#ff6b81" />, label: "Legal & IP" },
+  { icon: <Lightning size={40} color="#00a3ff" />, label: "Power Generation" },
+  { icon: <Sun size={40} color="#fc5c65" />, label: "Renewables" },
+  { icon: <PlugsConnected size={40} color="#ff7f50" />, label: "Transmission & Distribution" },
+  { icon: <Scan size={40} color="#fc5c65" />, label: "Green Hydrogen" },
+  { icon: <BatteryCharging size={40} color="#1e90ff" />, label: "Energy Storage" },
+  { icon: <Car size={40} color="#ff4757" />, label: "EV Infrastructure" },
+  { icon: <Buildings size={40} color="#1abc9c" />, label: "C&I Consumers" },
+  { icon: <Coins size={40} color="#576574" />, label: "Financing" },
+  { icon: <BookOpen size={40} color="#ffa502" />, label: "Academia" },
+  { icon: <TestTube size={40} color="#747d8c" />, label: "Researchers" },
+  { icon: <Scales size={40} color="#f1c40f" />, label: "Policymakers" },
+  { icon: <Lightbulb size={40} color="#3742fa" />, label: "Entrepreneurs" },
 ];
 
 const About: React.FC = () => {
@@ -76,7 +72,7 @@ const About: React.FC = () => {
                   },
                   {
                     label: "Venue",
-                    value: "Seoul, South Korea",
+                    value: "Crowne Plaza-Deira, Dubai, UAE",
                     icon: <MapPin className="w-5 h-5 text-gray-500" />,
                   },
                   {
@@ -120,14 +116,13 @@ const About: React.FC = () => {
                 <Star className="w-6 h-6 text-amber-500 mr-2" />
                 Highlights
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-8">
                 {[
                   "76 Plenary, Keynote & Invited Speakers",
                   "Tentative Program Released",
                   "24 Exhibitors Participating",
                   "Multiple Sponsor Opportunities",
                   "Global Media Coverage",
-                  "Seoul 2026 Edition Announced",
                 ].map((item, index) => (
                   <li
                     key={index}
@@ -157,7 +152,7 @@ const About: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
             Who Should Attend
           </h2>
-          <div className="mx-auto px-4 max-w-6xl grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
+          <div className="mx-auto px-4 max-w-6xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {industries.map((industry, index) => (
               <div
                 key={index}

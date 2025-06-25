@@ -19,7 +19,6 @@ interface Speaker {
 }
 
 const speakers: Speaker[] = [
-  // Keynote Speakers
   {
     name: "Dr. Kenji Uchino",
     title: "Keynote Speaker",
@@ -49,7 +48,6 @@ const speakers: Speaker[] = [
     category: "keynote"
   },
 
-  // Plenary Speakers
   {
     name: "Dr. Demis Hassabis",
     title: "Plenary Speaker",
@@ -81,6 +79,16 @@ const speakers: Speaker[] = [
 ];
 
 const Speakers: React.FC = () => {
+  const keynoteOrder = [
+    speakers.find(s => s.name === "Dr. Demis Hassabis")!,
+    ...speakers.filter(s => s.category === "keynote" && s.name !== "Dr. Kenji Uchino"),
+  ];
+
+  const plenaryOrder = [
+    speakers.find(s => s.name === "Dr. Kenji Uchino")!,
+    ...speakers.filter(s => s.category === "plenary" && s.name !== "Dr. Demis Hassabis"),
+  ];
+
   return (
     <section className="pt-16 pb-8 md:pt-24 md:pb-12 bg-white">
       <div className="container mx-auto px-4">
@@ -90,11 +98,35 @@ const Speakers: React.FC = () => {
 
         {/* Keynote Speakers */}
         <div className="mb-16">
-          <h3 className="text-2xl font-bold text-center text-amber-600 mb-8">
-            Keynote Speakers
-          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {speakers.filter(s => s.category === 'keynote').map((speaker) => (
+            {keynoteOrder.map((speaker) => (
+              <div key={speaker.name} className="flex flex-col items-center text-center">
+                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
+                  <img 
+                    src={speaker.image} 
+                    alt={speaker.name} 
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{speaker.name}</h3>
+                {/* Nobel Prize line */}
+                {speaker.name === "Dr. Demis Hassabis" && (
+                  <p className="text-black-600 font-medium text-sm mb-1">
+                  Nobel Prize Winner
+                  </p>
+                )}
+                <p className="text-gray-600 mb-1">{speaker.title}</p>
+                <p className="text-amber-600 font-semibold">{speaker.university}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Plenary Speakers */}
+        <div className="mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {plenaryOrder.map((speaker) => (
               <div key={speaker.name} className="flex flex-col items-center text-center">
                 <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
                   <img 
@@ -112,30 +144,6 @@ const Speakers: React.FC = () => {
           </div>
         </div>
 
-        {/* Plenary Speakers */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-bold text-center text-amber-600 mb-8">
-            Plenary Speakers
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {speakers.filter(s => s.category === 'plenary').map((speaker) => (
-              <div key={speaker.name} className="flex flex-col items-center text-center">
-                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
-                  <img 
-                    src={speaker.image} 
-                    alt={speaker.name} 
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{speaker.name}</h3>
-                <p className="text-gray-600 mb-1">{speaker.title}</p>
-                <p className="text-amber-600 font-semibold">{speaker.university}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        
         <div className="mt-16 text-center">
           <a 
             href="/speakers" 
