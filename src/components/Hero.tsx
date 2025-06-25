@@ -63,14 +63,14 @@ const Hero: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4">
                 <a
-                  href="#register"
+                  href="/registration"
                   className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black"
                   aria-label="Register for the conference"
                 >
                   Register Now
                 </a>
                 <a
-                  href="register?tab=abstract"
+                  href="/abstract-submission"
                   className="bg-transparent border-2 border-amber-500 hover:bg-amber-500 hover:text-gray-900 text-amber-500 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black"
                   aria-label="Submit an abstract"
                 >

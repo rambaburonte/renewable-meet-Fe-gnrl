@@ -65,9 +65,9 @@ const Footer: React.FC = () => {
 
       {/* Footer Columns */}
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand Column */}
-          <div>
+          <div className="md:col-span-2">
             <div className="flex items-center mb-4">
               <Sun className="h-8 w-8 text-amber-500" />
               <div className="ml-2">
@@ -109,16 +109,38 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              {["Home", "About", "Speakers", "Agenda", "Register"].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a
+                  href="/"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#about"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  About
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/speakers"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Speakers
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/agenda"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Agenda
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -126,44 +148,80 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
-              {["News", "Blog", "FAQ", "Gallery", "Media"].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a
+                  href="/conference-topics"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Conference Topics
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#faq"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  FAQ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/gallery"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Gallery
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/previous-edition"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Previous Edition
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Participate */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
-            <address className="not-italic text-gray-400">
-              <p className="mb-2">123 Renewable Way</p>
-              <p className="mb-2">Boston, MA 02110</p>
-              <p className="mb-4">United States</p>
-              <p className="mb-2">
+            <h3 className="text-lg font-semibold mb-4">Participate</h3>
+            <ul className="space-y-2">
+              <li>
                 <a
-                  href="mailto:info@renewablemeet2026.org"
-                  className="hover:text-white transition-colors"
+                  href="/registration"
+                  className="text-gray-400 hover:text-white transition-colors"
                 >
-                  info@renewablemeet2026.org
+                  Register Now
                 </a>
-              </p>
-              <p>
+              </li>
+              <li>
                 <a
-                  href="tel:+12345678900"
-                  className="hover:text-white transition-colors"
+                  href="/abstract-submission"
+                  className="text-gray-400 hover:text-white transition-colors"
                 >
-                  +1 (234) 567-8900
+                  Submit Abstract
                 </a>
-              </p>
-            </address>
+              </li>
+              <li>
+                <a
+                  href="/partners"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Become a Partner
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/contact"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Contact Us
+                </a>
+              </li>
+            </ul>
           </div>
+
         </div>
 
         {/* Bottom Line */}

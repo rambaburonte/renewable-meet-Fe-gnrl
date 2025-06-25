@@ -1,30 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Sun } from 'lucide-react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Link as ScrollLink } from 'react-scroll';
 
 const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
-  const handleTabNavigation = (tab: string) => {
+  const handleAbstractClick = () => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
-    // Navigate to the register page with the tab query parameter
-    navigate(`/register?tab=${tab}`);
-    // Dispatch a custom event to notify ConferenceRegistration to switch tabs
-    window.dispatchEvent(new CustomEvent('tabChange', { detail: { tab } }));
+    navigate('/abstract-submission');
   };
 
   const handleSessionsClick = () => {
@@ -77,16 +66,13 @@ const Header: React.FC = () => {
         {/* Action Buttons (Desktop) */}
         <div className="hidden md:flex items-center space-x-4">
           {/* Register Button */}
-          <ScrollLink
-            to="register"
-            smooth={true}
-            duration={500}
-            offset={-60}
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
-            onClick={() => handleTabNavigation('register')}
+          <RouterLink
+            to="/registration"
+            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            onClick={() => setMobileMenuOpen(false)}
           >
             Register
-          </ScrollLink>
+          </RouterLink>
 
           {/* Abstract Submission Dropdown */}
           <div className="relative">
@@ -112,12 +98,13 @@ const Header: React.FC = () => {
             </button>
             {dropdownOpen && (
               <div className="absolute top-full mt-2 bg-gray-900 text-white rounded shadow-lg min-w-[180px]">
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-800 transition-colors duration-300 ease-in-out cursor-pointer"
-                  onClick={() => handleTabNavigation('abstract')}
+                <RouterLink
+                  to="/abstract-submission"
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-800 transition-colors duration-300 ease-in-out"
+                  onClick={handleAbstractClick}
                 >
                   Abstract Submission
-                </button>
+                </RouterLink>
                 <RouterLink
                   to="/conference-topics"
                   className="block px-4 py-2 hover:bg-gray-800 transition-colors duration-300 ease-in-out"
@@ -191,18 +178,13 @@ const Header: React.FC = () => {
         </nav>
         <div className="mt-4 flex flex-col space-y-2">
           {/* Register Button */}
-          <ScrollLink
-            to="register"
-            smooth={true}
-            duration={500}
-            offset={-60}
+          <RouterLink
+            to="/registration"
             className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-            onClick={() => {
-              handleTabNavigation('register');
-            }}
+            onClick={() => setMobileMenuOpen(false)}
           >
             Register
-          </ScrollLink>
+          </RouterLink>
 
           {/* Abstract Submission Dropdown */}
           <button
@@ -227,12 +209,13 @@ const Header: React.FC = () => {
           </button>
           {dropdownOpen && (
             <div className="flex flex-col space-y-2 pl-4">
-              <button
+              <RouterLink
+                to="/abstract-submission"
                 className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out text-left"
-                onClick={() => handleTabNavigation('abstract')}
+                onClick={handleAbstractClick}
               >
                 Abstract Submission
-              </button>
+              </RouterLink>
               <RouterLink
                 to="/conference-topics"
                 className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out"
