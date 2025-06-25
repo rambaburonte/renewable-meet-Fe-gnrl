@@ -21,8 +21,6 @@
 
 // export default SpeakersPage;
 
-
-
 import React from 'react';
 
 // Import all speaker images
@@ -44,8 +42,9 @@ import JieshanQiu from '../images/Renewable-2026 Speaker/Plenary/9/Jieshan Qiu.j
 
 const placeholder = '';
 
+// Move Demis to Keynote and Kenji to Plenary
 const keynoteSpeakers = [
-  { name: 'Dr. Kenji UchinoThe', affiliation: 'Pennsylvania State University, USA', img: KenjiUchino },
+  { name: 'Dr. Demis Hassabis', affiliation: 'University of Cambridge, UK', img: DemisHassabis, isNobel: true },
   { name: 'Dr. Tina ShoaSimon', affiliation: 'Fraser University, Canada', img: TinaShoa },
   { name: 'Dr. Jerry Zeyu Gao', affiliation: 'San Jose State University, USA', img: JerryZeyuGao },
   { name: 'Dr. Michael Patt', affiliation: 'Kempten University of Applied Sciences, Germany', img: MichaelPatt },
@@ -54,7 +53,7 @@ const keynoteSpeakers = [
 ];
 
 const plenarySpeakers = [
-  { name: 'Dr. Demis Hassabis', affiliation: 'University of Cambridge, UK', img: DemisHassabis, style: { objectPosition: 'top' } },
+  { name: 'Dr. Kenji UchinoThe', affiliation: 'Pennsylvania State University, USA', img: KenjiUchino },
   { name: 'Dr. Yiguang Ju', affiliation: 'Princeton University, USA', img: YinguangJu },
   { name: 'Dr. Benjamin Sovacool', affiliation: 'Aarhus University, Denmark', img: BenjaminSovacool },
   { name: 'Dr. Maurizo Acciarri', affiliation: 'University of Milano, Italy', img: MaurizoAcciarri },
@@ -81,18 +80,59 @@ const SpeakersPage: React.FC = () => {
           </p>
         </div>
       </div>
+
       <div className="mt-12">
         <section className="pt-8 pb-8 md:pt-12 md:pb-16 bg-white">
           <div className="container mx-auto px-4">
+
             {/* Keynote Speakers */}
             <div className="mb-16">
-              <h3 className="text-2xl font-bold text-center text-amber-600 mb-8">
-                Keynote Speakers
-              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
                 {keynoteSpeakers.map((spk) => (
                   <div key={spk.name} className="flex flex-col items-center text-center">
                     <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
+                      <img
+                        src={spk.img}
+                        alt={spk.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={e => (e.currentTarget.src = placeholder)}
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{spk.name}</h3>
+                    {spk.isNobel && (
+                      <p className="text-black-1000 text-sm font-medium mb-1">Nobel Prize Winner</p>
+                    )}
+                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Plenary Speakers */}
+            <div className="mb-16">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-16 gap-y-20">
+                {plenarySpeakers.slice(0, 5).map((spk) => (
+                  <div key={spk.name} className="flex flex-col items-center text-center">
+                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
+                      <img
+                        src={spk.img}
+                        alt={spk.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={e => (e.currentTarget.src = placeholder)}
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{spk.name}</h3>
+                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-x-16 gap-y-20 mt-12">
+                {plenarySpeakers.slice(5).map((spk) => (
+                  <div key={spk.name} className="flex flex-col items-center text-center">
+                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
                       <img
                         src={spk.img}
                         alt={spk.name}
@@ -108,48 +148,6 @@ const SpeakersPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Plenary Speakers */}
-            <div className="mb-16">
-              <h3 className="text-2xl font-bold text-center text-amber-600 mb-8">
-                Plenary Speakers
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-16 gap-y-20">
-                {plenarySpeakers.slice(0, 5).map((spk) => (
-                  <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
-                      <img
-                        src={spk.img}
-                        alt={spk.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        style={spk.style}
-                        onError={e => (e.currentTarget.src = placeholder)}
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">{spk.name}</h3>
-                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-x-16 gap-y-20 mt-12">
-                {plenarySpeakers.slice(5).map((spk) => (
-                  <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
-                      <img
-                        src={spk.img}
-                        alt={spk.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        style={spk.style}
-                        onError={e => (e.currentTarget.src = placeholder)}
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">{spk.name}</h3>
-                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
       </div>
@@ -158,3 +156,5 @@ const SpeakersPage: React.FC = () => {
 };
 
 export default SpeakersPage;
+
+

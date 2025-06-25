@@ -50,12 +50,12 @@ const Hero: React.FC = () => {
                 <div className="flex items-center gap-4 mb-4">
                   <MapPin className="w-5 h-5 text-amber-400" />
                   <p className="text-xl font-medium text-white">
-                    Manhattan, New York, NY 10019, USA
+                    Dubai, UAE
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <p className="text-xl font-medium text-white">
-                    Novotel NY – Times Square
+                    Crowne Plaza Dubai - Deira
                   </p>
                 </div>
               </div>
