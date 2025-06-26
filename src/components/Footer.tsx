@@ -5,7 +5,7 @@ import { Sun } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-700 text-white">
       {/* Footer Content - Map section removed */}
 
       {/* Footer Columns */}
@@ -170,13 +170,28 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Line */}
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col items-center space-y-3">
+        <div className="border-t border-gray-600 mt-12 pt-8 flex flex-col items-center space-y-3">
           <button
             onClick={() => window.location.href = "/admin-login"}
             className="text-sm text-gray-400 hover:text-white transition-colors underline"
           >
             Admin Login
           </button>
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-500 text-sm">Developed and maintained by</span>
+            <a 
+              href="https://www.zynlogic.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <img 
+                src="/images/Zynlogic.png" 
+                alt="Zynlogic Logo" 
+                className="h-6 w-auto"
+              />
+            </a>
+          </div>
           <p className="text-center text-gray-500 text-sm">
             © 2025 Renewable Meet 2026. All rights reserved.
           </p>
