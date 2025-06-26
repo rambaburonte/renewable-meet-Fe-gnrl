@@ -16,7 +16,7 @@ interface DaySchedule {
 const Agenda: React.FC = () => {
   const schedule: DaySchedule[] = [
     {
-      date: "June 12, 2026",
+      date: "April 17, 2026",
       day: "Day 1",
       items: [
         { time: "08:00 - 09:00", title: "Registration & Welcome Coffee", description: "Check-in and networking opportunity" },
@@ -24,46 +24,39 @@ const Agenda: React.FC = () => {
         { time: "09:30 - 10:30", title: "Keynote: The Future of Renewable Energy", description: "Exploring the latest trends and future outlook for renewable energy technologies", speaker: "Michael Chen, GreenEnergy Global" },
         { time: "10:30 - 11:00", title: "Coffee Break", description: "Networking opportunity" },
         { time: "11:00 - 12:30", title: "Panel: Policy Frameworks for Accelerating Renewables", description: "Policymakers discuss effective regulatory approaches", speaker: "Emma Rodriguez, EcoFuture Alliance" },
+        { time: "12:30 - 13:30", title: "Lunch Break", description: "Networking lunch" },
+        { time: "13:30 - 15:00", title: "Breakthrough in Energy Storage", description: "Innovations in battery tech and storage solutions", speaker: "Dr. James Wilson, HydroPower Innovations" },
+        { time: "15:00 - 15:30", title: "Coffee Break", description: "Networking opportunity" },
+        { time: "15:30 - 17:00", title: "Workshop: Solar Technology Implementation", description: "Hands-on workshop for solar energy solutions", speaker: "Technical experts" },
       ],
     },
     {
-      date: "June 13, 2026",
+      date: "April 18, 2026",
       day: "Day 2",
       items: [
-        { time: "09:00 - 10:00", title: "Breakthrough in Energy Storage", description: "Innovations in battery tech and storage solutions", speaker: "Dr. James Wilson, HydroPower Innovations" },
+        { time: "09:00 - 10:00", title: "AI for Smart Grid Management", description: "How AI is transforming power grid operations", speaker: "Neha Reddy, GridAI Labs" },
         { time: "10:00 - 11:00", title: "Financing the Energy Transition", description: "Investment strategies for renewable projects", speaker: "Various industry experts" },
         { time: "11:00 - 11:30", title: "Coffee Break", description: "Networking opportunity" },
         { time: "11:30 - 12:30", title: "Renewable Integration: Challenges", description: "Operational challenges of high renewable penetration", speaker: "Panel of technical experts" },
+        { time: "12:30 - 13:30", title: "Lunch Break", description: "Networking lunch" },
+        { time: "13:30 - 15:00", title: "Hydrogen as a Clean Fuel", description: "Green hydrogen production and utilization", speaker: "Dr. Alan Fischer, H2Global" },
+        { time: "15:00 - 15:30", title: "Coffee Break", description: "Networking opportunity" },
+        { time: "15:30 - 17:00", title: "Wind Power Beyond 2030", description: "Designing scalable, efficient offshore wind farms", speaker: "Karen Smith, AeroWind Solutions" },
       ],
     },
     {
-      date: "June 14, 2026",
+      date: "April 19, 2026",
       day: "Day 3",
       items: [
-        { time: "09:00 - 10:00", title: "AI for Smart Grid Management", description: "How AI is transforming power grid operations", speaker: "Neha Reddy, GridAI Labs" },
-        { time: "10:00 - 11:00", title: "Hydrogen as a Clean Fuel", description: "Green hydrogen production and utilization", speaker: "Dr. Alan Fischer, H2Global" },
-        { time: "11:00 - 11:30", title: "Coffee Break", description: "Networking opportunity" },
-        { time: "11:30 - 12:30", title: "Circular Economy in Renewables", description: "Sustainable production and recycling of energy tech", speaker: "Jessica Lee, EcoLoop" },
-      ],
-    },
-    {
-      date: "June 15, 2026",
-      day: "Day 4",
-      items: [
         { time: "09:00 - 10:00", title: "Community Solar Projects", description: "Empowering local communities with clean energy", speaker: "Rajeev Patel, SunTogether" },
-        { time: "10:00 - 11:00", title: "Wind Power Beyond 2030", description: "Designing scalable, efficient offshore wind farms", speaker: "Karen Smith, AeroWind Solutions" },
+        { time: "10:00 - 11:00", title: "Electric Mobility Ecosystems", description: "EV infrastructure, policy, and innovation", speaker: "Panel with AutoGreen and ChargeNow" },
         { time: "11:00 - 11:30", title: "Coffee Break", description: "Networking opportunity" },
-        { time: "11:30 - 12:30", title: "Electric Mobility Ecosystems", description: "EV infrastructure, policy, and innovation", speaker: "Panel with AutoGreen and ChargeNow" },
-      ],
-    },
-    {
-      date: "June 16, 2026",
-      day: "Day 5",
-      items: [
-        { time: "09:00 - 10:00", title: "Youth in Clean Energy", description: "Opportunities for young professionals and students", speaker: "Global Youth Energy Council" },
-        { time: "10:00 - 11:00", title: "Innovation Pitches", description: "Startups present cutting-edge renewable ideas", speaker: "Various Founders" },
-        { time: "11:00 - 11:30", title: "Coffee Break", description: "Networking opportunity" },
-        { time: "11:30 - 12:30", title: "Closing Ceremony", description: "Summary and outlook", speaker: "Organizing Committee" },
+        { time: "11:30 - 12:30", title: "Youth in Clean Energy", description: "Opportunities for young professionals and students", speaker: "Global Youth Energy Council" },
+        { time: "12:30 - 13:30", title: "Lunch Break", description: "Networking lunch" },
+        { time: "13:30 - 15:00", title: "Innovation Pitches", description: "Startups present cutting-edge renewable ideas", speaker: "Various Founders" },
+        { time: "15:00 - 15:30", title: "Coffee Break", description: "Networking opportunity" },
+        { time: "15:30 - 16:30", title: "Circular Economy in Renewables", description: "Sustainable production and recycling of energy tech", speaker: "Jessica Lee, EcoLoop" },
+        { time: "16:30 - 17:00", title: "Closing Ceremony", description: "Summary and outlook for the future", speaker: "Organizing Committee" },
       ],
     },
   ];

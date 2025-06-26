@@ -13,7 +13,8 @@ import PartnersPage from './pages/PartnersPage';
 import ContactPage from './pages/ContactPage';
 import ConferenceTopics from './pages/ConferenceTopics';
 import PreviousEdition from './pages/PreviousEdition';
-import Register from './components/Register';
+import RegistrationPage from './pages/RegistrationPage';
+import AbstractSubmissionPage from './pages/AbstractSubmissionPage';
 import AdminWrapper from './AdminWrapper';
 import { EnterpriseSessionProvider } from './Context/EnterpriseSessionContext';
 import SessionMonitor from './components/SessionMonitor';
@@ -45,8 +46,8 @@ const AppWrapper = () => {
           <Route path="/partners" element={<PartnersPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/conference-topics" element={<ConferenceTopics />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register#abstract" element={<Register />} />
+          <Route path="/registration" element={<RegistrationPage />} />
+          <Route path="/abstract-submission" element={<AbstractSubmissionPage />} />
           <Route path="/previous-edition" element={<PreviousEdition />} />
         </Routes>
       </main>
