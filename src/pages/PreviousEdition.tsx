@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Globe, BookOpen } from 'lucide-react';
+import Footer from '../components/Footer';
 
 interface Speaker {
   name: string;
@@ -17,9 +18,17 @@ interface ConferenceStats {
   sessions: number;
 }
 
+type Section = 'overview' | 'plenary' | 'keynote' | 'topics' | 'gallery';
+
 const PreviousEdition: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>('overview');
+  const [activeSection, setActiveSection] = useState<Section>('overview');
   const [expandedSpeaker, setExpandedSpeaker] = useState<string | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const handleSectionChange = (section: Section) => {
+    setActiveSection(section);
+    contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const stats: ConferenceStats = {
     participants: 450,
@@ -28,7 +37,7 @@ const PreviousEdition: React.FC = () => {
     sessions: 24
   };
 
-  const plenaryHalfgfers: Speaker[] = [
+  const plenarySpeakers: Speaker[] = [
     {
       name: "Prof. Huu Hao Ngo",
       affiliation: "University of Technology Sydney",
@@ -247,7 +256,7 @@ const PreviousEdition: React.FC = () => {
       affiliation: "University of Calgary",
       country: "Canada",
       title: "Power System Protection and Control in Renewable Energy Systems",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Om  Malik.jpeg.jpg"
+      image: "/src/images/Renewable-2025 Speaker/keynote/om malik.jpeg.jpg"
     },
     {
       name: "Prof. Hongwei Wu",
@@ -294,64 +303,46 @@ const PreviousEdition: React.FC = () => {
     const isExpanded = expandedSpeaker === `${type}-${speaker.name}`;
     
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 max-w-sm mx-auto">
+      <div className="group relative flex flex-col rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-gray-200/50">
         {/* Speaker Image */}
-        {speaker.image && (
-          <div className="w-full h-56 bg-gray-200 overflow-hidden relative">
-            <img
-              src={speaker.image}
-              alt={speaker.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face";
-              }}
-            />
-            {/* Speaker Type Badge */}
-            <div className="absolute top-3 right-3">
-              {type === 'plenary' && (
-                <span className="inline-block bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-medium shadow-lg">
-                  Plenary
-                </span>
-              )}
-              {type === 'keynote' && (
-                <span className="inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-medium shadow-lg">
-                  Keynote
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-        
-        <div className="p-5">
-          <div className="text-center mb-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">{speaker.name}</h3>
-            <p className="text-amber-600 font-semibold text-sm mb-1 leading-snug">{speaker.affiliation}</p>
-            <p className="text-gray-500 text-sm flex items-center justify-center">
-              <span className="w-4 h-4 rounded-full bg-gray-300 mr-2 flex items-center justify-center">
-                <span className="text-xs">🌍</span>
-              </span>
+        <div className="relative h-64 w-full overflow-hidden rounded-t-xl">
+          <img
+            src={speaker.image}
+            alt={speaker.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/src/images/speaker-placeholder.png"; // Local placeholder
+            }}
+          />
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+          {/* Speaker Info */}
+          <div className="absolute bottom-0 left-0 p-4 text-white">
+            <h3 className="text-xl font-bold leading-tight tracking-tight">{speaker.name}</h3>
+            <p className="text-sm font-medium text-amber-200">{speaker.affiliation}</p>
+            <p className="text-xs text-gray-300 flex items-center mt-1">
+              <Globe size={14} className="mr-1.5" />
               {speaker.country}
             </p>
           </div>
-          
-          <div className="border-t border-gray-100 pt-4">
+        </div>
+
+        {/* Presentation Details */}
+        <div className="flex flex-1 flex-col p-4">
+          <div className="flex-1">
             <button
               onClick={() => setExpandedSpeaker(isExpanded ? null : `${type}-${speaker.name}`)}
-              className="flex items-center justify-between w-full text-left hover:bg-gray-50 p-2 rounded-lg transition-colors"
-            >
-              <span className="text-sm font-medium text-gray-700">View Presentation</span>
-              <div className="flex items-center">
-                {isExpanded ? 
-                  <ChevronUp size={16} className="text-amber-500" /> : 
-                  <ChevronDown size={16} className="text-amber-500" />
-                }
-              </div>
+              className="flex w-full items-center justify-between text-left text-sm font-semibold text-gray-800 hover:text-amber-600 transition-colors group-hover:text-amber-600"
+              aria-expanded={isExpanded}
+              aria-controls={`speaker-title-${type}-${speaker.name.replace(/\s+/g, '-')}`}>
+              <span>Presentation Title</span>
+              {isExpanded ? <ChevronUp size={18} className="text-amber-600" /> : <ChevronDown size={18} className="text-gray-500 group-hover:text-amber-500" />}
             </button>
-            
             {isExpanded && (
-              <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border-l-4 border-amber-400">
-                <p className="text-sm text-gray-700 italic leading-relaxed">{speaker.title}</p>
+              <div id={`speaker-title-${type}-${speaker.name.replace(/\s+/g, '-')}`} className="mt-3 space-y-2 border-l-2 border-amber-500 pl-4">
+                <p className="text-sm italic text-gray-700 leading-relaxed">{speaker.title}</p>
               </div>
             )}
           </div>
@@ -412,18 +403,19 @@ const PreviousEdition: React.FC = () => {
       </section>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b shadow-sm">
+      <div className="bg-white border-b shadow-sm sticky top-0 z-20">
         <div className="container mx-auto px-4">
           <nav className="flex space-x-8">
             {[
               { id: 'overview', label: 'Overview' },
               { id: 'plenary', label: 'Plenary Speakers' },
               { id: 'keynote', label: 'Keynote Speakers' },
-              { id: 'topics', label: 'Conference Topics' }
+              { id: 'topics', label: 'Conference Topics' },
+              { id: 'gallery', label: 'Gallery' }
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveSection(tab.id)}
+                onClick={() => handleSectionChange(tab.id as Section)}
                 className={`py-4 border-b-2 font-medium text-sm transition-colors ${
                   activeSection === tab.id
                     ? 'border-amber-500 text-amber-600'
@@ -438,7 +430,7 @@ const PreviousEdition: React.FC = () => {
       </div>
 
       {/* Content Sections */}
-      <main className="container mx-auto px-4 py-12">
+      <main ref={contentRef} className="container mx-auto px-4 py-12">
         {/* Overview Section */}
         {activeSection === 'overview' && (
           <div className="space-y-12">
@@ -461,113 +453,87 @@ const PreviousEdition: React.FC = () => {
                   The event accelerated the transition to a sustainable energy future, bringing together experts 
                   to make a difference and ensure a greener, more resilient world for generations to come.
                 </p>
+                <p className="text-gray-600 font-semibold">
+                  We thank all our speakers, participants, and partners for making RENEWABLE-2025 a landmark event. We look forward to seeing you at our next edition!
+                </p>
               </div>
             </div>
 
-
-
             {/* Conference Schedule */}
             <div className="mt-12 bg-white rounded-lg shadow-md p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Conference Schedule</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <h4 className="text-lg font-semibold text-amber-600 mb-4">Day 1</h4>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span>08:00 - 09:00</span>
-                      <span>Registration</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>09:30 - 10:30</span>
-                      <span>Session I</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>10:30 - 11:00</span>
-                      <span>Refreshment Break</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>11:00 - 12:30</span>
-                      <span>Session II</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>12:30 - 13:30</span>
-                      <span>Lunch with Discussions</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>13:30 - 15:00</span>
-                      <span>Break Out Session I</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>15:00 - 15:30</span>
-                      <span>Refreshment Break</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>15:30 - 18:00</span>
-                      <span>Breakout Session II</span>
-                    </div>
-                  </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Conference at a Glance</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
+                {/* Day 1 */}
+                <div className="border-t-4 border-amber-500 pt-6">
+                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 1: Foundations & Fundamentals</h4>
+                  <ul className="space-y-4">
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">08:00 - 09:00</span>
+                      <span className="text-gray-600">Registration & Welcome Coffee</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">09:30 - 10:30</span>
+                      <span className="text-gray-600">Opening Ceremony & Session I</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
+                      <span className="text-gray-600">Session II: Solar & Wind Energy</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
+                      <span className="text-gray-600">Breakout Session I: Biomass & Hydro</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">15:30 - 18:00</span>
+                      <span className="text-gray-600">Breakout Session II: Smart Grids</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="text-center">
-                  <h4 className="text-lg font-semibold text-amber-600 mb-4">Day 2</h4>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span>09:00 - 10:30</span>
-                      <span>Plenary Sessions</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>10:30 - 11:00</span>
-                      <span>Coffee Break</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>11:00 - 12:30</span>
-                      <span>Keynote Presentations</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>12:30 - 13:30</span>
-                      <span>Networking Lunch</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>13:30 - 15:00</span>
-                      <span>Technical Sessions</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>15:00 - 15:30</span>
-                      <span>Coffee Break</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>15:30 - 17:00</span>
-                      <span>Workshop Sessions</span>
-                    </div>
-                  </div>
+
+                {/* Day 2 */}
+                <div className="border-t-4 border-blue-600 pt-6">
+                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 2: Innovations & Insights</h4>
+                  <ul className="space-y-4">
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">09:00 - 10:30</span>
+                      <span className="text-gray-600">Plenary Sessions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
+                      <span className="text-gray-600">Keynote Presentations</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
+                      <span className="text-gray-600">Technical Sessions: Energy Storage</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">15:30 - 17:00</span>
+                      <span className="text-gray-600">Workshops: EV & Green Hydrogen</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="text-center">
-                  <h4 className="text-lg font-semibold text-amber-600 mb-4">Day 3</h4>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span>09:00 - 10:30</span>
-                      <span>Final Presentations</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>10:30 - 11:00</span>
-                      <span>Coffee Break</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>11:00 - 12:30</span>
-                      <span>Panel Discussions</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>12:30 - 13:30</span>
-                      <span>Closing Lunch</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>13:30 - 15:00</span>
-                      <span>Closing Ceremony</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>15:00 - 16:00</span>
-                      <span>Awards & Recognition</span>
-                    </div>
-                  </div>
+
+                {/* Day 3 */}
+                <div className="border-t-4 border-green-600 pt-6">
+                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 3: Future & Finale</h4>
+                  <ul className="space-y-4">
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">09:00 - 10:30</span>
+                      <span className="text-gray-600">Final Presentations & Demos</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
+                      <span className="text-gray-600">Panel Discussion: The Future of Energy</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
+                      <span className="text-gray-600">Closing Ceremony</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold text-gray-700 w-28">15:00 - 16:00</span>
+                      <span className="text-gray-600">Awards & Conference Conclusion</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -583,8 +549,8 @@ const PreviousEdition: React.FC = () => {
                 Distinguished experts who delivered keynote presentations on cutting-edge renewable energy research and innovations
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
-              {plenaryHalfgfers.map((speaker, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {plenarySpeakers.map((speaker, index) => (
                 <SpeakerCard key={index} speaker={speaker} type="plenary" />
               ))}
             </div>
@@ -600,7 +566,7 @@ const PreviousEdition: React.FC = () => {
                 Renowned researchers and industry leaders who shared their expertise and insights
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {keynoteSpeakers.map((speaker, index) => (
                 <SpeakerCard key={index} speaker={speaker} type="keynote" />
               ))}
@@ -614,73 +580,49 @@ const PreviousEdition: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Conference Topics</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Comprehensive coverage of renewable and sustainable energy technologies
+                Explore the diverse range of topics covered at RENEWABLE-2025
               </p>
             </div>
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {conferenceTopics.map((topic, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full mr-3"></div>
-                      <span className="text-gray-800 font-medium">{topic}</span>
-                    </div>
-                  </div>
-                ))}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {conferenceTopics.map((topic, index) => (
+                <div key={index} className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow flex flex-col items-center justify-center">
+                  <BookOpen className="h-8 w-8 text-amber-500 mb-3" />
+                  <p className="font-medium text-gray-700 text-sm">{topic}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Gallery Section */}
+        {activeSection === 'gallery' && (
+          <div>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Conference Gallery</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                A glimpse into the vibrant atmosphere of RENEWABLE-2025.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                <img src="/src/images/feature1.jpg" alt="Conference feature 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                <img src="/src/images/feature2.jpg" alt="Conference feature 2" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                <img src="/src/images/feature3.jpg" alt="Conference feature 3" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
               </div>
             </div>
-            
-            {/* Additional Topics Info */}
-            <div className="mt-12 bg-amber-50 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Additional Focus Areas</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Energy Systems & Technology</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• Nuclear, Wind, Solar, Geothermal, Hydropower and Biomass Energies</li>
-                    <li>• Power Generation and Distribution Systems</li>
-                    <li>• Insulation Technology and Lightning Protection</li>
-                    <li>• Modern Energy Cooking Transitions</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Innovation & Applications</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• Smart Technologies for Power Generation</li>
-                    <li>• Renewable Energy for IT Equipment</li>
-                    <li>• Green Facilities and Industries</li>
-                    <li>• Transportation and Sea Power Generation</li>
-                  </ul>
-                </div>
-              </div>
+            <div className="text-center">
+              <RouterLink to="/gallery" className="inline-block bg-amber-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition-colors">
+                View Full Gallery
+              </RouterLink>
             </div>
           </div>
         )}
       </main>
-
-      {/* Call to Action */}
-      <section className="bg-amber-50 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Join Us in 2026!</h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Don't miss out on the next edition of the Renewable Energy Conference
-          </p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <RouterLink
-              to="/registration"
-              className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Register for 2026
-            </RouterLink>
-            <RouterLink
-              to="/abstract-submission"
-              className="bg-white hover:bg-gray-50 text-amber-600 border-2 border-amber-600 px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Submit Abstract
-            </RouterLink>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 };
