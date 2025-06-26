@@ -62,8 +62,8 @@ const AdminBookings = () => {
   if (!isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
+          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
           <p className="text-gray-300">You do not have permission to access this page.</p>
         </div>
       </div>
@@ -77,7 +77,7 @@ const AdminBookings = () => {
 
     {/* Main content */}
     <main className="flex-1 p-8 overflow-y-auto">
-      <h1 className="text-4xl font-bold text-yellow-400 mb-6 text-center">All Registrations</h1>
+      <h1 className="text-4xl font-bold text-green-400 mb-6 text-center">All Registrations</h1>
 
       {/* Toggle Buttons */}
       <div className="flex justify-center gap-4 mb-8">
@@ -85,8 +85,8 @@ const AdminBookings = () => {
           onClick={() => setView('with')}
           className={`px-5 py-2 rounded-lg font-semibold transition ${
             view === 'with'
-              ? 'bg-yellow-500 text-black'
-              : 'bg-gray-800 hover:bg-yellow-600 text-white'
+              ? 'bg-green-500 text-black'
+              : 'bg-gray-800 hover:bg-green-600 text-white'
           }`}
         >
           With Accommodation
@@ -95,8 +95,8 @@ const AdminBookings = () => {
           onClick={() => setView('without')}
           className={`px-5 py-2 rounded-lg font-semibold transition ${
             view === 'without'
-              ? 'bg-yellow-500 text-black'
-              : 'bg-gray-800 hover:bg-yellow-600 text-white'
+              ? 'bg-green-500 text-black'
+              : 'bg-gray-800 hover:bg-green-600 text-white'
           }`}
         >
           Without Accommodation
@@ -121,7 +121,7 @@ const AdminBookings = () => {
 
 const Section = ({ title, bookings, hasAccommodation }: { title: string; bookings: Booking[]; hasAccommodation: boolean }) => (
   <section>
-    <h2 className="text-2xl font-semibold text-yellow-300 mb-6">{title}</h2>
+    <h2 className="text-2xl font-semibold text-green-300 mb-6">{title}</h2>
     {bookings.length === 0 ? (
       <p className="text-gray-400">No bookings {hasAccommodation ? 'with' : 'without'} accommodation.</p>
     ) : (
@@ -129,7 +129,7 @@ const Section = ({ title, bookings, hasAccommodation }: { title: string; booking
         {bookings.map((b) => (
           <div
             key={b.id}
-            className="bg-gray-900 p-6 rounded-xl shadow-md border border-yellow-800 hover:shadow-yellow-600/30 transition-shadow"
+            className="bg-gray-900 p-6 rounded-xl shadow-md border border-green-800 hover:shadow-green-600/30 transition-shadow"
           >
             <h3 className="text-xl font-bold mb-2">{b.name}</h3>
             <p className="text-sm text-gray-400 mb-1">{b.email}</p>
@@ -139,8 +139,8 @@ const Section = ({ title, bookings, hasAccommodation }: { title: string; booking
             <div className="text-sm text-white space-y-1">
               <p>
                 <strong>Presentation:</strong> {b.pricingConfig.presentationType.type}{' '}
-                <span className="text-yellow-300 font-semibold">
-                  (₹{b.pricingConfig.presentationType.price})
+                <span className="text-purple-300 font-semibold bg-gray-800 px-2 py-0.5 rounded-lg">
+                  ₹{b.pricingConfig.presentationType.price}
                 </span>
               </p>
 
@@ -149,7 +149,7 @@ const Section = ({ title, bookings, hasAccommodation }: { title: string; booking
                   <strong>Accommodation:</strong>{' '}
                   {b.pricingConfig.accommodationOption?.guests} Guest(s),{' '}
                   {b.pricingConfig.accommodationOption?.nights} Night(s) —{' '}
-                  <span className="text-yellow-300 font-semibold">
+                  <span className="text-yellow-300 font-semibold bg-gray-800 px-2 py-0.5 rounded-lg">
                     ₹{b.pricingConfig.accommodationOption?.price}
                   </span>
                 </p>
@@ -157,7 +157,7 @@ const Section = ({ title, bookings, hasAccommodation }: { title: string; booking
 
               <p>
                 <strong>Total Paid:</strong>{' '}
-                <span className="text-green-400 font-bold">₹{b.amountPaid}</span>
+                <span className="text-blue-300 font-bold bg-blue-900/40 px-3 py-1 rounded-md shadow-inner">₹{b.amountPaid}</span>
               </p>
             </div>
           </div>

@@ -85,8 +85,8 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
-      <div className="w-full max-w-md bg-[#111111] rounded-2xl shadow-lg p-8 border border-yellow-600">
-        <h2 className="text-3xl font-bold text-center text-yellow-400 mb-6">Admin Login</h2>        {(error || sessionError) && (
+      <div className="w-full max-w-md bg-[#111111] rounded-2xl shadow-lg p-8 border border-green-600">
+        <h2 className="text-3xl font-bold text-center text-green-400 mb-6">Admin Login</h2>        {(error || sessionError) && (
           <div className="bg-red-600 text-white p-3 rounded-md mb-4 text-center">
             {error || sessionError}
           </div>

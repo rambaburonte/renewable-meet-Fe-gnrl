@@ -59,8 +59,8 @@ const AdminCombos = () => {
   if (!isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
+          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
           <p className="text-gray-300">You do not have permission to access this page.</p>
         </div>
       </div>
@@ -72,7 +72,7 @@ const AdminCombos = () => {
       <Sidebar />
 
       <div className="flex-1 p-6 ml-[250px]">
-        <h1 className="text-3xl font-bold text-yellow-400 mb-6">Manage Accommodation Combos</h1>
+        <h1 className="text-3xl font-bold text-green-400 mb-6">Manage Accommodation Combos</h1>
 
         {error && (
           <div className="bg-red-600 text-white p-3 rounded-md mb-4">
@@ -87,47 +87,47 @@ const AdminCombos = () => {
             placeholder="Nights"
             value={nights}
             onChange={(e) => setNights(e.target.value)}
-            className="bg-[#1a1a1a] border border-yellow-600 px-4 py-2 rounded-md"
+            className="bg-[#1a1a1a] border border-green-600 px-4 py-2 rounded-md"
           />
           <input
             type="number"
             placeholder="Guests"
             value={guests}
             onChange={(e) => setGuests(e.target.value)}
-            className="bg-[#1a1a1a] border border-yellow-600 px-4 py-2 rounded-md"
+            className="bg-[#1a1a1a] border border-green-600 px-4 py-2 rounded-md"
           />
           <input
             type="number"
             placeholder="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="bg-[#1a1a1a] border border-yellow-600 px-4 py-2 rounded-md"
+            className="bg-[#1a1a1a] border-2 border-blue-500 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
           />
           <button
             onClick={addCombo}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md"
+            className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md"
           >
             Add Combo
           </button>
         </div>
 
         {/* Combo list */}
-        <table className="w-full table-auto border border-yellow-800 text-sm">
-  <thead className="bg-yellow-900 text-yellow-300">
+        <table className="w-full table-auto border border-green-800 text-sm">
+  <thead className="bg-green-900 text-green-300">
     <tr>
       <th className="p-2 border">ID</th>
       <th className="p-2 border">Nights</th>
       <th className="p-2 border">Guests</th>
-      <th className="p-2 border">Price</th>
+      <th className="p-2 border bg-green-800">Price</th>
     </tr>
   </thead>
   <tbody>
     {combos.map((combo: any) => (
-      <tr key={combo.id} className="text-center border-t border-yellow-800">
+      <tr key={combo.id} className="text-center border-t border-green-800">
         <td className="p-2">{combo.id}</td>
         <td className="p-2">{combo.nights}</td>
         <td className="p-2">{combo.guests}</td>
-        <td className="p-2">${combo.price.toFixed(2)}</td>
+        <td className="p-2 font-bold text-blue-300">${combo.price.toFixed(2)}</td>
       </tr>
     ))}
   </tbody>
@@ -138,11 +138,11 @@ const AdminCombos = () => {
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-yellow-600 shadow-lg w-[90%] max-w-md">
-            <h2 className="text-xl font-bold text-yellow-400 mb-4">Combo Added</h2>
+          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-green-600 shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold text-green-400 mb-4">Combo Added</h2>
             <p className="mb-4">The new accommodation combo has been successfully added.</p>
             <button
-              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md"
+              className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md"
               onClick={() => setShowModal(false)}
             >
               Close
