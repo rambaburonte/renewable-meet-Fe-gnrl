@@ -37,7 +37,7 @@ const Sponsors: React.FC = () => {
   return (
     <section className="flex items-center justify-center bg-white pt-24 pb-20" style={{ height: 'auto' }}>
       <div className="w-full px-4 max-w-6xl mx-auto">
-        <InfiniteSlider duration={25} durationOnHover={75} gap={8}>
+        <InfiniteSlider duration={70} durationOnHover={75} gap={8}>
           {sponsors.map((sponsor, index) => (
             <img
               key={index}
