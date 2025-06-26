@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Globe, BookOpen } from 'lucide-react';
+import { ChevronDown, ChevronUp, Globe, Sun, Wind, Zap, Battery, Droplets, Settings, Car, Lightbulb, Shield, Recycle, Leaf, Flame, Network, DollarSign, Mountain, Home, Activity } from 'lucide-react';
 import Footer from '../components/Footer';
 
 interface Speaker {
@@ -18,7 +18,7 @@ interface ConferenceStats {
   sessions: number;
 }
 
-type Section = 'overview' | 'plenary' | 'keynote' | 'topics' | 'gallery';
+type Section = 'overview' | 'plenary' | 'keynote' | 'topics';
 
 const PreviousEdition: React.FC = () => {
   const [activeSection, setActiveSection] = useState<Section>('overview');
@@ -43,112 +43,112 @@ const PreviousEdition: React.FC = () => {
       affiliation: "University of Technology Sydney",
       country: "Australia",
       title: "Advanced Water Treatment Technologies for Sustainable Energy",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Huu Hao Ngo.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Huu Hao Ngo.jpg"
     },
     {
       name: "Prof. Jieshan Qiu",
       affiliation: "Beijing University of Chemical Technology",
       country: "China", 
       title: "Carbon Materials for Energy Storage and Conversion",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Jieshan Qiu.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Jieshan Qiu.jpeg.jpg"
     },
     {
       name: "Prof. Kah-Wee ANG",
       affiliation: "National University of Singapore",
       country: "Singapore",
       title: "Semiconductor Technologies for Renewable Energy Applications",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Kah-Wee ANG.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Kah-Wee ANG.jpg"
     },
     {
       name: "Prof. Arif Hepbasli",
       affiliation: "Yasar University",
       country: "Turkey",
       title: "An Acrostic Approach to Renewable and Sustainable Energy/Exergy System",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Arif Hepbasli.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Arif Hepbasli.jpg"
     },
     {
       name: "Prof. Badrul Chowdhury",
       affiliation: "University of North Carolina",
       country: "USA",
       title: "Sustainable and resilient operation of distribution systems during extreme weather events",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Badrul Chowdhury.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Badrul Chowdhury.jpeg.jpg"
     },
     {
       name: "Prof. Yuying Yan",
       affiliation: "University of Nottingham",
       country: "UK",
       title: "Thermal Management - The Important Culture and Technology for The Development of Renewable and Sustainable Energy",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Yuuing Yan.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Yuuing Yan.jpg"
     },
     {
       name: "Prof. Strbac Goran",
       affiliation: "Imperial College London",
       country: "UK",
       title: "Smart Grid Integration and Renewable Energy Systems",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Strbac Goran.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Strbac Goran.jpg"
     },
     {
       name: "Prof. Yulong Ding",
       affiliation: "Birmingham University",
       country: "UK",
       title: "Energy Storage Technologies and Applications",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Yulong Ding.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Yulong Ding.jpg"
     },
     {
       name: "Prof. Dai-Yeun Jeong",
       affiliation: "Asia Climate Change Education Center",
       country: "South Korea",
       title: "How to Overcome the Limitations Inherent in Sustainable Development",
-      image: "/src/images/Renewable-2025 Speaker/plenary/dai-yeun-jeong.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/dai-yeun-jeong.jpg"
     },
     {
       name: "Prof. Kenji Uchino",
       affiliation: "Pennsylvania State University",
       country: "USA",
       title: "Advanced Materials for Renewable Energy Applications",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Kenji Uchino.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Kenji Uchino.jpg"
     },
     {
       name: "Prof. Vladimir Strezov",
       affiliation: "Macquarie University",
       country: "Australia",
       title: "Sustainable Waste-to-Energy Technologies",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Vladimir Strezov.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Vladimir Strezov.jpg"
     },
     {
       name: "Prof. Igor Zhitomirsky",
       affiliation: "McMaster University",
       country: "Canada",
       title: "Electrochemical Technologies for Energy Storage",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Igor Zhitomirsky.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Igor Zhitomirsky.jpg"
     },
     {
       name: "Prof. Hwai Chyuan Ong",
       affiliation: "Sunway University",
       country: "Malaysia",
       title: "Biofuel Technologies and Sustainable Transportation",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Hwai Chyuan Ong.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Hwai Chyuan Ong.jpeg.jpg"
     },
     {
       name: "Prof. Soteris Kalogirou",
       affiliation: "Cyprus University of Technology",
       country: "Cyprus",
       title: "Solar Energy Technologies and Applications",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Soteris Kalogirou.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/plenary/Soteris Kalogirou.jpeg.jpg"
     },
     {
       name: "Prof. Chu Fulei",
       affiliation: "Tsinghua University",
       country: "China",
       title: "Advanced Energy Systems and Technologies",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Fulei Chu.png"
+      image: "/images/Renewable-2025-Speaker/plenary/Fulei Chu.png"
     },
     {
       name: "Prof. Haofeng Chen",
       affiliation: "East China University",
       country: "China",
       title: "Renewable Energy Systems Integration",
-      image: "/src/images/Renewable-2025 Speaker/plenary/Haofeng Chen.png"
+      image: "/images/Renewable-2025-Speaker/plenary/Haofeng Chen.png"
     }
   ];
 
@@ -158,145 +158,145 @@ const PreviousEdition: React.FC = () => {
       affiliation: "Ontario Tech University",
       country: "Canada",
       title: "Advanced Control Systems for Renewable Energy Integration",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Kamiel S. Gabriel.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/Kamiel S. Gabriel.jpeg.jpg"
     },
     {
       name: "Prof. Andreas Lemmer",
       affiliation: "University of Hohenheim",
       country: "Germany",
       title: "Biomethane - the most sustainable fuel for heavy goods transport and agriculture",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Andreas Lemmer.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/Andreas Lemmer.jpeg.jpg"
     },
     {
       name: "Dr. Alessia Vacca",
       affiliation: "University of Lincoln",
       country: "UK",
       title: "The Role of Public Involvement in The Implementation of EU Policies Related to Renewables and Sustainable Energy",
-      image: "/src/images/Renewable-2025 Speaker/keynote/alessia vacca.webp"
+      image: "/images/Renewable-2025-Speaker/keynote/alessia vacca.webp"
     },
     {
       name: "Prof. Hanshen Li",
       affiliation: "Shanghai Jiao Tong University",
       country: "China",
       title: "Uncertainty Operation and Planning Method of Distribution Cyber-Physical System under Low-carbon Era",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Hanshen Li.png"
+      image: "/images/Renewable-2025-Speaker/keynote/Hanshen Li.png"
     },
     {
       name: "Dr. Adriana Greco",
       affiliation: "University of Naples Federico",
       country: "Italy",
       title: "The Project of the First Italian Elastocaloric Device for Air Conditioning",
-      image: "/src/images/Renewable-2025 Speaker/keynote/adriana greco.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/adriana greco.jpeg.jpg"
     },
     {
       name: "Prof. Michael Patt",
       affiliation: "Kempten University of Applied Sciences",
       country: "Germany",
       title: "Sustainable Energy Systems and Environmental Impact",
-      image: "/src/images/Renewable-2025 Speaker/keynote/micheal patt.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/micheal patt.jpg"
     },
     {
       name: "Dr. Gamze Karanfil Kaçmaz",
       affiliation: "GMZ Enerji (Founder/CEO)",
       country: "Turkey",
       title: "Innovative Hydrogen Energy Solutions for a Sustainable Future",
-      image: "/src/images/Renewable-2025 Speaker/keynote/gamze karanfil.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/gamze karanfil.jpg"
     },
     {
       name: "Prof. Nihal Kularatna",
       affiliation: "University of Waikato",
       country: "New Zealand",
       title: "Power Electronics for Renewable Energy Systems",
-      image: "/src/images/Renewable-2025 Speaker/keynote/nihal kularatna.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/nihal kularatna.jpg"
     },
     {
       name: "Dr. Barbara Marchetti",
       affiliation: "eCampus University",
       country: "Italy",
       title: "Digital Innovation in Renewable Energy Education",
-      image: "/src/images/Renewable-2025 Speaker/keynote/barbara marchetti.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/barbara marchetti.jpg"
     },
     {
       name: "Prof. Suwen Chen",
       affiliation: "Tongji University",
       country: "China",
       title: "Safety of Power Transformer from Arc Fault Explosion",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Suwen Chen.png"
+      image: "/images/Renewable-2025-Speaker/keynote/Suwen Chen.png"
     },
     {
       name: "Prof. Hao Zeng",
       affiliation: "University at Buffalo",
       country: "USA",
       title: "Developing Chalcogenide Perovskite Thin Films for Optoelectronics",
-      image: "/src/images/Renewable-2025 Speaker/keynote/hao zeng.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/hao zeng.jpeg.jpg"
     },
     {
       name: "Prof. Xi Jiang",
       affiliation: "Queen Mary University of London",
       country: "UK",
       title: "Insight Into Pollutant Formation of Ammonia-Hydrogen Combustion Utilisation",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Xi Jiang.png"
+      image: "/images/Renewable-2025-Speaker/keynote/Xi Jiang.png"
     },
     {
       name: "Prof. Xudong Zhao",
       affiliation: "University of Hull",
       country: "UK",
       title: "Advanced Solar Energy Technologies",
-      image: "/src/images/Renewable-2025 Speaker/keynote/xudong zhao.webp"
+      image: "/images/Renewable-2025-Speaker/keynote/xudong zhao.webp"
     },
     {
       name: "Prof. Xinggang Yan",
       affiliation: "University of Kent",
       country: "UK",
       title: "Control Systems for Renewable Energy Applications",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Xinggang Yan.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/Xinggang Yan.jpg"
     },
     {
       name: "Prof. Om Malik",
       affiliation: "University of Calgary",
       country: "Canada",
       title: "Power System Protection and Control in Renewable Energy Systems",
-      image: "/src/images/Renewable-2025 Speaker/keynote/om malik.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/om malik.jpeg.jpg"
     },
     {
       name: "Prof. Hongwei Wu",
       affiliation: "University of Hertfordshire",
       country: "UK",
       title: "Smart Grid Technologies and Applications",
-      image: "/src/images/Renewable-2025 Speaker/keynote/hongwei wu.jpeg.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/hongwei wu.jpeg.jpg"
     },
     {
       name: "Prof. Gordon Huang",
       affiliation: "University of Regina",
       country: "Canada",
       title: "Environmental Systems Engineering for Renewable Energy",
-      image: "/src/images/Renewable-2025 Speaker/keynote/Gordan Huang.jpg"
+      image: "/images/Renewable-2025-Speaker/keynote/Gordan Huang.jpg"
     }
   ];
 
 
 
   const conferenceTopics = [
-    "Sustainable and Renewable Energy",
-    "Solar Energy Systems and Materials", 
-    "Wind Energy Technologies",
-    "Biomass Conversion Technologies",
-    "Hydroelectric Power Systems",
-    "Green Hydrogen Production",
-    "Energy Storage Solutions",
-    "Smart Grid Technologies",
-    "Electric Vehicles and Transportation",
-    "Power Electronics and Systems",
-    "Energy Efficiency and Management",
-    "Biofuel Economics and Commercialization",
-    "Photovoltaic Systems",
-    "Geothermal Energy Applications",
-    "Nuclear Energy Safety",
-    "Distributed Generation",
-    "Power Quality and Control",
-    "Energy Harvesting Technologies",
-    "Green Technology and Eco-Design",
-    "Thermal Energy Systems"
+    { name: "Sustainable and Renewable Energy", icon: Leaf },
+    { name: "Solar Energy Systems and Materials", icon: Sun }, 
+    { name: "Wind Energy Technologies", icon: Wind },
+    { name: "Biomass Conversion Technologies", icon: Recycle },
+    { name: "Hydroelectric Power Systems", icon: Droplets },
+    { name: "Green Hydrogen Production", icon: Flame },
+    { name: "Energy Storage Solutions", icon: Battery },
+    { name: "Smart Grid Technologies", icon: Network },
+    { name: "Electric Vehicles and Transportation", icon: Car },
+    { name: "Power Electronics and Systems", icon: Zap },
+    { name: "Energy Efficiency and Management", icon: Settings },
+    { name: "Biofuel Economics and Commercialization", icon: DollarSign },
+    { name: "Photovoltaic Systems", icon: Sun },
+    { name: "Geothermal Energy Applications", icon: Mountain },
+    { name: "Nuclear Energy Safety", icon: Shield },
+    { name: "Distributed Generation", icon: Home },
+    { name: "Power Quality and Control", icon: Activity },
+    { name: "Energy Harvesting Technologies", icon: Lightbulb },
+    { name: "Green Technology and Eco-Design", icon: Leaf },
+    { name: "Thermal Energy Systems", icon: Flame }
   ];
 
   const SpeakerCard: React.FC<{ speaker: Speaker; type: 'plenary' | 'keynote' }> = ({ speaker, type }) => {
@@ -312,7 +312,7 @@ const PreviousEdition: React.FC = () => {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = "/src/images/speaker-placeholder.png"; // Local placeholder
+              target.src = "/images/speaker-placeholder.png"; // Local placeholder
             }}
           />
           {/* Overlay Gradient */}
@@ -410,8 +410,7 @@ const PreviousEdition: React.FC = () => {
               { id: 'overview', label: 'Overview' },
               { id: 'plenary', label: 'Plenary Speakers' },
               { id: 'keynote', label: 'Keynote Speakers' },
-              { id: 'topics', label: 'Conference Topics' },
-              { id: 'gallery', label: 'Gallery' }
+              { id: 'topics', label: 'Conference Topics' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -584,40 +583,15 @@ const PreviousEdition: React.FC = () => {
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {conferenceTopics.map((topic, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow flex flex-col items-center justify-center">
-                  <BookOpen className="h-8 w-8 text-amber-500 mb-3" />
-                  <p className="font-medium text-gray-700 text-sm">{topic}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Gallery Section */}
-        {activeSection === 'gallery' && (
-          <div>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Conference Gallery</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                A glimpse into the vibrant atmosphere of RENEWABLE-2025.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                <img src="/src/images/feature1.jpg" alt="Conference feature 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-              </div>
-              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                <img src="/src/images/feature2.jpg" alt="Conference feature 2" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-              </div>
-              <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                <img src="/src/images/feature3.jpg" alt="Conference feature 3" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-              </div>
-            </div>
-            <div className="text-center">
-              <RouterLink to="/gallery" className="inline-block bg-amber-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition-colors">
-                View Full Gallery
-              </RouterLink>
+              {conferenceTopics.map((topic, index) => {
+                const IconComponent = topic.icon;
+                return (
+                  <div key={index} className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow flex flex-col items-center justify-center">
+                    <IconComponent className="h-8 w-8 text-amber-500 mb-3" />
+                    <p className="font-medium text-gray-700 text-sm">{topic.name}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
