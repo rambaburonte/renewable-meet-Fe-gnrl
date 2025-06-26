@@ -101,7 +101,7 @@ const Speakers: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {keynoteOrder.map((speaker) => (
               <div key={speaker.name} className="flex flex-col items-center text-center">
-                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
+                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-green-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
                   <img 
                     src={speaker.image} 
                     alt={speaker.name} 
@@ -117,7 +117,7 @@ const Speakers: React.FC = () => {
                   </p>
                 )}
                 <p className="text-gray-600 mb-1">{speaker.title}</p>
-                <p className="text-amber-600 font-semibold">{speaker.university}</p>
+                <p className="text-green-600 font-semibold">{speaker.university}</p>
               </div>
             ))}
           </div>
@@ -128,7 +128,7 @@ const Speakers: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {plenaryOrder.map((speaker) => (
               <div key={speaker.name} className="flex flex-col items-center text-center">
-                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
+                <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-green-500 shadow-lg transform transition-transform duration-300 hover:scale-105">
                   <img 
                     src={speaker.image} 
                     alt={speaker.name} 
@@ -138,7 +138,7 @@ const Speakers: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{speaker.name}</h3>
                 <p className="text-gray-600 mb-1">{speaker.title}</p>
-                <p className="text-amber-600 font-semibold">{speaker.university}</p>
+                <p className="text-green-600 font-semibold">{speaker.university}</p>
               </div>
             ))}
           </div>
@@ -147,7 +147,7 @@ const Speakers: React.FC = () => {
         <div className="mt-16 text-center">
           <a 
             href="/speakers" 
-            className="inline-block bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-md text-lg transition-colors"
+            className="inline-block bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-8 py-3 rounded-md text-lg transition-colors"
           >
             View All Speakers
           </a>

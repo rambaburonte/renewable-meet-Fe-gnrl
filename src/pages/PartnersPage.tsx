@@ -27,7 +27,7 @@ const PartnersPage: React.FC = () => {
           </p>
           <a
             href="#partner"
-            className="inline-block bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-md text-lg transition-colors"
+            className="inline-block bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-8 py-3 rounded-md text-lg transition-colors"
           >
             Partner With Us
           </a>

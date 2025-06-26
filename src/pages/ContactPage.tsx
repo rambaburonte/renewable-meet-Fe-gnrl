@@ -27,13 +27,13 @@ const ContactPage: React.FC = () => {
                 </p>
                 <p className="flex items-center text-gray-700">
                   <span className="font-semibold mr-2">Email:</span>
-                  <a href="mailto:info@renewablemeet2026.org" className="text-amber-600 hover:underline">
+                  <a href="mailto:info@renewablemeet2026.org" className="text-green-600 hover:underline">
                     info@renewablemeet2026.org
                   </a>
                 </p>
                 <p className="flex items-center text-gray-700">
                   <span className="font-semibold mr-2">Phone:</span>
-                  <a href="tel:+12345678900" className="text-amber-600 hover:underline">
+                  <a href="tel:+12345678900" className="text-green-600 hover:underline">
                     +1 (234) 567-8900
                   </a>
                 </p>
@@ -74,12 +74,12 @@ const ContactPage: React.FC = () => {
                     id="message"
                     name="message"
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
                   ></textarea>
                 </div>
                 <button
                   type="submit"
-                  className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-6 py-3 rounded transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-6 py-3 rounded transition-colors"
                 >
                   Send Message
                 </button>

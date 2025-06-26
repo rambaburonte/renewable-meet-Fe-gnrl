@@ -69,7 +69,7 @@ const Footer: React.FC = () => {
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center mb-4">
-              <Sun className="h-8 w-8 text-amber-500" />
+              <Sun className="h-8 w-8 text-green-500" />
               <div className="ml-2">
                 <h3 className="text-lg font-bold">Renewable</h3>
                 <h4 className="text-base">Meet 2026</h4>

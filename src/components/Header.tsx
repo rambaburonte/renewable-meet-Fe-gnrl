@@ -30,7 +30,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <RouterLink to="/" className="flex items-center space-x-3">
-            <Sun className="h-10 w-10 text-amber-500" />
+            <Sun className="h-10 w-10 text-green-500" />
             <div className="text-white select-none">
               <h1 className="text-xl font-bold leading-tight">Renewable</h1>
               <h2 className="text-lg leading-tight">Meet 2026</h2>
@@ -50,14 +50,14 @@ const Header: React.FC = () => {
             <RouterLink
               key={to}
               to={to}
-              className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+              className="text-white hover:text-green-400 transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded"
             >
               {label}
             </RouterLink>
           ))}
           <RouterLink
             to="/previous-edition"
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
           >
             Previous Edition
           </RouterLink>
@@ -68,7 +68,7 @@ const Header: React.FC = () => {
           {/* Register Button */}
           <RouterLink
             to="/registration"
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setMobileMenuOpen(false)}
           >
             Register
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
           <div className="relative">
             <button
               onClick={toggleDropdown}
-              className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 flex items-center"
+              className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 flex items-center"
             >
               Abstract Submission
               <svg
@@ -120,7 +120,7 @@ const Header: React.FC = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
-          className="md:hidden text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+          className="md:hidden text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded"
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
         >
@@ -162,7 +162,7 @@ const Header: React.FC = () => {
             <RouterLink
               key={to}
               to={to}
-              className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+              className="text-white hover:text-green-400 transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded"
               onClick={() => setMobileMenuOpen(false)}
             >
               {label}
@@ -170,7 +170,7 @@ const Header: React.FC = () => {
           ))}
           <RouterLink
             to="/previous-edition"
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setMobileMenuOpen(false)}
           >
             Previous Edition
@@ -180,7 +180,7 @@ const Header: React.FC = () => {
           {/* Register Button */}
           <RouterLink
             to="/registration"
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setMobileMenuOpen(false)}
           >
             Register
@@ -189,7 +189,7 @@ const Header: React.FC = () => {
           {/* Abstract Submission Dropdown */}
           <button
             onClick={toggleDropdown}
-            className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 flex justify-center items-center"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 flex justify-center items-center"
           >
             Abstract Submission
             <svg
