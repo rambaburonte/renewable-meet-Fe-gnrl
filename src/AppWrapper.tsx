@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import FooterWithMap from './components/FooterWithMap';
 
 import Home from './pages/Home';
 import SpeakersPage from './pages/SpeakersPage';
@@ -34,6 +35,9 @@ const AppWrapper = () => {
   }
 
   // For public routes, use simple routing without session management
+  // Determine if we're on the home page to use the appropriate footer
+  const isHomePage = location.pathname === '/';
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -51,7 +55,7 @@ const AppWrapper = () => {
           <Route path="/previous-edition" element={<PreviousEdition />} />
         </Routes>
       </main>
-      <Footer />
+      {isHomePage ? <FooterWithMap /> : <Footer />}
     </div>
   );
 };

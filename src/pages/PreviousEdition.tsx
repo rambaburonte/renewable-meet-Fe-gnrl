@@ -18,10 +18,10 @@ interface ConferenceStats {
   sessions: number;
 }
 
-type Section = 'overview' | 'plenary' | 'keynote' | 'topics';
+type Section = 'plenary' | 'keynote' | 'topics';
 
 const PreviousEdition: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<Section>('overview');
+  const [activeSection, setActiveSection] = useState<Section>('plenary');
   const [expandedSpeaker, setExpandedSpeaker] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -407,7 +407,6 @@ const PreviousEdition: React.FC = () => {
         <div className="container mx-auto px-4">
           <nav className="flex space-x-8">
             {[
-              { id: 'overview', label: 'Overview' },
               { id: 'plenary', label: 'Plenary Speakers' },
               { id: 'keynote', label: 'Keynote Speakers' },
               { id: 'topics', label: 'Conference Topics' }
@@ -430,115 +429,6 @@ const PreviousEdition: React.FC = () => {
 
       {/* Content Sections */}
       <main ref={contentRef} className="container mx-auto px-4 py-12">
-        {/* Overview Section */}
-        {activeSection === 'overview' && (
-          <div className="space-y-12">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Conference Overview</h2>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-gray-600 mb-6">
-                  RENEWABLE-2025, the 7th edition of the largest European Conference & Exhibition on Renewable 
-                  and Sustainable Energy, was successfully held in Amsterdam, Netherlands from April 25-27, 2025. 
-                  This cutting-edge international conference brought together world leaders, prominent researchers, 
-                  and industry visionaries to explore and unlock the boundless potential of Renewable and Sustainable Energy.
-                </p>
-                <p className="text-gray-600 mb-6">
-                  Over the past editions, the Renewable Energy Conference strengthened its position as the main 
-                  in-person meeting point of the Renewable Energy community worldwide. The conference featured 
-                  intellectual showdowns where each session concluded with debates on abstracts, leading to the 
-                  selection of the best ideas.
-                </p>
-                <p className="text-gray-600 mb-6">
-                  The event accelerated the transition to a sustainable energy future, bringing together experts 
-                  to make a difference and ensure a greener, more resilient world for generations to come.
-                </p>
-                <p className="text-gray-600 font-semibold">
-                  We thank all our speakers, participants, and partners for making RENEWABLE-2025 a landmark event. We look forward to seeing you at our next edition!
-                </p>
-              </div>
-            </div>
-
-            {/* Conference Schedule */}
-            <div className="mt-12 bg-white rounded-lg shadow-md p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Conference at a Glance</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
-                {/* Day 1 */}
-                <div className="border-t-4 border-green-500 pt-6">
-                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 1: Foundations & Fundamentals</h4>
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">08:00 - 09:00</span>
-                      <span className="text-gray-600">Registration & Welcome Coffee</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">09:30 - 10:30</span>
-                      <span className="text-gray-600">Opening Ceremony & Session I</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
-                      <span className="text-gray-600">Session II: Solar & Wind Energy</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
-                      <span className="text-gray-600">Breakout Session I: Biomass & Hydro</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">15:30 - 18:00</span>
-                      <span className="text-gray-600">Breakout Session II: Smart Grids</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Day 2 */}
-                <div className="border-t-4 border-emerald-600 pt-6">
-                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 2: Innovations & Insights</h4>
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">09:00 - 10:30</span>
-                      <span className="text-gray-600">Plenary Sessions</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
-                      <span className="text-gray-600">Keynote Presentations</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
-                      <span className="text-gray-600">Technical Sessions: Energy Storage</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">15:30 - 17:00</span>
-                      <span className="text-gray-600">Workshops: EV & Green Hydrogen</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Day 3 */}
-                <div className="border-t-4 border-green-600 pt-6">
-                  <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 3: Future & Finale</h4>
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">09:00 - 10:30</span>
-                      <span className="text-gray-600">Final Presentations & Demos</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">11:00 - 12:30</span>
-                      <span className="text-gray-600">Panel Discussion: The Future of Energy</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">13:30 - 15:00</span>
-                      <span className="text-gray-600">Closing Ceremony</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="font-semibold text-gray-700 w-28">15:00 - 16:00</span>
-                      <span className="text-gray-600">Awards & Conference Conclusion</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Plenary Speakers Section */}
         {activeSection === 'plenary' && (
           <div>
@@ -596,7 +486,7 @@ const PreviousEdition: React.FC = () => {
           </div>
         )}
       </main>
-      <Footer />
+      
     </div>
   );
 };

@@ -55,16 +55,18 @@ const Header: React.FC = () => {
               {label}
             </RouterLink>
           ))}
-          <RouterLink
-            to="/previous-edition"
-            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-          >
-            Previous Edition
-          </RouterLink>
         </nav>
 
         {/* Action Buttons (Desktop) */}
         <div className="hidden md:flex items-center space-x-4">
+          {/* Previous Edition Button (left-aligned) */}
+          <RouterLink
+            to="/previous-edition"
+            className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 text-left"
+          >
+            Previous Edition
+          </RouterLink>
+          
           {/* Register Button */}
           <RouterLink
             to="/registration"
@@ -168,6 +170,9 @@ const Header: React.FC = () => {
               {label}
             </RouterLink>
           ))}
+        </nav>
+        <div className="mt-4 flex flex-col space-y-2">
+          {/* Previous Edition Button */}
           <RouterLink
             to="/previous-edition"
             className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-4 py-2 rounded text-center transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
@@ -175,8 +180,7 @@ const Header: React.FC = () => {
           >
             Previous Edition
           </RouterLink>
-        </nav>
-        <div className="mt-4 flex flex-col space-y-2">
+
           {/* Register Button */}
           <RouterLink
             to="/registration"
@@ -211,14 +215,14 @@ const Header: React.FC = () => {
             <div className="flex flex-col space-y-2 pl-4">
               <RouterLink
                 to="/abstract-submission"
-                className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out text-left"
+                className="text-white hover:text-green-400 transition-colors duration-300 ease-in-out text-left"
                 onClick={handleAbstractClick}
               >
                 Abstract Submission
               </RouterLink>
               <RouterLink
                 to="/conference-topics"
-                className="text-white hover:text-amber-400 transition-colors duration-300 ease-in-out"
+                className="text-white hover:text-green-400 transition-colors duration-300 ease-in-out"
                 onClick={handleSessionsClick}
               >
                 Sessions
