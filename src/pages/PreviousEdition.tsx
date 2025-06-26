@@ -321,7 +321,7 @@ const PreviousEdition: React.FC = () => {
           {/* Speaker Info */}
           <div className="absolute bottom-0 left-0 p-4 text-white">
             <h3 className="text-xl font-bold leading-tight tracking-tight">{speaker.name}</h3>
-            <p className="text-sm font-medium text-amber-200">{speaker.affiliation}</p>
+            <p className="text-sm font-medium text-green-200">{speaker.affiliation}</p>
             <p className="text-xs text-gray-300 flex items-center mt-1">
               <Globe size={14} className="mr-1.5" />
               {speaker.country}
@@ -334,14 +334,14 @@ const PreviousEdition: React.FC = () => {
           <div className="flex-1">
             <button
               onClick={() => setExpandedSpeaker(isExpanded ? null : `${type}-${speaker.name}`)}
-              className="flex w-full items-center justify-between text-left text-sm font-semibold text-gray-800 hover:text-amber-600 transition-colors group-hover:text-amber-600"
+              className="flex w-full items-center justify-between text-left text-sm font-semibold text-gray-800 hover:text-green-600 transition-colors group-hover:text-green-600"
               aria-expanded={isExpanded}
               aria-controls={`speaker-title-${type}-${speaker.name.replace(/\s+/g, '-')}`}>
               <span>Presentation Title</span>
-              {isExpanded ? <ChevronUp size={18} className="text-amber-600" /> : <ChevronDown size={18} className="text-gray-500 group-hover:text-amber-500" />}
+              {isExpanded ? <ChevronUp size={18} className="text-green-600" /> : <ChevronDown size={18} className="text-gray-500 group-hover:text-green-500" />}
             </button>
             {isExpanded && (
-              <div id={`speaker-title-${type}-${speaker.name.replace(/\s+/g, '-')}`} className="mt-3 space-y-2 border-l-2 border-amber-500 pl-4">
+              <div id={`speaker-title-${type}-${speaker.name.replace(/\s+/g, '-')}`} className="mt-3 space-y-2 border-l-2 border-green-500 pl-4">
                 <p className="text-sm italic text-gray-700 leading-relaxed">{speaker.title}</p>
               </div>
             )}
@@ -357,7 +357,7 @@ const PreviousEdition: React.FC = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <RouterLink to="/" className="text-amber-600 hover:text-amber-700 font-semibold flex items-center">
+            <RouterLink to="/" className="text-green-600 hover:text-green-700 font-semibold flex items-center">
               ← Back to Home
             </RouterLink>
             <div className="text-sm text-gray-600">
@@ -368,12 +368,12 @@ const PreviousEdition: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-amber-50 to-orange-50 py-16">
+      <section className="bg-gradient-to-r from-green-50 to-emerald-50 py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             RENEWABLE-2025
           </h1>
-          <p className="text-2xl text-amber-600 font-semibold mb-2">
+          <p className="text-2xl text-green-600 font-semibold mb-2">
             7th Edition of the largest European Conference & Exhibition
           </p>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -383,19 +383,19 @@ const PreviousEdition: React.FC = () => {
           {/* Conference Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-amber-600 mb-2">{stats.participants}+</div>
+              <div className="text-3xl font-bold text-green-600 mb-2">{stats.participants}+</div>
               <div className="text-gray-600">Participants</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-amber-600 mb-2">{stats.countries}</div>
+              <div className="text-3xl font-bold text-green-600 mb-2">{stats.countries}</div>
               <div className="text-gray-600">Countries</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-amber-600 mb-2">{stats.papers}</div>
+              <div className="text-3xl font-bold text-green-600 mb-2">{stats.papers}</div>
               <div className="text-gray-600">Papers</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-amber-600 mb-2">{stats.sessions}</div>
+              <div className="text-3xl font-bold text-green-600 mb-2">{stats.sessions}</div>
               <div className="text-gray-600">Sessions</div>
             </div>
           </div>
@@ -417,7 +417,7 @@ const PreviousEdition: React.FC = () => {
                 onClick={() => handleSectionChange(tab.id as Section)}
                 className={`py-4 border-b-2 font-medium text-sm transition-colors ${
                   activeSection === tab.id
-                    ? 'border-amber-500 text-amber-600'
+                    ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -463,7 +463,7 @@ const PreviousEdition: React.FC = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Conference at a Glance</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
                 {/* Day 1 */}
-                <div className="border-t-4 border-amber-500 pt-6">
+                <div className="border-t-4 border-green-500 pt-6">
                   <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 1: Foundations & Fundamentals</h4>
                   <ul className="space-y-4">
                     <li className="flex items-start">
@@ -490,7 +490,7 @@ const PreviousEdition: React.FC = () => {
                 </div>
 
                 {/* Day 2 */}
-                <div className="border-t-4 border-blue-600 pt-6">
+                <div className="border-t-4 border-emerald-600 pt-6">
                   <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">Day 2: Innovations & Insights</h4>
                   <ul className="space-y-4">
                     <li className="flex items-start">
@@ -587,7 +587,7 @@ const PreviousEdition: React.FC = () => {
                 const IconComponent = topic.icon;
                 return (
                   <div key={index} className="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow flex flex-col items-center justify-center">
-                    <IconComponent className="h-8 w-8 text-amber-500 mb-3" />
+                    <IconComponent className="h-8 w-8 text-green-500 mb-3" />
                     <p className="font-medium text-gray-700 text-sm">{topic.name}</p>
                   </div>
                 );

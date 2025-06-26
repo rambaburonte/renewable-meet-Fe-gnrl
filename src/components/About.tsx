@@ -60,7 +60,7 @@ const About: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                <Calendar className="w-6 h-6 text-amber-500 mr-2" />
+                <Calendar className="w-6 h-6 text-green-500 mr-2" />
                 Conference Details
               </h3>
               <div className="space-y-3">
@@ -113,7 +113,7 @@ const About: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                <Star className="w-6 h-6 text-amber-500 mr-2" />
+                <Star className="w-6 h-6 text-green-500 mr-2" />
                 Highlights
               </h3>
               <ul className="space-y-8">
@@ -128,13 +128,13 @@ const About: React.FC = () => {
                     key={index}
                     className={`flex items-start ${
                       item === "Seoul 2026 Edition Announced"
-                        ? "text-amber-600 font-semibold"
+                        ? "text-green-600 font-semibold"
                         : "text-gray-600"
                     }`}
                   >
                     <span
                       className={`inline-block w-2 h-2 rounded-full mt-2 mr-3 ${
-                        item === "Seoul 2026 Edition Announced" ? "bg-amber-500" : "bg-gray-400"
+                        item === "Seoul 2026 Edition Announced" ? "bg-green-500" : "bg-gray-400"
                       }`}
                     />
                     <span>{item}</span>

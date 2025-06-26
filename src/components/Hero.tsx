@@ -48,7 +48,7 @@ const Hero: React.FC = () => {
               {/* Location and Venue Card */}
               <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 mb-8 max-w-md shadow-lg border border-white/20 hover:bg-white/20 transition-colors duration-300">
                 <div className="flex items-center gap-4 mb-4">
-                  <MapPin className="w-5 h-5 text-amber-400" />
+                  <MapPin className="w-5 h-5 text-green-400" />
                   <p className="text-xl font-medium text-white">
                     Dubai, UAE
                   </p>
@@ -64,14 +64,14 @@ const Hero: React.FC = () => {
               <div className="flex flex-wrap gap-4">
                 <a
                   href="/registration"
-                  className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black"
+                  className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black"
                   aria-label="Register for the conference"
                 >
                   Register Now
                 </a>
                 <a
                   href="/abstract-submission"
-                  className="bg-transparent border-2 border-amber-500 hover:bg-amber-500 hover:text-gray-900 text-amber-500 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-black"
+                  className="bg-transparent border-2 border-green-500 hover:bg-green-500 hover:text-gray-900 text-green-500 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black"
                   aria-label="Submit an abstract"
                 >
                   Abstract Submission

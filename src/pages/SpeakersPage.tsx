@@ -90,7 +90,7 @@ const SpeakersPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
                 {keynoteSpeakers.map((spk) => (
                   <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
+                    <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-green-500 shadow-lg">
                       <img
                         src={spk.img}
                         alt={spk.name}
@@ -103,7 +103,7 @@ const SpeakersPage: React.FC = () => {
                     {spk.isNobel && (
                       <p className="text-black-1000 text-sm font-medium mb-1">Nobel Prize Winner</p>
                     )}
-                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
+                    <p className="text-green-600 font-semibold">{spk.affiliation}</p>
                   </div>
                 ))}
               </div>

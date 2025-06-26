@@ -77,7 +77,7 @@ const Agenda: React.FC = () => {
               onClick={() => setActiveTab(index)}
               className={`px-6 py-2 rounded-t-lg font-semibold transition-all ${
                 activeTab === index
-                  ? "bg-amber-500 text-gray-900 shadow"
+                  ? "bg-green-500 text-gray-900 shadow"
                   : "bg-white text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -87,7 +87,7 @@ const Agenda: React.FC = () => {
         </div>
 
         <div className="max-w-4xl mx-auto bg-white rounded-b-lg shadow-lg overflow-hidden">
-          <div className="bg-amber-100 px-6 py-4 border-b">
+          <div className="bg-green-100 px-6 py-4 border-b">
             <h3 className="text-lg font-bold text-gray-800">
               {schedule[activeTab].day}: {schedule[activeTab].date}
             </h3>
@@ -101,7 +101,7 @@ const Agenda: React.FC = () => {
               }`}
             >
               <div className="flex flex-col md:flex-row md:items-start">
-                <div className="md:w-1/4 font-medium text-amber-600 mb-2 md:mb-0">
+                <div className="md:w-1/4 font-medium text-green-600 mb-2 md:mb-0">
                   {item.time}
                 </div>
                 <div className="md:w-3/4">
@@ -120,7 +120,7 @@ const Agenda: React.FC = () => {
           </p>
           <a
             href="#download-agenda"
-            className="inline-block bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-6 py-3 rounded transition-colors"
+            className="inline-block bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-6 py-3 rounded transition-colors"
           >
             Download Full Agenda
           </a>
