@@ -17,6 +17,7 @@ import { Calendar, MapPin, Clock, FileText, Users, Star } from "lucide-react";
 import { useLucideDrawerAnimation } from "../components/ui/lucide-icon-drawer";
 import { motion } from "framer-motion";
 import Speakers from "../components/Speakers";
+import ConferenceTopicsSection from "./ConferenceTopicsSection";
 
 const industries = [
   { icon: <Lightning size={32} className="text-green-500" />, label: "Power Generation" },
@@ -202,6 +203,8 @@ const About: React.FC = () => {
       <FeaturedSpeakers />
       <ConferenceInfo />
       <WhoShouldAttend />
+       <ConferenceTopicsSection />
+       
     </>
   );
 };

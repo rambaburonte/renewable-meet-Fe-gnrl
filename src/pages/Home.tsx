@@ -18,7 +18,7 @@ const Home: React.FC = () => {
       <Features />
       
       <Agenda />
-      <ConferenceTopicsSection />
+     
       <FAQ />
     </>
   );
