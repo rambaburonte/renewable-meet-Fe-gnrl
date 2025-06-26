@@ -90,7 +90,7 @@ const SpeakersPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
                 {keynoteSpeakers.map((spk) => (
                   <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-green-500 shadow-lg">
+                    <div className="relative w-48 h-48 mb-6 overflow-hidden rounded-full border-4 border-gray-200 shadow-lg">
                       <img
                         src={spk.img}
                         alt={spk.name}
@@ -103,7 +103,7 @@ const SpeakersPage: React.FC = () => {
                     {spk.isNobel && (
                       <p className="text-black-1000 text-sm font-medium mb-1">Nobel Prize Winner</p>
                     )}
-                    <p className="text-green-600 font-semibold">{spk.affiliation}</p>
+                    <p className="text-gray-900 font-semibold">{spk.affiliation}</p>
                   </div>
                 ))}
               </div>
@@ -114,7 +114,7 @@ const SpeakersPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-16 gap-y-20">
                 {plenarySpeakers.slice(0, 5).map((spk) => (
                   <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
+                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-gray-200 shadow-lg">
                       <img
                         src={spk.img}
                         alt={spk.name}
@@ -124,7 +124,7 @@ const SpeakersPage: React.FC = () => {
                       />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{spk.name}</h3>
-                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
+                    <p className="text-gray-900 font-semibold">{spk.affiliation}</p>
                   </div>
                 ))}
               </div>
@@ -132,7 +132,7 @@ const SpeakersPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-x-16 gap-y-20 mt-12">
                 {plenarySpeakers.slice(5).map((spk) => (
                   <div key={spk.name} className="flex flex-col items-center text-center">
-                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-amber-500 shadow-lg">
+                    <div className="relative w-48 h-48 mb-10 overflow-hidden rounded-full border-4 border-gray-200 shadow-lg">
                       <img
                         src={spk.img}
                         alt={spk.name}
@@ -142,7 +142,7 @@ const SpeakersPage: React.FC = () => {
                       />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{spk.name}</h3>
-                    <p className="text-amber-600 font-semibold">{spk.affiliation}</p>
+                    <p className="text-gray-900 font-semibold">{spk.affiliation}</p>
                   </div>
                 ))}
               </div>

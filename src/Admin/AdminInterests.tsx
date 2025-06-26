@@ -66,8 +66,8 @@ const AdminInterests = () => {
   if (!isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
+          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
           <p className="text-gray-300">You do not have permission to access this page.</p>
         </div>
       </div>
@@ -81,7 +81,7 @@ const AdminInterests = () => {
 
       {/* Main content */}
       <div className="flex-1 p-6 ml-[250px]">
-        <h1 className="text-3xl font-bold text-yellow-400 mb-6">Manage Interests</h1>
+        <h1 className="text-3xl font-bold text-green-400 mb-6">Manage Interests</h1>
 
         {error && (
           <div className="bg-red-600 text-white p-3 rounded-md mb-4">
@@ -94,13 +94,13 @@ const AdminInterests = () => {
           <input
             type="text"
             placeholder="New Interest (e.g. Renewable Storage)"
-            className="bg-[#1a1a1a] border border-yellow-600 px-4 py-2 rounded-md text-white flex-grow"
+            className="bg-[#1a1a1a] border border-green-600 px-4 py-2 rounded-md text-white flex-grow"
             value={newInterest}
             onChange={(e) => setNewInterest(e.target.value)}
           />
           <button
             onClick={addInterest}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md"
+            className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md"
           >
             Add
           </button>
@@ -111,7 +111,7 @@ const AdminInterests = () => {
           {interests.map((interest, idx) => (
             <li
               key={idx}
-              className="flex justify-between items-center bg-[#1a1a1a] border border-yellow-700 p-4 rounded-lg"
+              className="flex justify-between items-center bg-[#1a1a1a] border border-green-700 p-4 rounded-lg"
             >
               <span>{interest}</span>
               {/* Uncomment if you want remove functionality */}
@@ -129,11 +129,11 @@ const AdminInterests = () => {
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-yellow-600 shadow-lg w-[90%] max-w-md">
-            <h2 className="text-xl font-bold text-yellow-400 mb-4">Interest Added</h2>
+          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-green-600 shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold text-green-400 mb-4">Interest Added</h2>
             <p className="mb-4">The new interest has been successfully added.</p>
             <button
-              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md"
+              className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md"
               onClick={() => setShowModal(false)}
             >
               Close

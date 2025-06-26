@@ -30,17 +30,17 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between min-h-screen border-r border-yellow-700">
+    <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between min-h-screen border-r border-green-700">
       <div>
-        <h2 className="text-2xl font-bold text-yellow-400 mb-6">Admin Panel</h2>
+        <h2 className="text-2xl font-bold text-green-400 mb-6">Admin Panel</h2>
         <nav className="space-y-2">
           {navItems.map(({ label, path }) => (
             <button
               key={path}
               className={`block w-full text-left py-2 px-3 rounded-lg font-medium ${
                 location.pathname === path
-                  ? 'bg-yellow-600 text-black'
-                  : 'text-white hover:bg-yellow-500 hover:text-black'
+                  ? 'bg-green-600 text-black'
+                  : 'text-white hover:bg-green-500 hover:text-black'
               }`}
               onClick={() => navigate(path)}
             >
@@ -51,7 +51,7 @@ const AdminSidebar = () => {
       <div className="mt-auto">
         {adminUser && (
           <div className="mb-4 p-3 bg-gray-800 rounded-lg">
-            <p className="text-yellow-400 font-semibold text-sm">Logged in as:</p>
+            <p className="text-green-400 font-semibold text-sm">Logged in as:</p>
             <p className="text-white text-sm">{adminUser.name || adminUser.email}</p>
             <p className="text-gray-400 text-xs">{adminUser.role}</p>
             {sessionInfo && (

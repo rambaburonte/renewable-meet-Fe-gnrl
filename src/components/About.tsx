@@ -154,7 +154,19 @@ const ConferenceInfo: React.FC = () => {
   );
 };
 
-// FeaturedSpeakers section removed to avoid duplication
+// Featured Speakers section
+const FeaturedSpeakers: React.FC = () => {
+  return (
+    <section className="py-16 bg-gray-50">
+      <div className="px-4 mx-auto">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
+          Featured Speakers 2026
+        </h2>
+        <Speakers />
+      </div>
+    </section>
+  );
+};
 
 // Who Should Attend section with gradient background
 const WhoShouldAttend: React.FC = () => {
@@ -187,6 +199,7 @@ const About: React.FC = () => {
   return (
     <>
       <Introduction />
+      <FeaturedSpeakers />
       <ConferenceInfo />
       <WhoShouldAttend />
     </>

@@ -10,8 +10,8 @@ const AdminDashboard = () => {
   if (!isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
+          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
           <p className="text-gray-300">You do not have permission to access this page.</p>
         </div>
       </div>
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
       <main className="flex-1 p-8">
         {/* Header */}
         <header className="mb-10">
-          <h1 className="text-4xl font-bold text-yellow-400">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold text-green-400">Admin Dashboard</h1>
           <p className="text-gray-400">Manage bookings, events, and more.</p>
         </header>
 
@@ -62,12 +62,12 @@ const AdminDashboard = () => {
           ].map((panel, idx) => (
             <div
               key={idx}
-              className="bg-[#1a1a1a] border border-yellow-600 rounded-xl p-6 shadow-lg hover:scale-[1.02] transition-transform duration-300"
+              className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6 shadow-lg hover:scale-[1.02] transition-transform duration-300"
             >
-              <h2 className="text-xl font-semibold mb-4 text-yellow-300">{panel.title}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-green-300">{panel.title}</h2>
               <p className="text-gray-300 mb-4">{panel.desc}</p>
               <button
-                className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md transition-all"
+                className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md transition-all"
                 onClick={() => navigate(panel.href)}
               >
                 {panel.title.includes('Manage') ? 'Manage' : 'View'} {panel.title.split(' ')[0]}

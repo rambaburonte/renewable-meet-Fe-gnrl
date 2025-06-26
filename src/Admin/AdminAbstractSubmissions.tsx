@@ -40,8 +40,8 @@ const AdminAbstractSubmissions = () => {
   if (!isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-yellow-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Unauthorized</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
+          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
           <p className="text-gray-300">You do not have permission to access this page.</p>
         </div>
       </div>
@@ -57,7 +57,7 @@ const AdminAbstractSubmissions = () => {
 
       {/* Main Content */}
       <div className="flex-1 ml-[250px] p-6">
-        <h1 className="text-3xl font-bold text-yellow-400 mb-6">Abstract Submissions</h1>
+        <h1 className="text-3xl font-bold text-green-400 mb-6">Abstract Submissions</h1>
 
         {error && (
           <div className="bg-red-600 text-white p-3 rounded-md mb-4">{error}</div>
@@ -66,10 +66,10 @@ const AdminAbstractSubmissions = () => {
         {submissions.length === 0 ? (
           <p className="text-gray-400">No submissions found.</p>
         ) : (
-          <div className="overflow-x-auto bg-[#1a1a1a] border border-yellow-600 rounded-xl">
+          <div className="overflow-x-auto bg-[#1a1a1a] border border-green-600 rounded-xl">
             <table className="min-w-full table-auto text-left text-sm">
               <thead>
-                <tr className="bg-yellow-800 text-black">
+                <tr className="bg-green-800 text-black">
                   <th className="px-4 py-3">Title</th>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Email</th>
@@ -85,7 +85,7 @@ const AdminAbstractSubmissions = () => {
                 {submissions.map((sub) => (
                   <tr
                     key={sub.id}
-                    className="border-t border-yellow-700 hover:bg-yellow-900/10"
+                    className="border-t border-green-700 hover:bg-green-900/10"
                   >
                     <td className="px-4 py-3">{sub.titlePrefix}</td>
                     <td className="px-4 py-3">{sub.name}</td>
@@ -100,7 +100,7 @@ const AdminAbstractSubmissions = () => {
                         href={sub.abstractFilePath}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-yellow-400 hover:underline"
+                        className="text-green-400 hover:underline"
                       >
                         View PDF
                       </a>

@@ -46,7 +46,7 @@ const Hero: React.FC = () => {
               </h1>
 
               {/* Location and Venue Card */}
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 mb-8 max-w-md shadow-lg border border-white/20 hover:bg-white/20 transition-colors duration-300">
+              <div className="bg-white/3 backdrop-blur-md rounded-lg p-6 mb-8 max-w-md shadow-lg border border-white/5 hover:bg-white/5 hover:border-white/30 transition-all duration-500 transform hover:scale-[1.02]">
                 <div className="flex items-center gap-4 mb-4">
                   <MapPin className="w-5 h-5 text-green-400" />
                   <p className="text-xl font-medium text-white">

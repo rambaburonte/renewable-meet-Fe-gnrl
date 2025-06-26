@@ -97,7 +97,7 @@ const AdminLogin = () => {
             <label className="block text-sm text-gray-300">Email</label>
             <input
               type="email"
-              className="w-full mt-1 p-3 bg-black text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full mt-1 p-3 bg-black text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="admin@renewablemeet.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -108,7 +108,7 @@ const AdminLogin = () => {
             <label className="block text-sm text-gray-300">Password</label>
             <input
               type="password"
-              className="w-full mt-1 p-3 bg-black text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full mt-1 p-3 bg-black text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}              required
@@ -117,7 +117,7 @@ const AdminLogin = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-black font-semibold py-3 rounded-lg transition-all"
+            className="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-black font-semibold py-3 rounded-lg transition-all"
           >
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
