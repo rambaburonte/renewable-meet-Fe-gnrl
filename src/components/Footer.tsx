@@ -11,10 +11,10 @@ const Footer: React.FC = () => {
       {/* World Map Section */}
       <section className="py-1 bg-gray-900 w-full">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="font-bold text-xl md:text-4xl text-white">
-            Remote{" "}
+          <p className="font-bold text-xl md:text-4xl text-white/70">
+            Meet Experts from All Over The Globe{" "}
             <span className="text-neutral-400">
-              {"Connectivity".split("").map((char, idx) => (
+              {"".split("").map((char, idx) => (
                 <motion.span
                   key={idx}
                   className="inline-block"
@@ -28,9 +28,8 @@ const Footer: React.FC = () => {
             </span>
           </p>
           <p className="text-sm md:text-lg text-neutral-500 max-w-2xl mx-auto py-4">
-            Break free from traditional boundaries. Work from anywhere, at the
-            comfort of your own studio apartment. Perfect for Nomads and
-            Travellers.
+            Engage with renowned experts and pioneers in renewable energy.
+Collaborate globally to drive innovation and sustainable solutions.
           </p>
         </div>
         <WorldMap
