@@ -16,6 +16,13 @@ export default defineConfig({
       overlay: true,
       clientPort: 3000
     },
+    proxy: {
+      '/api': {
+        target: 'http://147.93.102.131:8901',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
     outDir: 'dist',
