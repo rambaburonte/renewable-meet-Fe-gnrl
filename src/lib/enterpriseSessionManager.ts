@@ -448,6 +448,10 @@ export class EnterpriseSessionManager {
 
       // Store in sessionStorage
       sessionStorage.setItem('enterprise_session', JSON.stringify(session));
+      
+      // Also store token in the expected locations for backward compatibility with admin services
+      localStorage.setItem('authToken', accessToken);
+      sessionStorage.setItem('adminToken', accessToken);
 
       // Schedule token refresh
       this.scheduleTokenRefresh();      this.emit(SessionEvent.LOGIN, { user, sessionId: session.sessionId });
@@ -589,6 +593,11 @@ export class EnterpriseSessionManager {
 
     // Clear storage
     sessionStorage.removeItem('enterprise_session');
+    
+    // Also clear the compatibility token storage
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('adminToken');
 
     this.emit(SessionEvent.LOGOUT, { sessionId });
     console.log('[SessionManager] Session cleared');

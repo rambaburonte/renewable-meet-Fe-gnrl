@@ -5,11 +5,13 @@ import { useEnterpriseSession } from './Context/EnterpriseSessionContext';
 
 import AdminLogin from './Admin/Adminlogin';
 import AdminDashboard from './Admin/AdminDashboard';
+import AdminPayments from './Admin/AdminPayments';
 import AdminAccommodations from './Admin/AdminAccommodations';
 import AdminBookings from './Admin/AdminBookings';
 import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
 import AdminManageEvents from './Admin/AdminManageEvents';
 import AdminInterests from './Admin/AdminInterests';
+import PaymentTestPage from './Admin/PaymentTestPage';
 
 const AdminWrapper = () => {
   const location = useLocation();
@@ -66,11 +68,13 @@ const AdminWrapper = () => {
         <Routes>
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-payments" element={<AdminPayments />} />
           <Route path="/admin-accommodations" element={<AdminAccommodations />} />
           <Route path="/admin-bookings" element={<AdminBookings />} />
           <Route path="/admin-abstract-submissions" element={<AdminAbstractSubmissions />} />
           <Route path="/admin-manage-events" element={<AdminManageEvents />} />
           <Route path="/admin-interests" element={<AdminInterests />} />
+          <Route path="/admin-payment-test" element={<PaymentTestPage />} />
         </Routes>
       </main>
     </div>

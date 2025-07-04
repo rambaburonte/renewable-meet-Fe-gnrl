@@ -24,7 +24,7 @@ const AdminDashboard = () => {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 p-8">
+      <main className="ml-64 p-8">
         {/* Header */}
         <header className="mb-10">
           <h1 className="text-4xl font-bold text-green-400">Admin Dashboard</h1>
@@ -34,6 +34,12 @@ const AdminDashboard = () => {
         {/* Dashboard Panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
+            {
+              title: 'Payment Records',
+              desc: 'View and manage all payment transactions, statuses, and analytics.',
+              href: '/admin-payments',
+              icon: '💳',
+            },
             {
               title: 'Bookings',
               desc: 'View and manage user bookings.',
@@ -64,13 +70,16 @@ const AdminDashboard = () => {
               key={idx}
               className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6 shadow-lg hover:scale-[1.02] transition-transform duration-300"
             >
-              <h2 className="text-xl font-semibold mb-4 text-green-300">{panel.title}</h2>
+              <div className="flex items-center mb-4">
+                <span className="text-2xl mr-3">{panel.icon || '📋'}</span>
+                <h2 className="text-xl font-semibold text-green-300">{panel.title}</h2>
+              </div>
               <p className="text-gray-300 mb-4">{panel.desc}</p>
               <button
                 className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md transition-all"
                 onClick={() => navigate(panel.href)}
               >
-                {panel.title.includes('Manage') ? 'Manage' : 'View'} {panel.title.split(' ')[0]}
+                {panel.title.includes('Manage') ? 'Manage' : panel.title === 'Payment Records' ? 'View Payments' : 'View'} {panel.title.split(' ')[0]}
               </button>
             </div>
           ))}

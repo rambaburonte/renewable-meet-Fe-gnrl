@@ -6,6 +6,7 @@ import {
   SessionData,
   getSessionInfo 
 } from '../lib/enterpriseSessionManager';
+import { BASE_URL } from '../config';
 
 interface EnterpriseSessionContextType {
   // Authentication state
@@ -174,7 +175,7 @@ export const EnterpriseSessionProvider: React.FC<{ children: React.ReactNode }> 
       
       // Call backend logout endpoint
       try {
-        await fetch('/admin/api/admin/logout', {
+        await fetch(`${BASE_URL}/admin/api/admin/logout`, {
           method: 'POST',
           credentials: 'include',
           headers: {

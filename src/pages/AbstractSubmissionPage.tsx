@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
+import { BASE_URL } from '../config';
 
 interface AbstractFormData {
   title: string;
@@ -281,7 +282,7 @@ const AbstractSubmission: React.FC<{
     });
 
     try {
-      const response = await fetch('https://renewable-be.onrender.com/api/registration/submit-abstract', {
+      const response = await fetch(`${BASE_URL}/api/registration/submit-abstract`, {
         method: 'POST',
         body: formData,
       });

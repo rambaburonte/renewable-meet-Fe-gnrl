@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
+import { BASE_URL, PAYMENT_API_URL } from '../config';
 
 interface RegisterFormData {
-  title: string;
+  title: string; // Frontend only field for user experience
   name: string;
   phone: string;
   email: string;
-  institute: string;
+  institute: string; // Will be mapped to instituteOrUniversity for backend
   country: string;
   registrationType: string;
   presentationType: string;
@@ -301,12 +302,12 @@ const Register: React.FC<{
   generateCaptcha: () => void;
   setRegisterFormData: React.Dispatch<React.SetStateAction<RegisterFormData>>;
   registerFormData: RegisterFormData;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  resetForm: () => void;
-}> = ({ captchaCode, generateCaptcha, setRegisterFormData, registerFormData, setShowModal, resetForm }) => {
+}> = ({ captchaCode, generateCaptcha, setRegisterFormData, registerFormData }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [pricing, setPricing] = useState<PricingConfig[] | null>(null);
   const [pricingError, setPricingError] = useState<string>('');
+  const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
+  const [paymentError, setPaymentError] = useState<string>('');
 
   const fetchPricing = async () => {
     if (!registerFormData.registrationType || !registerFormData.presentationType) {
@@ -315,32 +316,72 @@ const Register: React.FC<{
     }
 
     try {
-      const response = await fetch('https://renewable-be.onrender.com/api/registration/get-pricing-config', {
+      const pricingRequest = {
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+          ? 'REGISTRATION_AND_ACCOMMODATION'
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+        numberOfNights: registerFormData.nights,
+        numberOfGuests: registerFormData.guests,
+      };
+
+      console.log('Fetching pricing with request:', pricingRequest);
+
+      const response = await fetch(`${BASE_URL}/api/registration/get-pricing-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
-            ? 'REGISTRATION_AND_ACCOMMODATION'
-            : 'REGISTRATION_ONLY',
-          presentationType: registerFormData.presentationType.toUpperCase(),
-          numberOfNights: registerFormData.nights,
-          numberOfGuests: registerFormData.guests,
-        }),
+        body: JSON.stringify(pricingRequest),
       });
 
+      console.log('Pricing response status:', response.status);
+      const responseText = await response.text();
+      console.log('Pricing response:', responseText);
+
       if (response.ok) {
-        const data = await response.json();
+        const data = JSON.parse(responseText);
         setPricing(data);
         setPricingError('');
+        console.log('Pricing data received:', data);
+        
+        // Debug accommodation data
+        if (data && data.length > 0) {
+          data.forEach((config: PricingConfig, index: number) => {
+            console.log(`Pricing config ${index}:`, {
+              id: config.id,
+              presentationType: config.presentationType,
+              accommodationOption: config.accommodationOption,
+              totalPrice: config.totalPrice,
+              processingFeePercent: config.processingFeePercent
+            });
+            
+            if (config.accommodationOption) {
+              console.log(`Accommodation details for config ${index}:`, {
+                nights: config.accommodationOption.nights,
+                guests: config.accommodationOption.guests,
+                price: config.accommodationOption.price
+              });
+            }
+          });
+        }
       } else {
-        setPricingError('Failed to fetch pricing information');
+        let errorMessage = 'Failed to fetch pricing information';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Pricing fetch failed: ${response.status} ${response.statusText}`;
+        }
+        setPricingError(errorMessage);
         setPricing(null);
+        console.error('Pricing fetch failed:', errorMessage);
       }
     } catch (error) {
-      setPricingError('Error fetching pricing information');
+      const errorMessage = `Error fetching pricing information: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      setPricingError(errorMessage);
       setPricing(null);
+      console.error('Pricing fetch error:', error);
     }
   };
 
@@ -359,17 +400,10 @@ const Register: React.FC<{
     }
   };
 
-  const handleNumberChange = (name: string, value: number) => {
-    setRegisterFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
-
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!registerFormData.title) newErrors.title = 'Title is required';
+    // Note: title is not validated as it's frontend-only for UX
     if (!registerFormData.name) newErrors.name = 'Name is required';
     if (!registerFormData.phone) newErrors.phone = 'Phone is required';
     if (!registerFormData.email) newErrors.email = 'Email is required';
@@ -386,32 +420,181 @@ const Register: React.FC<{
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
+  const createPaymentSession = async (pricingConfigId: number) => {
+    setIsProcessingPayment(true);
+    setPaymentError('');
 
     try {
-      const response = await fetch('https://renewable-be.onrender.com/api/registration/register', {
+      // First, calculate the amount from pricing
+      const selectedPricing = pricing?.find(p => p.id === pricingConfigId);
+      if (!selectedPricing) {
+        throw new Error('Pricing configuration not found');
+      }
+
+      // Build detailed description including accommodation
+      let description = `Registration for ${registerFormData.name} - ${selectedPricing.presentationType.type}`;
+      let productName = `Renewable Energy Summit 2026 - ${selectedPricing.presentationType.type}`;
+      
+      if (selectedPricing.accommodationOption) {
+        description += ` + Accommodation (${selectedPricing.accommodationOption.nights} nights, ${selectedPricing.accommodationOption.guests} guests)`;
+        productName += ` + Accommodation`;
+      }
+
+      const paymentData = {
+        // Basic payment information
+        productName: productName,
+        description: description,
+        orderReference: `REG-${Date.now()}-${registerFormData.name.replace(/\s+/g, '')}`,
+        unitAmount: selectedPricing.totalPrice, // Keep as euros (backend expects euros, not cents)
+        quantity: 1,
+        currency: "eur",
+        successUrl: `${window.location.origin}/payment-success`,
+        cancelUrl: `${window.location.origin}/registration`,
+        pricingConfigId: pricingConfigId,
+        
+        // Customer registration information (matching CheckoutRequest fields exactly)
+        name: registerFormData.name,
+        phone: registerFormData.phone,
+        email: registerFormData.email,
+        instituteOrUniversity: registerFormData.institute, // Map institute to instituteOrUniversity
+        country: registerFormData.country,
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation' 
+          ? 'REGISTRATION_AND_ACCOMMODATION' 
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+        
+        // Accommodation information (if applicable)
+        accompanyingPerson: registerFormData.accompanyingPerson,
+        extraNights: registerFormData.extraNights,
+        accommodationNights: selectedPricing.accommodationOption ? selectedPricing.accommodationOption.nights : 0,
+        accommodationGuests: selectedPricing.accommodationOption ? selectedPricing.accommodationOption.guests : 0,
+      };
+
+      console.log('Creating payment session with data:', paymentData);
+      console.log('Selected pricing configuration:', selectedPricing);
+      console.log('Amount in euros (unitAmount):', paymentData.unitAmount);
+
+      const response = await fetch(`${PAYMENT_API_URL}/api/payment/create-checkout-session?pricingConfigId=${pricingConfigId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...registerFormData,
+        body: JSON.stringify(paymentData),
+      });
+
+      if (response.ok) {
+        const paymentSession = await response.json();
+        
+        // Redirect to Stripe checkout
+        if (paymentSession.url) {
+          window.location.href = paymentSession.url;
+        } else {
+          throw new Error('No payment URL received');
+        }
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create payment session');
+      }
+    } catch (error) {
+      console.error('Payment session creation error:', error);
+      setPaymentError(error instanceof Error ? error.message : 'Failed to create payment session');
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    // Check if we have pricing information
+    if (!pricing || pricing.length === 0) {
+      alert('Please wait for pricing information to load or check your selection.');
+      return;
+    }
+
+    // Option 1: Try registration first (original flow)
+    try {
+      const registrationData = {
+        // Exclude title field as RegistrationForm doesn't have it
+        name: registerFormData.name,
+        phone: registerFormData.phone,
+        email: registerFormData.email,
+        instituteOrUniversity: registerFormData.institute, // Map institute to instituteOrUniversity
+        country: registerFormData.country,
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+          ? 'REGISTRATION_AND_ACCOMMODATION'
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+      };
+
+      console.log('Sending registration data:', registrationData);
+
+      const response = await fetch(`${BASE_URL}/api/registration/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
+
+      console.log('Registration response status:', response.status);
+      const responseText = await response.text();
+      console.log('Registration response:', responseText);
+
+      if (response.ok) {
+        // Registration successful, now create payment session
+        const pricingConfigId = pricing[0].id;
+        await createPaymentSession(pricingConfigId);
+      } else {
+        // Registration failed, let's try direct payment approach
+        console.warn('Registration failed, trying direct payment approach...');
+        
+        // Store registration data in localStorage for later processing
+        const registrationDataForStorage = {
+          name: registerFormData.name,
+          phone: registerFormData.phone,
+          email: registerFormData.email,
+          instituteOrUniversity: registerFormData.institute,
+          country: registerFormData.country,
           registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
             ? 'REGISTRATION_AND_ACCOMMODATION'
             : 'REGISTRATION_ONLY',
           presentationType: registerFormData.presentationType.toUpperCase(),
-        }),
-      });
-
-      if (response.ok) {
-        setShowModal(true);
-      } else {
-        alert('Registration failed. Please try again.');
+        };
+        localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
+        
+        // Proceed directly to payment
+        const pricingConfigId = pricing[0].id;
+        await createPaymentSession(pricingConfigId);
       }
     } catch (error) {
-      alert('An error occurred. Please try again.');
+      console.error('Registration error:', error);
+      
+      // If registration API fails completely, try direct payment
+      console.warn('Registration API failed, trying direct payment approach...');
+      
+      try {      // Store registration data for later processing
+      const registrationDataForStorage = {
+        name: registerFormData.name,
+        phone: registerFormData.phone,
+        email: registerFormData.email,
+        instituteOrUniversity: registerFormData.institute,
+        country: registerFormData.country,
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+          ? 'REGISTRATION_AND_ACCOMMODATION'
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+      };
+      
+      localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
+        
+        // Proceed to payment
+        const pricingConfigId = pricing[0].id;
+        await createPaymentSession(pricingConfigId);
+      } catch (paymentError) {
+        alert(`Unable to process registration and payment: ${paymentError instanceof Error ? paymentError.message : 'Unknown error'}`);
+      }
     }
   };
 
@@ -434,14 +617,14 @@ const Register: React.FC<{
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
           <select
             name="title"
             value={registerFormData.title}
             onChange={handleInputChange}
             className={`form-select ${errors.title ? 'error' : ''}`}
           >
-            <option value="">Select Title</option>
+            <option value="">Select Title (Optional)</option>
             <option value="Mr">Mr</option>
             <option value="Ms">Ms</option>
             <option value="Dr">Dr</option>
@@ -619,33 +802,50 @@ const Register: React.FC<{
       </div>
 
       {registerFormData.registrationType === 'registrationAndAccommodation' && (
-        <div className="accommodation-selectors">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Number of Guests</label>
-            <select
-              name="guests"
-              value={registerFormData.guests}
-              onChange={handleInputChange}
-              className="form-select"
-            >
-              {[1, 2, 3, 4].map(num => (
-                <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
-              ))}
-            </select>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-4">
+          <div className="flex items-center mb-4">
+            <svg className="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <h4 className="text-lg font-semibold text-blue-900">Accommodation Options</h4>
           </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Number of Guests</label>
+              <select
+                name="guests"
+                value={registerFormData.guests}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                {[1, 2, 3, 4].map(num => (
+                  <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Number of Nights</label>
-            <select
-              name="nights"
-              value={registerFormData.nights}
-              onChange={handleInputChange}
-              className="form-select"
-            >
-              {[1, 2, 3, 4, 5].map(num => (
-                <option key={num} value={num}>{num} Night{num > 1 ? 's' : ''}</option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Number of Nights</label>
+              <select
+                name="nights"
+                value={registerFormData.nights}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                {[1, 2, 3, 4, 5].map(num => (
+                  <option key={num} value={num}>{num} Night{num > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-white border border-blue-200 rounded text-sm text-gray-700">
+            <p className="font-medium text-gray-900 mb-1">Accommodation Details:</p>
+            <p>• Hotel: Premium conference hotel in Dubai</p>
+            <p>• Location: Walking distance to conference venue</p>
+            <p>• Selected: {registerFormData.guests} guest{registerFormData.guests > 1 ? 's' : ''} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
+            <p>• Dates: April {17 - 1} - April {17 - 1 + registerFormData.nights}, 2026</p>
           </div>
         </div>
       )}
@@ -684,28 +884,74 @@ const Register: React.FC<{
       {pricing && pricing.length > 0 && (
         <div className="payment-summary">
           <h3 className="text-lg font-semibold mb-4">Pricing Summary</h3>
-          {pricing.map((config, index) => (
+          {pricing.map((config) => {
+            // Calculate subtotal (registration + accommodation before processing fee)
+            const registrationPrice = config.presentationType.price;
+            const accommodationPrice = config.accommodationOption ? config.accommodationOption.price : 0;
+            const subtotal = registrationPrice + accommodationPrice;
+            const processingFee = subtotal * (config.processingFeePercent / 100);
+            
+            return (
             <div key={config.id} className="mb-4 p-4 bg-gray-50 rounded-lg">
+              <h4 className="font-semibold text-lg mb-3 text-gray-900">Order Details</h4>
+              
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">{config.presentationType.type}</span>
-                <span className="font-bold">${config.presentationType.price}</span>
+                <span className="font-medium">{config.presentationType.type} Registration</span>
+                <span className="font-semibold">€{registrationPrice}</span>
               </div>
+              
               {config.accommodationOption && (
-                <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
-                  <span>Accommodation ({config.accommodationOption.nights} nights, {config.accommodationOption.guests} guests)</span>
-                  <span>${config.accommodationOption.price}</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">
+                    Accommodation ({config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}, {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''})
+                  </span>
+                  <span className="font-semibold">€{accommodationPrice}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center text-sm text-gray-600">
-                <span>Processing Fee ({config.processingFeePercent}%)</span>
-                <span>${(config.totalPrice * config.processingFeePercent / 100).toFixed(2)}</span>
+              
+              <div className="border-t border-gray-300 my-3"></div>
+              
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="font-medium">€{subtotal}</span>
               </div>
-              <div className="flex justify-between items-center font-bold text-lg border-t pt-2 mt-2">
-                <span>Total</span>
-                <span>${config.totalPrice}</span>
+              
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-gray-600">Processing Fee ({config.processingFeePercent}%)</span>
+                <span className="font-medium">€{processingFee.toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between items-center font-bold text-xl border-t border-gray-400 pt-3">
+                <span>Total Amount</span>
+                <span className="text-green-600">€{Math.round(config.totalPrice)}</span>
+              </div>
+              
+              {registerFormData.registrationType === 'registrationAndAccommodation' && config.accommodationOption && (
+                <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                  <div className="text-sm text-blue-800">
+                    <p className="font-semibold">Accommodation Details:</p>
+                    <p>• Duration: {config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}</p>
+                    <p>• Capacity: {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''}</p>
+                    <p>• Check-in: April 16, 2026</p>
+                    <p>• Check-out: April {16 + config.accommodationOption.nights}, 2026</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            );
+          })}
+          
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div className="text-sm text-blue-800">
+                <p className="font-semibold mb-1">Secure Payment Process</p>
+                <p>After clicking "Register & Pay Now", you'll be redirected to our secure Stripe payment page to complete your registration payment in euros (EUR).</p>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       )}
 
@@ -713,12 +959,23 @@ const Register: React.FC<{
         <div className="text-red-500 text-sm">{pricingError}</div>
       )}
 
+      {paymentError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <strong>Payment Error:</strong> {paymentError}
+        </div>
+      )}
+
       <div className="flex justify-center">
         <button
           type="submit"
-          className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+          disabled={isProcessingPayment || !pricing || pricing.length === 0}
+          className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+            isProcessingPayment || !pricing || pricing.length === 0
+              ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+              : 'bg-black text-white hover:bg-gray-800'
+          }`}
         >
-          Register Now
+          {isProcessingPayment ? 'Processing...' : 'Register & Pay Now'}
         </button>
       </div>
     </form>
@@ -801,8 +1058,6 @@ const RegistrationPage: React.FC = () => {
               generateCaptcha={generateCaptcha}
               setRegisterFormData={setRegisterFormData}
               registerFormData={registerFormData}
-              setShowModal={setShowModal}
-              resetForm={resetForm}
             />
           </div>
         </div>

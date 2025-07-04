@@ -6,11 +6,12 @@ import { BASE_URL } from '../config';
 const navItems = [
   { label: 'Dashboard', path: '/admin-dashboard' },
   { label: 'Bookings', path: '/admin-bookings' },
+  { label: 'Payments', path: '/admin-payments' },
   { label: 'Manage Events', path: '/admin-manage-events' },
   { label: 'Interest Options', path: '/admin-interests' },
   { label: 'Accommodation Combos', path: '/admin-accommodations' },
   { label: 'Abstract Submissions', path: '/admin-abstract-submissions' },
-
+  { label: 'Payment API Test', path: '/admin-payment-test' },
 ];
 
 const AdminSidebar = () => {
@@ -30,7 +31,7 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-gray-900 p-6 flex flex-col justify-between min-h-screen border-r border-green-700">
+    <aside className="fixed left-0 top-0 w-64 bg-gray-900 p-6 flex flex-col justify-between h-screen border-r border-green-700 overflow-y-auto z-40">
       <div>
         <h2 className="text-2xl font-bold text-green-400 mb-6">Admin Panel</h2>
         <nav className="space-y-2">
