@@ -341,6 +341,8 @@ const AdminCombos = () => {
                 <th className="px-4 py-3"><span className="inline-flex items-center"><FaMoneyBillWave className="mr-1" /> Revenue</span></th>
                 <th className="px-4 py-3"><span className="inline-flex items-center"><FaCheckCircle className="mr-1" /> Paid</span></th>
                 <th className="px-4 py-3"><span className="inline-flex items-center"><FaInfoCircle className="mr-1" /> Details</span></th>
+                <th className="px-4 py-3"><span className="inline-flex items-center"><FaEdit className="mr-1" /> Edit</span></th>
+                <th className="px-4 py-3"><span className="inline-flex items-center"><FaTrashAlt className="mr-1" /> Delete</span></th>
               </tr>
             </thead>
             <tbody>
@@ -349,8 +351,7 @@ const AdminCombos = () => {
                 return (
                   <tr
                     key={acc.id}
-                    className="border-t border-green-700 hover:bg-green-900/10 cursor-pointer"
-                    onClick={e => handleAccommodationClick(acc, e)}
+                    className="border-t border-green-700 hover:bg-green-900/10"
                   >
                     <td className="px-4 py-3">{acc.nights}</td>
                     <td className="px-4 py-3">{acc.guests}</td>
@@ -358,6 +359,33 @@ const AdminCombos = () => {
                     <td className="px-4 py-3"><span className="inline-flex items-center"><FaMoneyBillWave className="text-green-400 mr-1" /> €{details.totalRevenue}</span></td>
                     <td className="px-4 py-3"><span className="inline-flex items-center"><FaCheckCircle className="text-green-400 mr-1" /> {details.paidBookings}</span></td>
                     <td className="px-4 py-3"><span className="inline-flex items-center"><FaInfoCircle className="text-blue-400 mr-1" /> {details.totalBookings}</span></td>
+                    <td className="px-4 py-3">
+                      <button
+                        className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded flex items-center gap-1 text-xs"
+                        title="Edit Accommodation"
+                        onClick={() => {
+                          setSelectedAccommodation(acc);
+                          setNights(acc.nights.toString());
+                          setGuests(acc.guests.toString());
+                          setPrice(acc.price.toString());
+                          setEditModalOpen(true);
+                        }}
+                      >
+                        <FaEdit /> Edit
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 text-xs"
+                        title="Delete Accommodation"
+                        onClick={() => {
+                          setSelectedAccommodation(acc);
+                          setDeleteModalOpen(true);
+                        }}
+                      >
+                        <FaTrashAlt /> Delete
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -388,6 +416,7 @@ const AdminCombos = () => {
                       <th className="px-2 py-1">Email</th>
                       <th className="px-2 py-1">Amount Paid</th>
                       <th className="px-2 py-1">Status</th>
+                      <th className="px-2 py-1">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -406,6 +435,33 @@ const AdminCombos = () => {
                               <FaTimesCircle className="text-gray-400" /> Unpaid
                             </span>
                           )}
+                        </td>
+                        <td className="px-2 py-1 flex gap-2">
+                          <button
+                            className="bg-yellow-500 hover:bg-yellow-600 text-black px-2 py-1 rounded flex items-center gap-1 text-xs"
+                            title="Edit Booking"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              setSelectedAccommodation(selectedAccommodation); // keep modal open
+                              setNights(booking.pricingConfig?.accommodationOption?.nights?.toString() || '');
+                              setGuests(booking.pricingConfig?.accommodationOption?.guests?.toString() || '');
+                              setPrice(booking.pricingConfig?.accommodationOption?.price?.toString() || '');
+                              setEditModalOpen(true);
+                            }}
+                          >
+                            <FaEdit /> Edit
+                          </button>
+                          <button
+                            className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded flex items-center gap-1 text-xs"
+                            title="Delete Booking"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              setSelectedAccommodation(selectedAccommodation); // keep modal open
+                              setDeleteModalOpen(true);
+                            }}
+                          >
+                            <FaTrashAlt /> Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
