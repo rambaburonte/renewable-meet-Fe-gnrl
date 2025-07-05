@@ -3,6 +3,7 @@ import Sidebar from './AdminSidebar';
 import PaymentDetailsModal from './PaymentDetailsModal';
 import { isAdmin } from '../lib/authUtils';
 import AdminPaymentService from '../services/AdminPaymentService';
+import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaSyncAlt, FaClipboard, FaCopy, FaExclamationCircle } from 'react-icons/fa';
 
 // Types for payment data
 interface PaymentRecord {
@@ -114,24 +115,30 @@ const AdminPayments = () => {
   // Search by customer email
   const searchByEmail = async () => {
     if (!searchEmail.trim()) {
-      alert('Please enter an email address to search');
+      setError(null);
+      setSelectedStatus('ALL');
+      setSearchSession('');
+      fetchPayments(); // Reset to all payments if input is empty
       return;
     }
-    
+    setSelectedStatus('ALL'); // Reset status filter
+    setSearchSession(''); // Clear session search
     try {
       setLoading(true);
       setError(null);
-      console.log('Searching for email:', searchEmail);
-      const data = await AdminPaymentService.searchByEmail(searchEmail);
-      console.log('Email search results:', data);
-      setPayments(Array.isArray(data) ? data : []);
-      
-      if (!data || (Array.isArray(data) && data.length === 0)) {
+      const data = await AdminPaymentService.searchByEmail(searchEmail.trim());
+      let result = Array.isArray(data) ? data : data ? [data] : [];
+      // If no results, try client-side substring match
+      if (result.length === 0 && allPayments.length > 0) {
+        const searchLower = searchEmail.trim().toLowerCase();
+        result = allPayments.filter(p => p.customerEmail && p.customerEmail.toLowerCase().includes(searchLower));
+      }
+      setPayments(result);
+      if (result.length === 0) {
         setError(`No payments found for email: ${searchEmail}`);
       }
     } catch (err) {
-      const errorMessage = `Failed to search for email: ${searchEmail}`;
-      setError(errorMessage);
+      setError(`Failed to search for email: ${searchEmail}`);
       console.error('Error searching by email:', err);
     } finally {
       setLoading(false);
@@ -193,18 +200,6 @@ const AdminPayments = () => {
     }
   };
 
-  // Status color helper
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED': return 'text-green-400';
-      case 'PENDING': return 'text-yellow-400';
-      case 'FAILED': return 'text-red-400';
-      case 'CANCELLED': return 'text-gray-400';
-      case 'EXPIRED': return 'text-orange-400';
-      default: return 'text-gray-400';
-    }
-  };
-
   // Show payment details modal
   const showPaymentDetails = (payment: PaymentRecord) => {
     setSelectedPayment(payment);
@@ -229,7 +224,7 @@ const AdminPayments = () => {
       <main className="ml-64 p-8">
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-green-400 mb-2">💳 Payment Records</h1>
+          <h1 className="text-4xl font-bold text-green-400 mb-2 flex items-center gap-2"><FaMoneyBillWave /> Payment Records</h1>
           <p className="text-gray-400">Manage and monitor all payment transactions</p>
         </header>
 
@@ -237,12 +232,12 @@ const AdminPayments = () => {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-green-300 mb-2">Total Payments</h3>
+              <h3 className="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2"><FaClipboard /> Total Payments</h3>
               <p className="text-3xl font-bold text-white">{stats.totalRecords}</p>
               <p className="text-xs text-gray-400">All status types</p>
             </div>
             <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-green-300 mb-2">Total Revenue</h3>
+              <h3 className="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2"><FaMoneyBillWave /> Total Revenue</h3>
               <p className="text-3xl font-bold text-white">
                 {(() => {
                   // Calculate revenue only from completed payments using ALL payments, not filtered ones
@@ -255,22 +250,22 @@ const AdminPayments = () => {
               <p className="text-xs text-gray-400">Completed payments only</p>
             </div>
             <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-green-300 mb-2">✅ Completed</h3>
+              <h3 className="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2"><FaCheckCircle className="text-green-400" /> Completed</h3>
               <p className="text-3xl font-bold text-green-400">{stats.completedPayments}</p>
               <p className="text-xs text-gray-400">Successfully paid</p>
             </div>
             <div className="bg-[#1a1a1a] border border-yellow-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">⏳ Pending</h3>
+              <h3 className="text-lg font-semibold text-yellow-300 mb-2 flex items-center gap-2"><FaSpinner className="animate-spin" /> Pending</h3>
               <p className="text-3xl font-bold text-yellow-400">{stats.pendingPayments}</p>
               <p className="text-xs text-gray-400">Awaiting payment</p>
             </div>
             <div className="bg-[#1a1a1a] border border-red-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-red-300 mb-2">❌ Failed</h3>
+              <h3 className="text-lg font-semibold text-red-300 mb-2 flex items-center gap-2"><FaTimesCircle /> Failed</h3>
               <p className="text-3xl font-bold text-red-400">{stats.failedPayments}</p>
               <p className="text-xs text-gray-400">Failed transactions</p>
             </div>
             <div className="bg-[#1a1a1a] border border-orange-600 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-orange-300 mb-2">⏰ Expired</h3>
+              <h3 className="text-lg font-semibold text-orange-300 mb-2 flex items-center gap-2"><FaClock /> Expired</h3>
               <p className="text-3xl font-bold text-orange-400">{stats.expiredPayments}</p>
               <p className="text-xs text-gray-400">Expired sessions</p>
             </div>
@@ -304,20 +299,24 @@ const AdminPayments = () => {
                 <input
                   type="email"
                   value={searchEmail}
-                  onChange={(e) => setSearchEmail(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      searchByEmail();
-                    }
+                  onChange={(e) => {
+                    setSearchEmail(e.target.value);
+                    setError(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') searchByEmail();
                   }}
                   placeholder="customer@example.com"
                   className="flex-1 bg-[#2a2a2a] border border-green-600 rounded-l-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                  disabled={loading}
                 />
                 <button
                   onClick={searchByEmail}
-                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors flex items-center gap-1"
+                  disabled={loading}
+                  title="Search by Email"
                 >
-                  🔍
+                  <FaSearch />
                 </button>
               </div>
             </div>
@@ -340,9 +339,10 @@ const AdminPayments = () => {
                 />
                 <button
                   onClick={searchBySession}
-                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors flex items-center gap-1"
+                  title="Search by Session ID"
                 >
-                  🔍
+                  <FaSearch />
                 </button>
               </div>
             </div>
@@ -353,15 +353,15 @@ const AdminPayments = () => {
               <div className="space-y-2">
                 <button
                   onClick={() => fetchPayments()}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
                 >
-                  🔄 Refresh
+                  <FaSyncAlt /> Refresh
                 </button>
                 <button
                   onClick={expireStalePayments}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
                 >
-                  ⏰ Expire Stale
+                  <FaClock /> Expire Stale
                 </button>
               </div>
             </div>
@@ -370,11 +370,12 @@ const AdminPayments = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 mb-6">
-            <p className="text-red-400">❌ {error}</p>
+          <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 mb-6 flex items-center gap-2">
+            <FaExclamationCircle className="text-red-400 text-xl" />
+            <p className="text-red-400">{error}</p>
             <button
               onClick={() => setError(null)}
-              className="mt-2 text-sm text-red-300 hover:text-red-100"
+              className="ml-4 text-sm text-red-300 hover:text-red-100"
             >
               Dismiss
             </button>
@@ -384,7 +385,7 @@ const AdminPayments = () => {
         {/* Loading */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-400"></div>
+            <FaSpinner className="animate-spin text-green-400 text-5xl mx-auto mb-4" />
             <p className="mt-4 text-gray-400">Loading payments...</p>
           </div>
         )}
@@ -444,13 +445,18 @@ const AdminPayments = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <div className={`px-3 py-1 rounded-full text-xs font-bold mb-2 ${
+                        <div className={`px-3 py-1 rounded-full text-xs font-bold mb-2 flex items-center gap-1 ${
                           payment.status === 'COMPLETED' ? 'bg-green-500 text-green-900' :
                           payment.status === 'PENDING' ? 'bg-yellow-500 text-yellow-900' :
                           payment.status === 'FAILED' ? 'bg-red-500 text-red-900' :
                           payment.status === 'CANCELLED' ? 'bg-gray-500 text-gray-900' :
                           'bg-orange-500 text-orange-900'
                         }`}>
+                          {payment.status === 'COMPLETED' && <FaCheckCircle className="mr-1" />}
+                          {payment.status === 'PENDING' && <FaSpinner className="animate-spin mr-1" />}
+                          {payment.status === 'FAILED' && <FaTimesCircle className="mr-1" />}
+                          {payment.status === 'CANCELLED' && <FaTimesCircle className="mr-1" />}
+                          {payment.status === 'EXPIRED' && <FaClock className="mr-1" />}
                           {payment.status}
                         </div>
                         <div className="text-xs text-gray-300">
@@ -466,20 +472,20 @@ const AdminPayments = () => {
                             navigator.clipboard.writeText(payment.sessionId);
                             alert('Session ID copied!');
                           }}
-                          className="text-blue-400 hover:text-blue-300 text-xs"
+                          className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
                           title="Copy full session ID"
                         >
-                          📋 Copy Full ID
+                          <FaCopy /> Copy Full ID
                         </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex flex-col space-y-1">
                           <button
                             onClick={() => showPaymentDetails(payment)}
-                            className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded text-xs transition-colors"
+                            className="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded text-xs transition-colors flex items-center gap-1"
                             title="View Complete Details"
                           >
-                            �️ Full Details
+                            <FaClipboard /> Full Details
                           </button>
                           <button
                             onClick={() => {
@@ -498,10 +504,10 @@ ${payment.paymentIntentId ? `Payment Intent: ${payment.paymentIntentId}` : ''}
                               navigator.clipboard.writeText(fullDetails);
                               alert('Payment details copied to clipboard!');
                             }}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors"
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors flex items-center gap-1"
                             title="Copy All Details"
                           >
-                            📋 Copy All
+                            <FaCopy /> Copy All
                           </button>
                         </div>
                       </td>

@@ -11,7 +11,6 @@ import AdminBookings from './Admin/AdminBookings';
 import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
 import AdminManageEvents from './Admin/AdminManageEvents';
 import AdminInterests from './Admin/AdminInterests';
-import PaymentTestPage from './Admin/PaymentTestPage';
 
 const AdminWrapper = () => {
   const location = useLocation();
@@ -74,7 +73,7 @@ const AdminWrapper = () => {
           <Route path="/admin-abstract-submissions" element={<AdminAbstractSubmissions />} />
           <Route path="/admin-manage-events" element={<AdminManageEvents />} />
           <Route path="/admin-interests" element={<AdminInterests />} />
-          <Route path="/admin-payment-test" element={<PaymentTestPage />} />
+       
         </Routes>
       </main>
     </div>

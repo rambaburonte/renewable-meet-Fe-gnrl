@@ -224,12 +224,7 @@ Collaborate globally to drive innovation and sustainable solutions.
 
         {/* Bottom Line */}
         <div className="border-t border-gray-600 mt-12 pt-8 flex flex-col items-center space-y-3">
-          <button
-            onClick={() => window.location.href = "/admin-login"}
-            className="text-sm text-gray-400 hover:text-white transition-colors underline"
-          >
-            Admin Login
-          </button>
+          
           {/* <div className="flex items-center space-x-2">
             <span className="text-gray-500 text-sm">Developed and maintained by</span>
             <a 

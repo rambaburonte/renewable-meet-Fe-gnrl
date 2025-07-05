@@ -4,6 +4,7 @@ import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
 import AdminPaymentService from '../services/AdminPaymentService';
+import { FaSearch, FaBed, FaUserFriends, FaCheckCircle, FaTimesCircle, FaMoneyBillWave, FaClipboard, FaSpinner } from 'react-icons/fa';
 
 // Utility function for consistent currency formatting
 const formatCurrency = (amount: number, currency: string = 'EUR') => {
@@ -73,6 +74,12 @@ const AdminBookings = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
+  const [searchEmail, setSearchEmail] = useState('');
+  const [searching, setSearching] = useState(false);
+  // Universal search state
+  const [universalSearch, setUniversalSearch] = useState('');
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -235,6 +242,50 @@ const AdminBookings = () => {
     b => !b.pricingConfig?.accommodationOption
   );
 
+  // Universal search handler
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredBookings(bookings);
+      return;
+    }
+    const q = searchQuery.trim().toLowerCase();
+    setFilteredBookings(
+      bookings.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        b.email.toLowerCase().includes(q) ||
+        b.phone.toLowerCase().includes(q) ||
+        b.country.toLowerCase().includes(q) ||
+        b.instituteOrUniversity.toLowerCase().includes(q) ||
+        (b.pricingConfig.presentationType.type?.toLowerCase().includes(q)) ||
+        (b.pricingConfig.accommodationOption?.nights?.toString().includes(q)) ||
+        (b.pricingConfig.accommodationOption?.guests?.toString().includes(q)) ||
+        (b.pricingConfig.accommodationOption?.price?.toString().includes(q)) ||
+        (b.pricingConfig.totalPrice?.toString().includes(q))
+      )
+    );
+  }, [searchQuery, bookings]);
+
+  // Universal search filter function
+  const filterByUniversalSearch = (booking: Booking) => {
+    if (!universalSearch.trim()) return true;
+    const search = universalSearch.trim().toLowerCase();
+    return (
+      booking.name?.toLowerCase().includes(search) ||
+      booking.email?.toLowerCase().includes(search) ||
+      booking.phone?.toLowerCase().includes(search) ||
+      booking.country?.toLowerCase().includes(search) ||
+      booking.instituteOrUniversity?.toLowerCase().includes(search) ||
+      (booking.paymentRecord?.id?.toString() || '').includes(search) ||
+      booking.pricingConfig?.presentationType?.type?.toLowerCase().includes(search) ||
+      (booking.pricingConfig?.accommodationOption?.nights?.toString() || '').includes(search) ||
+      (booking.pricingConfig?.accommodationOption?.guests?.toString() || '').includes(search)
+    );
+  };
+
+  // Filtered bookings for each view
+  const filteredBookingsWithAccommodation = bookingsWithAccommodation.filter(filterByUniversalSearch);
+  const filteredBookingsWithoutAccommodation = bookingsWithoutAccommodation.filter(filterByUniversalSearch);
+
   // Role check: block access if not admin
   if (!isAdmin()) {
     return (
@@ -261,26 +312,25 @@ const AdminBookings = () => {
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-green-300 mb-2">Total Bookings</h3>
+              <h3 className="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2"><FaClipboard /> Total Bookings</h3>
               <p className="text-2xl font-bold text-white">{bookings.length}</p>
             </div>
             <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-green-300 mb-2">✅ Paid</h3>
+              <h3 className="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2"><FaCheckCircle className="text-green-400" /> Paid</h3>
               <p className="text-2xl font-bold text-green-400">{paidBookings.length}</p>
             </div>
             <div className="bg-[#1a1a1a] border border-yellow-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-yellow-300 mb-2">⏳ Pending</h3>
+              <h3 className="text-lg font-semibold text-yellow-300 mb-2 flex items-center gap-2"><FaSpinner className="animate-spin" /> Pending</h3>
               <p className="text-2xl font-bold text-yellow-400">{pendingBookings.length}</p>
             </div>
             <div className="bg-[#1a1a1a] border border-gray-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-gray-300 mb-2">❌ No Payment</h3>
+              <h3 className="text-lg font-semibold text-gray-300 mb-2 flex items-center gap-2"><FaTimesCircle className="text-gray-400" /> No Payment</h3>
               <p className="text-2xl font-bold text-gray-400">{unpaidBookings.length}</p>
             </div>
             <div className="bg-[#1a1a1a] border border-purple-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-purple-300 mb-2">Total Revenue</h3>
+              <h3 className="text-lg font-semibold text-purple-300 mb-2 flex items-center gap-2"><FaMoneyBillWave /> Total Revenue</h3>
               <p className="text-2xl font-bold text-purple-400">
                 {(() => {
-                  // Calculate revenue from ALL completed payments - same logic as AdminPayments
                   const completedRevenue = allPayments
                     .filter(payment => payment.status === 'COMPLETED')
                     .reduce((total, payment) => total + (payment.amountTotalEuros || 0), 0);
@@ -294,11 +344,11 @@ const AdminBookings = () => {
           {/* Accommodation Breakdown */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="bg-[#1a1a1a] border border-blue-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-blue-300 mb-2">With Accommodation</h3>
+              <h3 className="text-lg font-semibold text-blue-300 mb-2 flex items-center gap-2"><FaBed /> With Accommodation</h3>
               <p className="text-2xl font-bold text-blue-400">{bookingsWithAccommodation.length}</p>
             </div>
             <div className="bg-[#1a1a1a] border border-purple-600 rounded-xl p-4">
-              <h3 className="text-lg font-semibold text-purple-300 mb-2">Without Accommodation</h3>
+              <h3 className="text-lg font-semibold text-purple-300 mb-2 flex items-center gap-2"><FaUserFriends /> Without Accommodation</h3>
               <p className="text-2xl font-bold text-purple-400">{bookingsWithoutAccommodation.length}</p>
             </div>
           </div>
@@ -327,13 +377,36 @@ const AdminBookings = () => {
         </button>
       </div>
 
+      {/* Universal Search Bar (only one, with icon) */}
+      <div className="flex items-center gap-2 mb-6">
+        <div className="relative w-96">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400">
+            <FaSearch />
+          </span>
+          <input
+            type="text"
+            value={universalSearch}
+            onChange={e => setUniversalSearch(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') {/* Optionally: do nothing, search is live */} }}
+            placeholder="Search all fields (name, email, phone, country, etc.)..."
+            className="bg-[#222] border border-purple-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+          />
+        </div>
+        <button
+          onClick={() => setUniversalSearch('')}
+          className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm flex items-center gap-1"
+        >
+          <FaTimesCircle /> Reset
+        </button>
+      </div>
+
       {loading && <p className="text-gray-300 text-center">Loading bookings...</p>}
       {error && <p className="text-red-400 text-center">Error: {error}</p>}
 
       {!loading && !error && (
         <Section
           title={view === 'with' ? 'With Accommodation' : 'Without Accommodation'}
-          bookings={view === 'with' ? bookingsWithAccommodation : bookingsWithoutAccommodation}
+          bookings={view === 'with' ? filteredBookingsWithAccommodation : filteredBookingsWithoutAccommodation}
           hasAccommodation={view === 'with'}
           onBookingClick={handleBookingClick}
           getPaymentStatusColor={(booking) => getPaymentStatusColor(booking, bookingPaymentStatuses[booking.id])}

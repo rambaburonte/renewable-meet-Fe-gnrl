@@ -3,6 +3,7 @@ import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
+import { FaUser, FaInfoCircle, FaClipboardList, FaRegClock } from 'react-icons/fa';
 
 interface Session {
   id: number;
@@ -127,11 +128,11 @@ const AdminManageEvents = () => {
                 className="bg-[#1a1a1a] border border-green-700 p-4 rounded-lg flex justify-between items-start"
               >
                 <div>
-                  <h3 className="text-lg font-semibold text-green-300">{session.sessionName}</h3>
-                  <p className="text-gray-300">Speaker: {session.speaker}</p>
-                  <p className="text-gray-400 text-sm">Time: {session.time}</p>
+                  <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2"><FaClipboardList className="inline-block" />{session.title}</h3>
+                  <p className="text-gray-300 flex items-center gap-2"><FaUser className="inline-block" />Speaker: {session.speaker}</p>
+                  <p className="text-gray-400 text-sm flex items-center gap-2"><FaRegClock className="inline-block" />Time: {session.time}</p>
                   {session.description && (
-                    <p className="text-gray-500 text-sm mt-1">{session.description}</p>
+                    <p className="text-gray-500 text-sm mt-1 flex items-center gap-2"><FaInfoCircle className="inline-block" />{session.description}</p>
                   )}
                 </div>
               </div>

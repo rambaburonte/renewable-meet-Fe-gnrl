@@ -2,6 +2,16 @@ import React from 'react';
 import Sidebar from './AdminSidebar';
 import { useNavigate } from 'react-router-dom';
 import { isAdmin } from '../lib/authUtils';
+import { FaCreditCard, FaClipboardList, FaCalendarAlt, FaListAlt, FaBed, FaFileAlt } from 'react-icons/fa';
+
+const panelIcons = {
+  'Payment Records': <FaCreditCard className="text-2xl mr-3 text-green-300" />,
+  'Bookings': <FaClipboardList className="text-2xl mr-3 text-green-300" />,
+  'Manage Events': <FaCalendarAlt className="text-2xl mr-3 text-green-300" />,
+  'Interest Options': <FaListAlt className="text-2xl mr-3 text-green-300" />,
+  'Accommodation Combinations': <FaBed className="text-2xl mr-3 text-green-300" />,
+  'Abstract Submissions': <FaFileAlt className="text-2xl mr-3 text-green-300" />,
+};
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -38,7 +48,6 @@ const AdminDashboard = () => {
               title: 'Payment Records',
               desc: 'View and manage all payment transactions, statuses, and analytics.',
               href: '/admin-payments',
-              icon: '💳',
             },
             {
               title: 'Bookings',
@@ -71,7 +80,7 @@ const AdminDashboard = () => {
               className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6 shadow-lg hover:scale-[1.02] transition-transform duration-300"
             >
               <div className="flex items-center mb-4">
-                <span className="text-2xl mr-3">{panel.icon || '📋'}</span>
+                {panelIcons[panel.title] || <FaClipboardList className="text-2xl mr-3 text-green-300" />}
                 <h2 className="text-xl font-semibold text-green-300">{panel.title}</h2>
               </div>
               <p className="text-gray-300 mb-4">{panel.desc}</p>
