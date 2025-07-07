@@ -3,8 +3,8 @@
 // export const BASE_URL = 'http://147.93.102.131:8901';
 // export const PAYMENT_API_URL = 'http://147.93.102.131:8901'; // Payment API base URL
 
-export const BASE_URL = 'https://api.zynmarketing.xyz';
-export const PAYMENT_API_URL = 'https://api.zynmarketing.xyz';
+export const BASE_URL = 'https://api.globalrenewablemeet.com';
+export const PAYMENT_API_URL = 'https://api.globalrenewablemeet.com';
 // Development URLs (Local development)
 // export const BASE_URL = 'http://localhost:8080';
 // export const PAYMENT_API_URL = 'http://localhost:8901'; // Local payment API
