@@ -65,7 +65,7 @@ const AdminRegistrationTypes: React.FC = () => {
     }
     try {
       await axios.post(
-        `https://api.zynmarketing.xyz/admin/api/admin/presentation-type/edit/${id}/${editPrice}`,
+        `${BASE_URL}/admin/api/admin/presentation-type/edit/${id}/${editPrice}`,
         {},
         {
           headers: {
