@@ -69,6 +69,9 @@ const AdminLogin = () => {
         throw new Error('No authentication token received');
       }
 
+      // Store token in localStorage for admin pages
+      localStorage.setItem('adminToken', accessToken);
+
       // Use enterprise session manager to set the session
       await login(adminData, accessToken, refreshToken);
 

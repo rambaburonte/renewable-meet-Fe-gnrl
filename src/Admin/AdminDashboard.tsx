@@ -11,6 +11,7 @@ const panelIcons = {
   'Interest Options': <FaListAlt className="text-2xl mr-3 text-green-300" />,
   'Accommodation Combinations': <FaBed className="text-2xl mr-3 text-green-300" />,
   'Abstract Submissions': <FaFileAlt className="text-2xl mr-3 text-green-300" />,
+  'Registration Types': <FaListAlt className="text-2xl mr-3 text-green-300" />,
 };
 
 const AdminDashboard = () => {
@@ -73,6 +74,11 @@ const AdminDashboard = () => {
               title: 'Abstract Submissions',
               desc: 'View all submitted abstracts for review and processing.',
               href: '/admin-abstract-submissions',
+            },
+            {
+              title: 'Registration Types',
+              desc: 'View and edit registration/presentation types and their prices.',
+              href: '/admin-registration-types',
             },
           ].map((panel, idx) => (
             <div

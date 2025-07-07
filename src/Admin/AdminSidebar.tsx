@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Interest Options', path: '/admin-interests' },
   { label: 'Accommodation Combos', path: '/admin-accommodations' },
   { label: 'Abstract Submissions', path: '/admin-abstract-submissions' },
+  { label: 'Registration Types', path: '/admin-registration-types' },
   // { label: 'Payment API Test', path: '/admin-payment-test' },
 ];
 
