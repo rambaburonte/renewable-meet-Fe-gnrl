@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
 import { BASE_URL, PAYMENT_API_URL } from '../config';
 
@@ -308,6 +308,30 @@ const Register: React.FC<{
   const [pricingError, setPricingError] = useState<string>('');
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
   const [paymentError, setPaymentError] = useState<string>('');
+  const [showCaptcha, setShowCaptcha] = useState(false);
+
+  // Add refs for error fields
+  const nameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const instituteRef = useRef<HTMLInputElement>(null);
+  const countryRef = useRef<HTMLSelectElement>(null);
+  const registrationTypeRef = useRef<HTMLInputElement>(null);
+  const presentationTypeRef = useRef<HTMLInputElement>(null);
+  const captchaRef = useRef<HTMLInputElement>(null);
+  const errorSectionRef = useRef<HTMLDivElement>(null);
+
+  // Map error keys to refs
+  const fieldRefs: { [key: string]: React.RefObject<any> } = {
+    name: nameRef,
+    phone: phoneRef,
+    email: emailRef,
+    institute: instituteRef,
+    country: countryRef,
+    registrationType: registrationTypeRef,
+    presentationType: presentationTypeRef,
+    captcha: captchaRef,
+  };
 
   const fetchPricing = async () => {
     if (!registerFormData.registrationType || !registerFormData.presentationType) {
@@ -396,6 +420,20 @@ const Register: React.FC<{
     }
 
     setErrors(newErrors);
+    // Scroll to first error field or error section (always scroll up)
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const ref = fieldRefs[firstErrorKey];
+      if (ref && ref.current) {
+        // Scroll to top of the field (start of viewport)
+        const y = ref.current.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        ref.current.focus();
+      } else if (errorSectionRef.current) {
+        const y = errorSectionRef.current.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
     return Object.keys(newErrors).length === 0;
   };
 
@@ -560,6 +598,23 @@ const Register: React.FC<{
     }
   };
 
+  // Add handler for captcha input paste shortcut
+  useEffect(() => {
+    const handlePasteShortcut = (e: KeyboardEvent) => {
+      // Only trigger if captcha input is focused
+      if (document.activeElement === captchaRef.current) {
+        if ((e.altKey && e.key.toLowerCase() === 'v') || (e.ctrlKey && e.key.toLowerCase() === 'v')) {
+          e.preventDefault();
+          navigator.clipboard.readText().then((clipText) => {
+            setRegisterFormData((prev) => ({ ...prev, captcha: clipText.slice(0, 6) }));
+          });
+        }
+      }
+    };
+    window.addEventListener('keydown', handlePasteShortcut);
+    return () => window.removeEventListener('keydown', handlePasteShortcut);
+  }, [setRegisterFormData]);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="info-section">
@@ -604,6 +659,7 @@ const Register: React.FC<{
             onChange={handleInputChange}
             placeholder="Enter your full name"
             className={`form-input ${errors.name ? 'error' : ''}`}
+            ref={nameRef}
           />
           {errors.name && <p className="error-text">{errors.name}</p>}
         </div>
@@ -617,6 +673,7 @@ const Register: React.FC<{
             onChange={handleInputChange}
             placeholder="Enter your phone number"
             className={`form-input ${errors.phone ? 'error' : ''}`}
+            ref={phoneRef}
           />
           {errors.phone && <p className="error-text">{errors.phone}</p>}
         </div>
@@ -630,6 +687,7 @@ const Register: React.FC<{
             onChange={handleInputChange}
             placeholder="Enter your email address"
             className={`form-input ${errors.email ? 'error' : ''}`}
+            ref={emailRef}
           />
           {errors.email && <p className="error-text">{errors.email}</p>}
         </div>
@@ -643,6 +701,7 @@ const Register: React.FC<{
             onChange={handleInputChange}
             placeholder="Enter your institute/organization"
             className={`form-input ${errors.institute ? 'error' : ''}`}
+            ref={instituteRef}
           />
           {errors.institute && <p className="error-text">{errors.institute}</p>}
         </div>
@@ -654,6 +713,7 @@ const Register: React.FC<{
             value={registerFormData.country}
             onChange={handleInputChange}
             className={`form-select ${errors.country ? 'error' : ''}`}
+            ref={countryRef}
           >
             <option value="">Select your country</option>
             <option value="Afghanistan">Afghanistan</option>
@@ -866,6 +926,7 @@ const Register: React.FC<{
               checked={registerFormData.registrationType === 'registrationOnly'}
               onChange={handleInputChange}
               className="radio-input"
+              ref={registrationTypeRef}
             />
             <span>Registration Only</span>
           </label>
@@ -895,6 +956,7 @@ const Register: React.FC<{
               checked={registerFormData.presentationType === 'speaker'}
               onChange={handleInputChange}
               className="radio-input"
+              ref={presentationTypeRef}
             />
             <span>Speaker</span>
           </label>
@@ -1016,27 +1078,59 @@ const Register: React.FC<{
             </button>
           </div>
           <div className="captcha-input-container">
-            <input
-              type="text"
-              name="captcha"
-              value={registerFormData.captcha}
-              onChange={handleInputChange}
-              placeholder="Enter the code shown above"
-              className={`captcha-input ${errors.captcha ? 'error' : ''}`}
-              autoComplete="off"
-              maxLength={6}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showCaptcha ? 'text' : 'password'}
+                name="captcha"
+                value={registerFormData.captcha}
+                onChange={handleInputChange}
+                placeholder="Enter the code shown above"
+                className={`captcha-input ${errors.captcha ? 'error' : ''}`}
+                autoComplete="off"
+                maxLength={6}
+                ref={captchaRef}
+              />
+              <button
+                type="button"
+                aria-label={showCaptcha ? 'Hide captcha' : 'Show captcha'}
+                onClick={() => setShowCaptcha((v) => !v)}
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  color: '#64748b',
+                }}
+                tabIndex={-1}
+              >
+                {showCaptcha ? (
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-5 0-9-4.03-9-7 0-1.13.44-2.19 1.22-3.13M6.53 6.53A9.97 9.97 0 0 1 12 5c5 0 9 4.03 9 7 0 1.13-.44 2.19-1.22 3.13M1 1l22 22" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                ) : (
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="7"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </button>
+            </div>
             <div className="captcha-help-text">
               <svg className="security-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              Please enter the 6-character code to verify you're human
+              Please enter the 6-character code to verify you're human. <span style={{marginLeft: 4}}>Use <b>Alt+V</b> or <b>Ctrl+V</b> to paste from clipboard. <b>Show/Hide</b> with the eye icon.</span>
             </div>
           </div>
           {errors.captcha && <p className="error-text">{errors.captcha}</p>}
         </div>
       </div>
 
+      {/* Error section for scrolling fallback */}
+      {Object.keys(errors).length > 0 && (
+        <div ref={errorSectionRef}></div>
+      )}
+
+      {/* Pricing summary and payment section */}
       {pricing && pricing.length > 0 && (
         <div className="payment-summary">
           <h3 className="text-lg font-semibold mb-4">Pricing Summary</h3>
@@ -1045,58 +1139,50 @@ const Register: React.FC<{
             const registrationPrice = config.presentationType.price;
             const accommodationPrice = config.accommodationOption ? config.accommodationOption.price : 0;
             const subtotal = registrationPrice + accommodationPrice;
-            const processingFee = subtotal * (config.processingFeePercent / 100);
-            
+            const processingFee = subtotal * ((config.processingFeePercent ?? 5) / 100);
+            // Ensure totalPrice is always used as-is for payment, never rounded
             return (
-            <div key={config.id} className="mb-4 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-semibold text-lg mb-3 text-gray-900">Order Details</h4>
-              
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">{config.presentationType.type} Registration</span>
-                <span className="font-semibold">€{registrationPrice}</span>
-              </div>
-              
-              {config.accommodationOption && (
+              <div key={config.id} className="mb-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold text-lg mb-3 text-gray-900">Order Details</h4>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium">
-                    Accommodation ({config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}, {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''})
-                  </span>
-                  <span className="font-semibold">€{accommodationPrice}</span>
+                  <span className="font-medium">{config.presentationType.type} Registration</span>
+                  <span className="font-semibold">€{registrationPrice}</span>
                 </div>
-              )}
-              
-              <div className="border-t border-gray-300 my-3"></div>
-              
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">€{subtotal}</span>
-              </div>
-              
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-gray-600">Processing Fee ({config.processingFeePercent}%)</span>
-                <span className="font-medium">€{processingFee.toFixed(2)}</span>
-              </div>
-              
-              <div className="flex justify-between items-center font-bold text-xl border-t border-gray-400 pt-3">
-                <span>Total Amount</span>
-                <span className="text-green-600">€{config.totalPrice}</span>
-              </div>
-              
-              {registerFormData.registrationType === 'registrationAndAccommodation' && config.accommodationOption && (
-                <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
-                  <div className="text-sm text-blue-800">
-                    <p className="font-semibold">Accommodation Details:</p>
-                    <p>• Duration: {config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}</p>
-                    <p>• Capacity: {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''}</p>
-                    <p>• Check-in: April 16, 2026</p>
-                    <p>• Check-out: April {16 + config.accommodationOption.nights}, 2026</p>
+                {config.accommodationOption && (
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium">
+                      Accommodation ({config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}, {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''})
+                    </span>
+                    <span className="font-semibold">€{accommodationPrice}</span>
                   </div>
+                )}
+                <div className="border-t border-gray-300 my-3"></div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-medium">€{subtotal}</span>
                 </div>
-              )}
-            </div>
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-gray-600">Processing Fee ({config.processingFeePercent ?? 5}%)</span>
+                  <span className="font-medium">€{processingFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center font-bold text-xl border-t border-gray-400 pt-3">
+                  <span>Total Amount</span>
+                  <span className="text-green-600">€{config.totalPrice}</span>
+                </div>
+                {registerFormData.registrationType === 'registrationAndAccommodation' && config.accommodationOption && (
+                  <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
+                    <div className="text-sm text-blue-800">
+                      <p className="font-semibold">Accommodation Details:</p>
+                      <p>• Duration: {config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}</p>
+                      <p>• Capacity: {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''}</p>
+                      <p>• Check-in: April 16, 2026</p>
+                      <p>• Check-out: April {16 + config.accommodationOption.nights}, 2026</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
-          
           <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-start">
               <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1111,10 +1197,10 @@ const Register: React.FC<{
         </div>
       )}
 
+      {/* Error and payment error sections only if defined */}
       {pricingError && (
         <div className="text-red-500 text-sm">{pricingError}</div>
       )}
-
       {paymentError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
           <strong>Payment Error:</strong> {paymentError}
