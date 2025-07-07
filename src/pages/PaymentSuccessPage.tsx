@@ -17,7 +17,6 @@ const PaymentSuccessPage: React.FC = () => {
       // Check if there's a pending registration to complete
       const pendingRegistration = localStorage.getItem('pendingRegistration');
       if (pendingRegistration) {
-        console.log('Found pending registration, attempting to complete...');
         
         // Try to complete the registration
         fetch(`${BASE_URL}/api/registration/register`, {
@@ -29,14 +28,10 @@ const PaymentSuccessPage: React.FC = () => {
         })
         .then(response => {
           if (response.ok) {
-            console.log('Pending registration completed successfully');
             localStorage.removeItem('pendingRegistration');
-          } else {
-            console.warn('Failed to complete pending registration, but payment was successful');
-          }
+          } 
         })
         .catch(error => {
-          console.warn('Error completing pending registration:', error);
         });
       }
     }

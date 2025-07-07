@@ -45,7 +45,6 @@ const AdminLogin = () => {
       }
 
       const responseData = await response.json();
-      console.log('[AdminLogin] Login responseData:', responseData);
 
       // Handle different response formats
       const adminData = responseData.user || responseData;
@@ -61,7 +60,6 @@ const AdminLogin = () => {
         const jwtFromCookie = getCookie('admin_jwt');
         if (jwtFromCookie) {
           accessToken = jwtFromCookie;
-          console.log('[AdminLogin] Token retrieved from cookie');
         }
       }
 
@@ -75,11 +73,9 @@ const AdminLogin = () => {
       // Use enterprise session manager to set the session
       await login(adminData, accessToken, refreshToken);
 
-      console.log('[AdminLogin] Enterprise session established, redirecting to dashboard');
       navigate('/admin-dashboard');
 
     } catch (err: any) {
-      console.error('[AdminLogin] Login error:', err);
       setError(err.message || 'Login failed');
     } finally {
       setIsLoading(false);

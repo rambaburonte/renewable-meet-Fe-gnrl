@@ -18,7 +18,7 @@
 //         enterpriseToken = session.accessToken;
 //       }
 //     } catch (error) {
-//       console.log('Error parsing enterprise session:', error);
+      
 //     }
     
 //     let cookieToken = null;

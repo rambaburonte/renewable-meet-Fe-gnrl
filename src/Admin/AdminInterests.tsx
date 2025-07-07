@@ -33,7 +33,6 @@ const AdminInterests = () => {
 
         setInterests(data.map(item => item.option_name).filter(Boolean));
       } catch (err: any) {
-        console.error('Fetch error:', err);
         setError(`Failed to fetch interests: ${err.message}`);
       }
     };
@@ -56,7 +55,6 @@ const AdminInterests = () => {
         setNewInterest('');
         setShowModal(true); // Show confirmation modal
       } catch (err: any) {
-        console.error('Add interest error:', err);
         setError(`Failed to add interest: ${err.message}`);
       }
     }

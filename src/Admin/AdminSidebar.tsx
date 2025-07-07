@@ -25,7 +25,6 @@ const AdminSidebar = () => {
       await logout();
       navigate('/admin-login');
     } catch (error) {
-      console.error('Logout error:', error);
       // Force navigation even if logout fails
       navigate('/admin-login');
     }

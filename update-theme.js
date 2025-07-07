@@ -40,7 +40,6 @@ function processDirectory(directory) {
 
 // Function to process a single file
 function processFile(filePath) {
-  console.log(`Processing ${filePath}...`);
   let content = fs.readFileSync(filePath, 'utf8');
   let hasChanges = false;
   
@@ -50,17 +49,13 @@ function processFile(filePath) {
     
     if (content !== originalContent) {
       hasChanges = true;
-      console.log(`  Replaced "${from}" with "${to}"`);
     }
   }
   
   if (hasChanges) {
     fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`  Updated file ${filePath}`);
   }
 }
 
 // Start processing
-console.log('Starting theme color update...');
 processDirectory(srcDir);
-console.log('Theme update complete!');

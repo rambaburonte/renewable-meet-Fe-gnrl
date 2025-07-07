@@ -42,10 +42,8 @@ const AdminWrapper = () => {
     const isLoginPage = location.pathname === '/admin-login';
     
     if (!isLoginPage && !isAuthenticated) {
-      console.log('[AdminWrapper] Redirecting to login - not authenticated');
       navigate('/admin-login');
     } else if (isLoginPage && isAuthenticated) {
-      console.log('[AdminWrapper] Authenticated user on login page, redirecting to dashboard');
       navigate('/admin-dashboard');
     }
   }, [sessionCheckComplete, isAuthenticated, location.pathname, navigate]);

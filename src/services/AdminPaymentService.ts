@@ -17,7 +17,7 @@ export class AdminPaymentService {
           token = session.accessToken;
         }
       } catch (error) {
-        console.log('[AdminPaymentService] Error parsing enterprise session:', error);
+        // Removed console.log('[AdminPaymentService] Error parsing enterprise session:', error);
       }
     }
     

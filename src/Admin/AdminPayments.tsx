@@ -73,7 +73,7 @@ const AdminPayments = () => {
       const statsData = await AdminPaymentService.getPaymentStats();
       setStats(statsData);
     } catch (err) {
-      console.error('Error fetching stats:', err);
+      // Removed console.error('Error fetching stats:', err);
     }
   };
 
@@ -87,7 +87,7 @@ const AdminPayments = () => {
       setAllPayments(paymentsArray); // Store all payments for revenue calculation
     } catch (err) {
       setError('Failed to fetch payments');
-      console.error('Error fetching payments:', err);
+      // Removed console.error('Error fetching payments:', err);
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ const AdminPayments = () => {
       setPayments(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(`Failed to fetch ${status} payments`);
-      console.error('Error fetching payments by status:', err);
+      // Removed console.error('Error fetching payments by status:', err);
     } finally {
       setLoading(false);
     }
@@ -139,7 +139,7 @@ const AdminPayments = () => {
       }
     } catch (err) {
       setError(`Failed to search for email: ${searchEmail}`);
-      console.error('Error searching by email:', err);
+      // Removed console.error('Error searching by email:', err);
     } finally {
       setLoading(false);
     }
@@ -156,7 +156,7 @@ const AdminPayments = () => {
       setPayments(data ? [data] : []);
     } catch (err) {
       setError('Failed to find payment session');
-      console.error('Error searching by session:', err);
+      // Removed console.error('Error searching by session:', err);
     } finally {
       setLoading(false);
     }
@@ -170,7 +170,7 @@ const AdminPayments = () => {
       fetchPayments(); // Refresh the list
     } catch (err) {
       alert('Failed to expire stale payments');
-      console.error('Error expiring stale payments:', err);
+      // Removed console.error('Error expiring stale payments:', err);
     }
   };
 

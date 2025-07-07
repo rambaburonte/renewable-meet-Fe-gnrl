@@ -325,8 +325,6 @@ const Register: React.FC<{
         numberOfGuests: registerFormData.guests,
       };
 
-      console.log('Fetching pricing with request:', pricingRequest);
-
       const response = await fetch(`${BASE_URL}/api/registration/get-pricing-config`, {
         method: 'POST',
         headers: {
@@ -335,53 +333,34 @@ const Register: React.FC<{
         body: JSON.stringify(pricingRequest),
       });
 
-      console.log('Pricing response status:', response.status);
-      const responseText = await response.text();
-      console.log('Pricing response:', responseText);
-
       if (response.ok) {
-        const data = JSON.parse(responseText);
+        const data = await response.json();
         setPricing(data);
         setPricingError('');
-        console.log('Pricing data received:', data);
         
         // Debug accommodation data
         if (data && data.length > 0) {
-          data.forEach((config: PricingConfig, index: number) => {
-            console.log(`Pricing config ${index}:`, {
-              id: config.id,
-              presentationType: config.presentationType,
-              accommodationOption: config.accommodationOption,
-              totalPrice: config.totalPrice,
-              processingFeePercent: config.processingFeePercent
-            });
-            
+          data.forEach((config: PricingConfig) => {
             if (config.accommodationOption) {
-              console.log(`Accommodation details for config ${index}:`, {
-                nights: config.accommodationOption.nights,
-                guests: config.accommodationOption.guests,
-                price: config.accommodationOption.price
-              });
+              
             }
           });
         }
       } else {
         let errorMessage = 'Failed to fetch pricing information';
         try {
-          const errorData = JSON.parse(responseText);
+          const errorData = await response.json();
           errorMessage = errorData.message || errorData.error || errorMessage;
         } catch (e) {
           errorMessage = `Pricing fetch failed: ${response.status} ${response.statusText}`;
         }
         setPricingError(errorMessage);
         setPricing(null);
-        console.error('Pricing fetch failed:', errorMessage);
       }
     } catch (error) {
       const errorMessage = `Error fetching pricing information: ${error instanceof Error ? error.message : 'Unknown error'}`;
       setPricingError(errorMessage);
       setPricing(null);
-      console.error('Pricing fetch error:', error);
     }
   };
 
@@ -470,10 +449,6 @@ const Register: React.FC<{
         accommodationGuests: selectedPricing.accommodationOption ? selectedPricing.accommodationOption.guests : 0,
       };
 
-      console.log('Creating payment session with data:', paymentData);
-      console.log('Selected pricing configuration:', selectedPricing);
-      console.log('Amount in euros (unitAmount):', paymentData.unitAmount);
-
       const response = await fetch(`${PAYMENT_API_URL}/api/payment/create-checkout-session?pricingConfigId=${pricingConfigId}`, {
         method: 'POST',
         headers: {
@@ -496,7 +471,6 @@ const Register: React.FC<{
         throw new Error(errorData.message || 'Failed to create payment session');
       }
     } catch (error) {
-      console.error('Payment session creation error:', error);
       setPaymentError(error instanceof Error ? error.message : 'Failed to create payment session');
     } finally {
       setIsProcessingPayment(false);
@@ -528,8 +502,6 @@ const Register: React.FC<{
         presentationType: registerFormData.presentationType.toUpperCase(),
       };
 
-      console.log('Sending registration data:', registrationData);
-
       const response = await fetch(`${BASE_URL}/api/registration/register`, {
         method: 'POST',
         headers: {
@@ -538,18 +510,12 @@ const Register: React.FC<{
         body: JSON.stringify(registrationData),
       });
 
-      console.log('Registration response status:', response.status);
-      const responseText = await response.text();
-      console.log('Registration response:', responseText);
-
       if (response.ok) {
         // Registration successful, now create payment session
         const pricingConfigId = pricing[0].id;
         await createPaymentSession(pricingConfigId);
       } else {
         // Registration failed, let's try direct payment approach
-        console.warn('Registration failed, trying direct payment approach...');
-        
         // Store registration data in localStorage for later processing
         const registrationDataForStorage = {
           name: registerFormData.name,
@@ -569,11 +535,7 @@ const Register: React.FC<{
         await createPaymentSession(pricingConfigId);
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      
       // If registration API fails completely, try direct payment
-      console.warn('Registration API failed, trying direct payment approach...');
-      
       try {      // Store registration data for later processing
       const registrationDataForStorage = {
         name: registerFormData.name,

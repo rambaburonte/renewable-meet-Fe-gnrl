@@ -26,7 +26,7 @@ const AdminManageEvents = () => {
       const data = await res.json();
       setSessions(data);
     } catch (err) {
-      console.error('Failed to fetch sessions:', err);
+     
     }
   };
 
@@ -47,11 +47,10 @@ const AdminManageEvents = () => {
       setTitle('');
       fetchSessions(); // refresh sessions list if needed
     } else {
-      const errText = await res.text();
-      console.error('Failed to add session:', errText);
+      await res.text(); // Remove unused variable assignment
     }
   } catch (err) {
-    console.error('Network error:', err);
+      console.error('Network error:', err);
   }
 };
 
