@@ -9,7 +9,6 @@ import FooterWithMap from './components/FooterWithMap';
 import Home from './pages/Home';
 import SpeakersPage from './pages/SpeakersPage';
 import AgendaPage from './pages/AgendaPage';
-import GalleryPage from './pages/GalleryPage';
 import PartnersPage from './pages/PartnersPage';
 import ContactPage from './pages/ContactPage';
 import ConferenceTopics from './pages/ConferenceTopics';
@@ -47,7 +46,7 @@ const AppWrapper = () => {
           <Route path="/" element={<Home />} />
           <Route path="/speakers" element={<SpeakersPage />} />
           <Route path="/agenda" element={<AgendaPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
+          {/* <Route path="/gallery" element={<GalleryPage />} /> */}
           <Route path="/partners" element={<PartnersPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/conference-topics" element={<ConferenceTopics />} />

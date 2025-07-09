@@ -1,6 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { BASE_URL } from '../config';
 
 const ContactPage: React.FC = () => {
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setSuccess(null);
+    setError(null);
+    try {
+      const response = await fetch(`${BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (response.ok) {
+        setSuccess('Your message has been sent successfully!');
+        setForm({ name: '', email: '', subject: '', message: '' });
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setError(data.message || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to send message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="pt-20">
       <div className="bg-gray-900 py-16">
@@ -23,12 +59,12 @@ const ContactPage: React.FC = () => {
               <div className="space-y-4">
                 <p className="flex items-center text-gray-700">
                   <span className="font-semibold mr-2">Address:</span>
-                  123 Renewable Way, Boston, MA 02110, United States
+                DoubleTree by Hilton Tokyo Ariake -  Tokyo Japan
                 </p>
                 <p className="flex items-center text-gray-700">
                   <span className="font-semibold mr-2">Email:</span>
-                  <a href="mailto:info@renewablemeet2026.org" className="text-green-600 hover:underline">
-                    info@renewablemeet2026.org
+                  <a href="mailto:secretary@globalrenewablemeet.com" className="text-green-600 hover:underline">
+                    secretary@globalrenewablemeet.com
                   </a>
                 </p>
                 <p className="flex items-center text-gray-700">
@@ -43,7 +79,7 @@ const ContactPage: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 Send us a Message
               </h2>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
                     Name
@@ -52,7 +88,10 @@ const ContactPage: React.FC = () => {
                     type="text"
                     id="name"
                     name="name"
+                    value={form.name}
+                    onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    required
                   />
                 </div>
                 <div>
@@ -63,7 +102,24 @@ const ContactPage: React.FC = () => {
                     type="email"
                     id="email"
                     name="email"
+                    value={form.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="subject" className="block text-gray-700 font-medium mb-2">
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
                   />
                 </div>
                 <div>
@@ -74,14 +130,20 @@ const ContactPage: React.FC = () => {
                     id="message"
                     name="message"
                     rows={4}
+                    value={form.message}
+                    onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
                   ></textarea>
                 </div>
+                {success && <div className="text-green-600 font-medium">{success}</div>}
+                {error && <div className="text-red-600 font-medium">{error}</div>}
                 <button
                   type="submit"
                   className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-6 py-3 rounded transition-colors"
+                  disabled={submitting}
                 >
-                  Send Message
+                  {submitting ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>

@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>World Renewable Energy Conference 2026 - New York</title>
+        <title>World Renewable Energy Conference 2026 - Tokyo </title>
       </Helmet>
 
       <section className="relative h-screen min-h-[600px] flex items-center justify-start overflow-hidden bg-black w-full">
@@ -50,12 +50,12 @@ const Hero: React.FC = () => {
                 <div className="flex items-center gap-4 mb-4">
                   <MapPin className="w-5 h-5 text-green-400" />
                   <p className="text-xl font-medium text-white">
-                    Dubai, UAE
+                  Tokyo Japan
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <p className="text-xl font-medium text-white">
-                    Crowne Plaza Dubai - Deira
+                      DoubleTree by Hilton Tokyo Ariake
                   </p>
                 </div>
               </div>

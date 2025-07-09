@@ -361,7 +361,7 @@ const PreviousEdition: React.FC = () => {
               ← Back to Home
             </RouterLink>
             <div className="text-sm text-gray-600">
-              7th Edition - April 25-27, 2025 - Amsterdam, Netherlands
+              17th Edition - April 25-27, 2025 - Amsterdam, Netherlands
             </div>
           </div>
         </div>
@@ -374,7 +374,7 @@ const PreviousEdition: React.FC = () => {
             RENEWABLE-2025
           </h1>
           <p className="text-2xl text-green-600 font-semibold mb-2">
-            7th Edition of the largest European Conference & Exhibition
+            17th Edition of the largest European Conference & Exhibition
           </p>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             on Renewable and Sustainable Energy - Amsterdam, Netherlands

@@ -620,11 +620,11 @@ const Register: React.FC<{
       <div className="info-section">
         <div className="info-item">
           <label>Conference Date</label>
-          <p>April 17-19, 2026</p>
+          <p>May 29-31, 2026</p>
         </div>
         <div className="info-item">
           <label>Location</label>
-          <p>Dubai, UAE</p>
+          <p>DoubleTree by Hilton Tokyo Ariake - Deira Tokyo Japan</p>
         </div>
         <div className="info-item">
           <label>Registration Deadline</label>
@@ -986,17 +986,6 @@ const Register: React.FC<{
             <input
               type="radio"
               name="presentationType"
-              value="sponsor"
-              checked={registerFormData.presentationType === 'sponsor'}
-              onChange={handleInputChange}
-              className="radio-input"
-            />
-            <span>Sponsor</span>
-          </label>
-          <label className="radio-label">
-            <input
-              type="radio"
-              name="presentationType"
               value="student"
               checked={registerFormData.presentationType === 'student'}
               onChange={handleInputChange}
@@ -1060,7 +1049,7 @@ const Register: React.FC<{
           
           <div className="mt-4 p-3 bg-white border border-blue-200 rounded text-sm text-gray-700">
             <p className="font-medium text-gray-900 mb-1">Accommodation Details:</p>
-            <p>• Hotel: Premium conference hotel in Dubai</p>
+            <p>• Hotel: Premium conference hotel in Tokyo</p>
             <p>• Location: Walking distance to conference venue</p>
             <p>• Selected: {registerFormData.guests} guest{registerFormData.guests > 1 ? 's' : ''} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
             <p>• Dates: April {17 - 1} - April {17 - 1 + registerFormData.nights}, 2026</p>

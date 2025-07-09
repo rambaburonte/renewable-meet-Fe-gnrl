@@ -135,11 +135,11 @@ const PaymentSuccessPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
               <div>
                 <strong className="block text-gray-900">Date:</strong>
-                April 17-19, 2026
+                May 29 - 31, 2026
               </div>
               <div>
                 <strong className="block text-gray-900">Location:</strong>
-                Dubai, UAE
+                DoubleTree by Hilton Tokyo Ariake - Deira Tokyo Japan
               </div>
               <div>
                 <strong className="block text-gray-900">Type:</strong>

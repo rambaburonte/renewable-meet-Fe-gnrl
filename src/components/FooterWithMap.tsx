@@ -71,7 +71,7 @@ Collaborate globally to drive innovation and sustainable solutions.
               <Sun className="h-8 w-8 text-green-500" />
               <div className="ml-2">
                 <h3 className="text-lg font-bold">Renewable</h3>
-                <h4 className="text-base">Meet 2026</h4>
+                <h4 className="text-base">Meet 2026 - 18th Edition</h4>
               </div>
             </div>
             <p className="text-gray-400 mb-4">
@@ -164,12 +164,12 @@ Collaborate globally to drive innovation and sustainable solutions.
                 </a>
               </li>
               <li>
-                <a
+                {/* <a
                   href="/gallery"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Gallery
-                </a>
+                </a> */}
               </li>
               <li>
                 <a

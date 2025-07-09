@@ -230,9 +230,68 @@ const AbstractSubmission: React.FC<{
   resetForm: () => void;
 }> = ({ captchaCode, generateCaptcha, setAbstractFormData, abstractFormData, setShowModal, resetForm }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [interestedInOptions, setInterestedInOptions] = useState<{ id: string; option_name: string }[]>([]);
+  const [sessionOptions, setSessionOptions] = useState<{ id: string; option_name: string }[]>([]);
+
+  useEffect(() => {
+    // Fetch interestedIn options
+    fetch(`${BASE_URL}/api/form-submission/get-interested-in-options`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Interested In Options:', data);
+        if (Array.isArray(data)) {
+          setInterestedInOptions(
+            data.map(option => ({
+              id: option.id?.toString() || '',
+              option_name: option.option_name || option.sessionName || option.name || option.label || ''
+            }))
+          );
+        } else {
+          console.error('Expected array for interested in options, got:', data);
+          setInterestedInOptions([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching interested in options:', error);
+        setInterestedInOptions([]);
+      });
+
+    // Fetch session options
+    fetch(`${BASE_URL}/api/form-submission/get-session-options`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Session Options:', data);
+        if (Array.isArray(data)) {
+          setSessionOptions(
+            data.map(option => ({
+              id: option.id?.toString() || '',
+              option_name: option.option_name || option.sessionName || option.name || option.label || ''
+            }))
+          );
+        } else {
+          console.error('Expected array for session options, got:', data);
+          setSessionOptions([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching session options:', error);
+        setSessionOptions([]);
+      });
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // For interestedIn and session, store the id as string
     setAbstractFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -241,6 +300,24 @@ const AbstractSubmission: React.FC<{
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
+    
+    if (file) {
+      // Check file type
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        setErrors((prev) => ({ ...prev, abstractFile: 'Only PDF files are accepted.' }));
+        setAbstractFormData((prev) => ({ ...prev, abstractFile: null }));
+        return;
+      }
+      
+      // Check file size (25MB limit)
+      const maxSizeInBytes = 25 * 1024 * 1024; // 25MB in bytes
+      if (file.size > maxSizeInBytes) {
+        setErrors((prev) => ({ ...prev, abstractFile: 'File size too large. Maximum allowed size is 25MB.' }));
+        setAbstractFormData((prev) => ({ ...prev, abstractFile: null }));
+        return;
+      }
+    }
+    
     setAbstractFormData((prev) => ({ ...prev, abstractFile: file }));
     if (errors.abstractFile) {
       setErrors((prev) => ({ ...prev, abstractFile: '' }));
@@ -273,26 +350,45 @@ const AbstractSubmission: React.FC<{
     if (!validate()) return;
 
     const formData = new FormData();
-    Object.entries(abstractFormData).forEach(([key, value]) => {
-      if (key === 'abstractFile' && value) {
-        formData.append(key, value);
-      } else if (key !== 'abstractFile') {
-        formData.append(key, value as string);
-      }
-    });
+    
+    // Map frontend field names to backend DTO field names
+    formData.append('titlePrefix', abstractFormData.title);
+    formData.append('name', abstractFormData.name);
+    formData.append('phone', abstractFormData.phone);
+    formData.append('email', abstractFormData.email);
+    formData.append('organizationName', abstractFormData.organization);
+    // Convert string IDs to numbers for backend Long fields
+    formData.append('interestedInId', abstractFormData.interestedIn);
+    formData.append('sessionId', abstractFormData.session);
+    formData.append('country', abstractFormData.country);
+    // Note: captcha is not in the backend DTO, so we'll skip it or handle it separately
+    
+    // Append file if exists
+    if (abstractFormData.abstractFile) {
+      formData.append('abstractFile', abstractFormData.abstractFile);
+    }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/registration/submit-abstract`, {
+      const response = await fetch(`${BASE_URL}/api/form-submission/submit`, {
         method: 'POST',
         body: formData,
+        // Don't set Content-Type header - let the browser set it for FormData
       });
 
       if (response.ok) {
         setShowModal(true);
       } else {
-        alert('Abstract submission failed. Please try again.');
+        const errorData = await response.text();
+        console.error('Submission error:', errorData);
+        
+        if (response.status === 413) {
+          alert('File size too large. Maximum allowed size is 25MB. Please upload a smaller file.');
+        } else {
+          alert('Abstract submission failed. Please try again.');
+        }
       }
     } catch (error) {
+      console.error('Network error:', error);
       alert('An error occurred. Please try again.');
     }
   };
@@ -408,14 +504,9 @@ const AbstractSubmission: React.FC<{
             className={`form-select ${errors.interestedIn ? 'error' : ''}`}
           >
             <option value="">Select Interest Area</option>
-            <option value="Solar Energy">Solar Energy</option>
-            <option value="Wind Energy">Wind Energy</option>
-            <option value="Hydroelectric Energy">Hydroelectric Energy</option>
-            <option value="Geothermal Energy">Geothermal Energy</option>
-            <option value="Biomass Energy">Biomass Energy</option>
-            <option value="Energy Storage">Energy Storage</option>
-            <option value="Smart Grid">Smart Grid</option>
-            <option value="Energy Efficiency">Energy Efficiency</option>
+            {interestedInOptions.map(option => (
+              <option key={option.id} value={option.id}>{option.option_name}</option>
+            ))}
           </select>
           {errors.interestedIn && <p className="error-text">{errors.interestedIn}</p>}
         </div>
@@ -429,10 +520,9 @@ const AbstractSubmission: React.FC<{
             className={`form-select ${errors.session ? 'error' : ''}`}
           >
             <option value="">Select Session</option>
-            <option value="Oral Presentation">Oral Presentation</option>
-            <option value="Poster Presentation">Poster Presentation</option>
-            <option value="Workshop">Workshop</option>
-            <option value="Panel Discussion">Panel Discussion</option>
+            {sessionOptions.map(option => (
+              <option key={option.id} value={option.id}>{option.option_name}</option>
+            ))}
           </select>
           {errors.session && <p className="error-text">{errors.session}</p>}
         </div>
@@ -442,7 +532,7 @@ const AbstractSubmission: React.FC<{
         <label className="block text-sm font-medium text-gray-700 mb-2">Abstract File *</label>
         <input
           type="file"
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,application/pdf"
           onChange={handleFileChange}
           className={`file-input ${errors.abstractFile ? 'error' : ''}`}
         />
@@ -453,7 +543,7 @@ const AbstractSubmission: React.FC<{
         )}
         {errors.abstractFile && <p className="error-text">{errors.abstractFile}</p>}
         <p className="text-sm text-gray-500 mt-1">
-          Please upload your abstract in PDF, DOC, or DOCX format (max 5MB)
+          PDF only (max 25MB)
         </p>
       </div>
 

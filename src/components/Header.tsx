@@ -44,7 +44,7 @@ const Header: React.FC = () => {
             { to: '/', label: 'Home' },
             { to: '/speakers', label: 'Speakers' },
             { to: '/agenda', label: 'Agenda 2026' },
-            { to: '/gallery', label: 'Gallery' },
+            // { to: '/gallery', label: 'Gallery' },
             { to: '/contact', label: 'Contact' },
           ].map(({ to, label }) => (
             <RouterLink

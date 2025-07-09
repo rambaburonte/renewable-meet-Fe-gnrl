@@ -16,7 +16,7 @@ interface DaySchedule {
 const Agenda: React.FC = () => {
   const schedule: DaySchedule[] = [
     {
-      date: "April 17, 2026",
+      date: "May 29, 2026",
       day: "Day 1",
       items: [
         { time: "08:00 - 09:00", title: "Registration & Welcome Coffee", description: "Check-in and networking opportunity" },
@@ -31,7 +31,7 @@ const Agenda: React.FC = () => {
       ],
     },
     {
-      date: "April 18, 2026",
+      date: "May 30, 2026",
       day: "Day 2",
       items: [
         { time: "09:00 - 10:00", title: "AI for Smart Grid Management", description: "How AI is transforming power grid operations", speaker: "Neha Reddy, GridAI Labs" },
@@ -45,7 +45,7 @@ const Agenda: React.FC = () => {
       ],
     },
     {
-      date: "April 19, 2026",
+      date: "May 31, 2026",
       day: "Day 3",
       items: [
         { time: "09:00 - 10:00", title: "Community Solar Projects", description: "Empowering local communities with clean energy", speaker: "Rajeev Patel, SunTogether" },

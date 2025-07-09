@@ -40,12 +40,12 @@ const Introduction: React.FC = () => {
     <section className="pt-12 pb-16 bg-white">
       <div className="px-4 mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8">
-          Join Global Renewable Energy Leaders in Seoul
+          Join Global Renewable Energy Leaders in Tokyo
         </h2>
 
         <div className="max-w-4xl mx-auto text-center mb-10">
           <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-            The <span className="font-semibold">RENEWABLE-2026 International Conference</span> is the 8th Edition of the world's largest Global Conference & Exhibition on Renewable and Sustainable Energy, held in person in Seoul, South Korea, from April 24–26, 2026. The conference will bring together <span className="font-semibold">world leaders, researchers, and industry experts</span> to explore how solar, wind, and electric vehicles (EVs) can support a sustainable future.
+            The <span className="font-semibold">RENEWABLE-2026 International Conference</span> is the 18th Edition of the world's largest Global Conference & Exhibition on Renewable and Sustainable Energy, held in person in Tokyo, Japan, from May 29-31, 2026. The conference will bring together <span className="font-semibold">world leaders, researchers, and industry experts</span> to explore how solar, wind, and electric vehicles (EVs) can support a sustainable future.
           </p>
         </div>
       </div>
@@ -74,12 +74,12 @@ const ConferenceInfo: React.FC = () => {
             <div className="space-y-3">
               {[{
                 label: "Conference Date",
-                value: "April 24–26, 2026",
+                value: "May 29-31, 2026",
                 icon: <Calendar className="w-5 h-5 text-gray-500" />,
               },
               {
                 label: "Venue",
-                value: "Crowne Plaza-Deira, Dubai, UAE",
+                value: "DoubleTree by Hilton Tokyo Ariake",
                 icon: <MapPin className="w-5 h-5 text-gray-500" />,
               },
               {
@@ -125,7 +125,7 @@ const ConferenceInfo: React.FC = () => {
             </h3>
             <div className="space-y-3">
               {[
-                "76 Plenary, Keynote & Invited Speakers",
+                "16 Plenary, Keynote & Invited Speakers",
                 "Tentative Program Released",
                 "24 Exhibitors Participating",
                 "Multiple Sponsor Opportunities",

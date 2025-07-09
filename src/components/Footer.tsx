@@ -110,12 +110,12 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a
+                {/* <a
                   href="/gallery"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Gallery
-                </a>
+                </a> */}
               </li>
               <li>
                 <a

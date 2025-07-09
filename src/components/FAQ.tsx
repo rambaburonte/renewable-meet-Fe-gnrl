@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import faqImg1 from '../images/FAQ18th 6.jpeg.jpg';
+import faqImg2 from '../images/8th5.jpg';
+import faqImg3 from '../images/8th1.jpg';
 
 interface FAQItem {
   question: string;
@@ -67,19 +70,19 @@ const FAQ: React.FC = () => {
         {/* Professional Image Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <img
-            src="https://media.gettyimages.com/id/1408304047/photo/cheerful-female-presenter-interacting-with-the-audience.jpg?s=2048x2048&w=gi&k=20&c=wMPgaORmqxlwEZ6I3lxoTd-Hm94G3GWUi2-QNTWZAXM="
+            src={faqImg1}
             alt="Renewable Energy"
-            className="rounded-xl shadow-md w-full h-auto object-cover"
+            className="rounded-xl shadow-md w-full h-[260px] object-cover"
           />
           <img
-            src="https://media.gettyimages.com/id/1382269943/photo/group-of-diverse-business-people-on-panel-discussion.jpg?s=612x612&w=gi&k=20&c=LhEGjfA0-soR_nfGKiU6c2NR5jPZT0AJrZyxwHGk2rU="
+            src={faqImg2}
             alt="Conference"
-            className="rounded-xl shadow-md w-full h-auto object-cover"
+            className="rounded-xl shadow-md w-full h-[260px] object-cover"
           />
           <img
-            src="https://media.gettyimages.com/id/1039606566/photo/business-people-listening-to-the-speaker-at-a-conference.jpg?s=2048x2048&w=gi&k=20&c=ZX8Tbafg3Oxy8QCipEPwL6OBejcvqyOLpAxy6FUNAOw="
+            src={faqImg3}
             alt="Networking"
-            className="rounded-xl shadow-md w-full h-auto object-cover"
+            className="rounded-xl shadow-md w-full h-[260px] object-cover"
           />
         </div>
 
