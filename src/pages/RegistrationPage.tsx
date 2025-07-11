@@ -975,12 +975,23 @@ const Register: React.FC<{
             <input
               type="radio"
               name="presentationType"
-              value="listener/delegate"
-              checked={registerFormData.presentationType === 'listener/delegate'}
+              value="listener"
+              checked={registerFormData.presentationType === 'listener'}
               onChange={handleInputChange}
               className="radio-input"
             />
-            <span>Listener/Delegate</span>
+            <span>Listener</span>
+          </label>
+          <label className="radio-label">
+            <input
+              type="radio"
+              name="presentationType"
+              value="delegate"
+              checked={registerFormData.presentationType === 'delegate'}
+              onChange={handleInputChange}
+              className="radio-input"
+            />
+            <span>Delegate</span>
           </label>
           <label className="radio-label">
             <input
@@ -1016,7 +1027,6 @@ const Register: React.FC<{
             </svg>
             <h4 className="text-lg font-semibold text-blue-900">Accommodation Options</h4>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Number of Guests</label>
@@ -1026,8 +1036,8 @@ const Register: React.FC<{
                 onChange={handleInputChange}
                 className="form-select"
               >
-                {[1, 2, 3, 4].map(num => (
-                  <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
+                {[...Array(10)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1} Guest{i + 1 > 1 ? 's' : ''}</option>
                 ))}
               </select>
             </div>
@@ -1040,8 +1050,8 @@ const Register: React.FC<{
                 onChange={handleInputChange}
                 className="form-select"
               >
-                {[1, 2, 3, 4, 5].map(num => (
-                  <option key={num} value={num}>{num} Night{num > 1 ? 's' : ''}</option>
+                {[...Array(10)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1} Night{i + 1 > 1 ? 's' : ''}</option>
                 ))}
               </select>
             </div>
@@ -1049,10 +1059,16 @@ const Register: React.FC<{
           
           <div className="mt-4 p-3 bg-white border border-blue-200 rounded text-sm text-gray-700">
             <p className="font-medium text-gray-900 mb-1">Accommodation Details:</p>
-            <p>• Hotel: Premium conference hotel in Tokyo</p>
-            <p>• Location: Walking distance to conference venue</p>
+            <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
+            <p>• Location: Deira Tokyo, Japan</p>
             <p>• Selected: {registerFormData.guests} guest{registerFormData.guests > 1 ? 's' : ''} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
-            <p>• Dates: April {17 - 1} - April {17 - 1 + registerFormData.nights}, 2026</p>
+            <p>• Dates: May 29, 2026 – {(() => {
+              const start = new Date(2026, 4, 29); // May is month 4 (0-based)
+              const end = new Date(start);
+              end.setDate(start.getDate() + registerFormData.nights);
+              const options = { month: 'long', day: 'numeric', year: 'numeric' };
+              return end.toLocaleDateString('en-US', options);
+            })()}</p>
           </div>
         </div>
       )}
@@ -1162,10 +1178,18 @@ const Register: React.FC<{
                   <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
                     <div className="text-sm text-blue-800">
                       <p className="font-semibold">Accommodation Details:</p>
+                      <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
+                      <p>• Location: Deira Tokyo, Japan</p>
                       <p>• Duration: {config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}</p>
                       <p>• Capacity: {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''}</p>
-                      <p>• Check-in: April 16, 2026</p>
-                      <p>• Check-out: April {16 + config.accommodationOption.nights}, 2026</p>
+                      <p>• Check-in: May 29, 2026</p>
+                      <p>• Check-out: {(() => {
+                        const start = new Date(2026, 4, 29);
+                        const end = new Date(start);
+                        end.setDate(start.getDate() + config.accommodationOption.nights);
+                        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                        return end.toLocaleDateString('en-US', options);
+                      })()}</p>
                     </div>
                   </div>
                 )}

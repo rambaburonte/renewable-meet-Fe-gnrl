@@ -1,4 +1,3 @@
-
 "use client";
 
 
@@ -7,6 +6,8 @@ import { Helmet } from "react-helmet";
 import Card from "./ui/globe"; // Assuming this is the same globe component
 import { MapPin } from "lucide-react"; // Only import MapPin icon
 import Typewriter from 'typewriter-effect';
+import { GradientButton } from "./ui/gradient-button";
+import { StarBorder } from "@/components/ui/star-border";
 
 const Hero: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -54,34 +55,49 @@ const Hero: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <p className="text-xl font-medium text-white">
-                      DoubleTree by Hilton Tokyo Ariake
-                  </p>
+                  <a
+                    href="https://www.hilton.com/en/hotels/tyoardi-doubletree-tokyo-ariake/?SEO_id=GMB-APAC-DI-TYOARDI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xl font-medium text-white underline hover:text-green-300 transition-colors"
+                  >
+                    DoubleTree by Hilton Tokyo Ariake
+                  </a>
                 </div>
               </div>
 
+              {/* Be Part Heading */}
+              <StarBorder as="div" className="w-full max-w-2xl mx-auto mb-6">
+                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-white/90 text-center whitespace-normal">
+                  Be Part of World Renewable Energy Conference
+                </h2>
+              </StarBorder>
+
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="/registration"
-                  className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black"
+              <div className="flex flex-wrap gap-4 mb-8">
+                <GradientButton
+                  asChild
                   aria-label="Register for the conference"
                 >
-                  Register Now
-                </a>
-                <a
-                  href="/abstract-submission"
-                  className="bg-transparent border-2 border-green-500 hover:bg-green-500 hover:text-gray-900 text-green-500 font-semibold px-8 py-3 rounded-full text-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black"
+                  <a href="/registration">
+                    Register Now
+                  </a>
+                </GradientButton>
+                <GradientButton
+                  asChild
+                  variant="variant"
                   aria-label="Submit an abstract"
                 >
-                  Abstract Submission
-                </a>
+                  <a href="/abstract-submission">
+                    Abstract Submission
+                  </a>
+                </GradientButton>
               </div>
             </div>
 
             {/* Globe Component */}
-            <div className="relative h-full w-full">
-              <div className="absolute bottom-[80px] md:bottom-[100px] right-4 md:right-20 flex justify-end pr-4">
+            <div className="relative h-full w-full flex items-center justify-end">
+              <div className="pr-4 md:pr-20">
                 {!isMobile && <Card />}
               </div>
             </div>

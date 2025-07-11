@@ -9,7 +9,7 @@ const FooterWithMap: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* World Map Section */}
-      <section className="py-1 bg-gray-700 w-full">
+      <section className="pt-0 pb-1 bg-gray-700 w-full relative z-0">
         <div className="max-w-7xl mx-auto text-center">
           <p className="font-bold text-xl md:text-4xl text-white/70">
             Meet Experts from All Over The {" "}
@@ -18,7 +18,7 @@ const FooterWithMap: React.FC = () => {
                 <motion.span
                   key={idx}
                   className="inline-block"
-                  initial={{ x: -10, opacity: 0 }}
+                  initial={{ x : -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.5, delay: idx * 0.04 }}
                 >
@@ -32,38 +32,93 @@ const FooterWithMap: React.FC = () => {
 Collaborate globally to drive innovation and sustainable solutions.
           </p>
         </div>
-        <WorldMap
-          dots={[
-            {
-              start: { lat: 64.2008, lng: -149.4937 },
-              end: { lat: 34.0522, lng: -118.2437 },
-            },
-            {
-              start: { lat: 64.2008, lng: -149.4937 },
-              end: { lat: -15.7975, lng: -47.8919 },
-            },
-            {
-              start: { lat: -15.7975, lng: -47.8919 },
-              end: { lat: 38.7223, lng: -9.1393 },
-            },
-            {
-              start: { lat: 51.5074, lng: -0.1278 },
-              end: { lat: 28.6139, lng: 77.209 },
-            },
-            {
-              start: { lat: 28.6139, lng: 77.209 },
-              end: { lat: 43.1332, lng: 131.9113 },
-            },
-            {
-              start: { lat: 28.6139, lng: 77.209 },
-              end: { lat: -1.2921, lng: 36.8219 },
-            },
-          ]}
-        />
+        <div className="relative w-full mx-auto aspect-[2/1] bg-white z-0 min-h-[120px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] max-h-[35vw] hidden sm:block">
+          <WorldMap
+            className="w-full h-full"
+            dots={[
+              {
+                start: { lat: 64.2008, lng: -149.4937 },
+                end: { lat: 34.0522, lng: -118.2437 },
+              },
+              {
+                start: { lat: 64.2008, lng: -149.4937 },
+                end: { lat: -15.7975, lng: -47.8919 },
+              },
+              {
+                start: { lat: -15.7975, lng: -47.8919 },
+                end: { lat: 38.7223, lng: -9.1393 },
+              },
+              {
+                start: { lat: 51.5074, lng: -0.1278 },
+                end: { lat: 28.6139, lng: 77.209 },
+              },
+              {
+                start: { lat: 28.6139, lng: 77.209 },
+                end: { lat: 43.1332, lng: 131.9113 },
+              },
+              {
+                start: { lat: 28.6139, lng: 77.209 },
+                end: { lat: -1.2921, lng: 36.8219 },
+              },
+            ]}
+          />
+          {/* Overlayed Percentages with lines and circles for each region */}
+          {/* Europe */}
+          <div className="absolute left-[38vw] top-[22%] flex flex-col items-start z-10 text-[2.5vw] md:text-xs lg:text-base">
+            <div className="flex items-center">
+              <span className="font-extrabold text-[#1a7c7c] drop-shadow-lg text-[4vw] md:text-2xl lg:text-4xl">18%</span>
+              <div className="ml-2 rounded-full bg-[#1a7c7c] h-[0.7vw] w-[6vw] md:w-24 md:h-1"></div>
+            </div>
+            <span className="font-semibold text-[#1a7c7c] mt-1 text-[2vw] md:text-lg">Europe</span>
+            <div className="rounded-full mt-2 ml-10 md:ml-28 shadow-lg border-2 border-yellow-400 bg-yellow-300/80 w-[3vw] h-[3vw] md:w-7 md:h-7"></div>
+          </div>
+          {/* Americas */}
+          <div className="absolute left-[7vw] top-[45%] flex flex-col items-start z-10 text-[2.5vw] md:text-xs lg:text-base">
+            <div className="flex items-center">
+              <span className="font-extrabold text-[#1a7c7c] drop-shadow-lg text-[4vw] md:text-2xl lg:text-4xl">26%</span>
+              <div className="ml-2 rounded-full bg-[#1a7c7c] h-[0.7vw] w-[4vw] md:w-16 md:h-1"></div>
+            </div>
+            <span className="font-semibold text-[#1a7c7c] mt-1 text-[2vw] md:text-lg">Americas</span>
+            <div className="rounded-full mt-2 ml-8 md:ml-20 shadow-lg border-2 border-yellow-400 bg-yellow-300/80 w-[4vw] h-[4vw] md:w-9 md:h-9"></div>
+          </div>
+          {/* Asia */}
+          <div className="absolute left-[80vw] top-[22%] flex flex-col items-end z-10 text-[2.5vw] md:text-xs lg:text-base">
+            <div className="flex items-center">
+              <div className="mr-2 rounded-full bg-[#1a7c7c] h-[0.7vw] w-[5vw] md:w-20 md:h-1"></div>
+              <span className="font-extrabold text-[#1a7c7c] drop-shadow-lg text-[4vw] md:text-2xl lg:text-4xl">28%</span>
+            </div>
+            <span className="font-semibold text-[#1a7c7c] mt-1 text-[2vw] md:text-lg">Asia</span>
+            <div className="rounded-full mt-2 mr-8 md:mr-16 shadow-lg border-2 border-yellow-400 bg-yellow-300/80 w-[4.5vw] h-[4.5vw] md:w-10 md:h-10"></div>
+          </div>
+          {/* Middle East */}
+          <div className="absolute left-[62vw] top-[38%] flex flex-col items-end z-10 text-[2.5vw] md:text-xs lg:text-base">
+            <div className="flex items-center">
+              <div className="mr-2 rounded-full bg-[#1a7c7c] h-[0.7vw] w-[8vw] md:w-32 md:h-1"></div>
+              <span className="font-extrabold text-[#1a7c7c] drop-shadow-lg text-[4vw] md:text-2xl lg:text-4xl">22%</span>
+            </div>
+            <span className="font-semibold text-[#1a7c7c] mt-1 text-[2vw] md:text-lg">Middle East</span>
+            <div className="rounded-full mt-2 mr-16 md:mr-32 shadow-lg border-2 border-yellow-400 bg-yellow-300/80 w-[5vw] h-[5vw] md:w-11 md:h-11"></div>
+          </div>
+          {/* Africa */}
+          <div className="absolute left-[50vw] top-[70%] flex flex-col items-end z-10 text-[2.5vw] md:text-xs lg:text-base">
+            <div className="flex items-center">
+              <div className="mr-2 rounded-full bg-[#1a7c7c] h-[0.7vw] w-[4vw] md:w-16 md:h-1"></div>
+              <span className="font-extrabold text-[#1a7c7c] drop-shadow-lg text-[4vw] md:text-2xl lg:text-4xl">6%</span>
+            </div>
+            <span className="font-semibold text-[#1a7c7c] mt-1 text-[2vw] md:text-lg">Africa</span>
+            <div className="rounded-full mt-2 mr-8 md:mr-12 shadow-lg border-2 border-yellow-400 bg-yellow-300/80 w-[2vw] h-[2vw] md:w-5 md:h-5"></div>
+          </div>
+        </div>
+        {/* Hide map only on small screens */}
+        <style>{`
+          @media (max-width: 639px) {
+            .sm\\:block { display: none !important; }
+          }
+        `}</style>
       </section>
 
       {/* Footer Columns */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="relative z-20 container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand Column */}
           <div className="md:col-span-2">

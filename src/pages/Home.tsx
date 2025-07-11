@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import Sponsors from '../components/Sponsors';
 import About from '../components/About';
 import Features from '../components/Features';
+import Stats from '../components/Stats';
 
 import Agenda from '../components/Agenda';
 import FAQ from '../components/FAQ';
@@ -13,6 +14,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Hero />
+      <Stats />
       <Sponsors />
       <About />
       <Features />
