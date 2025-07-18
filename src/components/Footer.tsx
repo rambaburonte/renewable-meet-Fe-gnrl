@@ -48,6 +48,7 @@ const Footer: React.FC = () => {
                 </a>
               ))}
             </div>
+                <p className="text-gray-400 mb-2">📞 +17163749009</p>
           </div>
 
           {/* Quick Links */}
