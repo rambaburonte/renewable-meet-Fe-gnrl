@@ -3,13 +3,23 @@ import axios from 'axios';
 import { BASE_URL } from '../config';
 import Sidebar from './AdminSidebar';
 
+
 interface PresentationType {
   id: number;
   type: string;
   price: number;
 }
 
+
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
 const AdminRegistrationTypes: React.FC = () => {
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   const [types, setTypes] = useState<PresentationType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +30,10 @@ const AdminRegistrationTypes: React.FC = () => {
   // Get JWT token from localStorage (or your auth context)
   const token = localStorage.getItem('adminToken') || localStorage.getItem('jwt');
 
+
   useEffect(() => {
     fetchTypes();
-  }, []);
+  }, [website]);
 
   const fetchTypes = async () => {
     setLoading(true);
@@ -33,7 +44,17 @@ const AdminRegistrationTypes: React.FC = () => {
       return;
     }
     try {
-      const res = await axios.get(`${BASE_URL}/admin/api/admin/presentation-types`, {
+      let endpoint = '';
+      if (website === 'optics') {
+        endpoint = '/admin/api/admin/presentation-types/optics';
+      } else if (website === 'renewable') {
+        endpoint = '/admin/api/admin/presentation-types/renewable';
+      } else if (website === 'nursing') {
+        endpoint = '/admin/api/admin/presentation-types/nursing';
+      } else {
+        throw new Error('Invalid website selection');
+      }
+      const res = await axios.get(`${BASE_URL}${endpoint}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,8 +85,18 @@ const AdminRegistrationTypes: React.FC = () => {
       return;
     }
     try {
+      let endpoint = '';
+      if (website === 'optics') {
+        endpoint = `/admin/api/admin/presentation-type/edit/optics/${id}/${editPrice}`;
+      } else if (website === 'renewable') {
+        endpoint = `/admin/api/admin/presentation-type/edit/renewable/${id}/${editPrice}`;
+      } else if (website === 'nursing') {
+        endpoint = `/admin/api/admin/presentation-type/edit/nursing/${id}/${editPrice}`;
+      } else {
+        throw new Error('Invalid website selection');
+      }
       await axios.post(
-        `${BASE_URL}/admin/api/admin/presentation-type/edit/${id}/${editPrice}`,
+        `${BASE_URL}${endpoint}`,
         {},
         {
           headers: {
@@ -89,7 +120,7 @@ const AdminRegistrationTypes: React.FC = () => {
   return (
     <div className="min-h-screen flex bg-black text-white">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar website={website} setWebsite={setWebsite} />
       <main className="ml-64 p-8 w-full max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-green-400 mb-2">Registration Types</h1>
         <p className="text-gray-400 mb-8">Manage and update the prices for all available registration/presentation types.</p>

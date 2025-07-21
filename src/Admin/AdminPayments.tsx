@@ -1,79 +1,52 @@
 import { useState, useEffect } from 'react';
+// PaymentRecord type for TypeScript
+interface PaymentRecord {
+  id: string;
+  customerEmail: string;
+  customerName?: string;
+  customerInstitute?: string;
+  customerCountry?: string;
+  paymentIntentId?: string;
+  pricingConfigId?: string;
+  amountTotalEuros?: number;
+  currency: string;
+  pricingConfigTotalPrice?: number;
+  status: string;
+  paymentStatus?: string;
+  sessionId: string;
+  createdAt?: string;
+}
 import Sidebar from './AdminSidebar';
 import PaymentDetailsModal from './PaymentDetailsModal';
 import { isAdmin } from '../lib/authUtils';
 import AdminPaymentService from '../services/AdminPaymentService';
 import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaSyncAlt, FaClipboard, FaCopy, FaExclamationCircle } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
-// Types for payment data
-interface PaymentRecord {
-  id: number;
-  sessionId: string;
-  paymentIntentId?: string;
-  customerEmail: string;
-  amountTotalEuros: number;
-  amountTotalCents: number;
-  currency: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
-  paymentStatus: string;
-  stripeCreatedAt: string;
-  stripeExpiresAt?: string;
-  createdAt: string;
-  updatedAt: string;
-  pricingConfigId?: number;
-  pricingConfigTotalPrice?: number;
-  customerName?: string;
-  customerInstitute?: string;
-  customerCountry?: string;
-  registrationType?: string;
-  presentationType?: string;
-  presentationPrice?: number;
-  processingFeePercent?: number;
-}
-
-interface PaymentStats {
-  totalRecords: number;
-  completedPayments: number;
-  pendingPayments: number;
-  failedPayments: number;
-  expiredPayments: number;
-  totalAmountInEuros: number;
-  totalAmountInDollars: number;
-  totalAmountInEurosAsDouble: number;
-}
-
-const AdminPayments = () => {
-  // Role check
-  if (!isAdmin()) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <div className="bg-[#1a1a1a] p-8 rounded-xl border border-green-700">
-          <h2 className="text-2xl font-bold text-green-400 mb-4">Unauthorized</h2>
-          <p className="text-gray-300">You do not have permission to access this page.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // State management
+// Define the component
+const AdminPayments = ({ website: propWebsite, setWebsite }) => {
+  const [website, setLocalWebsite] = useState(() => propWebsite || localStorage.getItem('adminWebsite') || 'optics');
+  // Keep setWebsite in sync with local state
+  useEffect(() => { if (setWebsite) setWebsite(website); }, [website, setWebsite]);
+  // State variables
+  const [stats, setStats] = useState(null);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
-  const [allPayments, setAllPayments] = useState<PaymentRecord[]>([]); // Store all payments for revenue calculation
-  const [stats, setStats] = useState<PaymentStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
+  const [allPayments, setAllPayments] = useState<PaymentRecord[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchEmail, setSearchEmail] = useState('');
   const [searchSession, setSearchSession] = useState('');
-  const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   // Fetch payment statistics
   const fetchStats = async () => {
     try {
-      const statsData = await AdminPaymentService.getPaymentStats();
+      const statsData = await AdminPaymentService.getPaymentStats(website);
       setStats(statsData);
     } catch (err) {
-      // Removed console.error('Error fetching stats:', err);
+      setError('Failed to fetch payment stats');
     }
   };
 
@@ -81,32 +54,29 @@ const AdminPayments = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const data = await AdminPaymentService.getAllPayments();
+      const data = await AdminPaymentService.getAllPayments(website);
       const paymentsArray = Array.isArray(data) ? data : [];
       setPayments(paymentsArray);
-      setAllPayments(paymentsArray); // Store all payments for revenue calculation
+      setAllPayments(paymentsArray);
     } catch (err) {
       setError('Failed to fetch payments');
-      // Removed console.error('Error fetching payments:', err);
     } finally {
       setLoading(false);
     }
   };
 
   // Fetch payments by status
-  const fetchPaymentsByStatus = async (status: string) => {
+  const fetchPaymentsByStatus = async (status) => {
     if (status === 'ALL') {
       fetchPayments();
       return;
     }
-    
     try {
       setLoading(true);
-      const data = await AdminPaymentService.getPaymentsByStatus(status);
-      setPayments(Array.isArray(data) ? data : []);
+      const data = await AdminPaymentService.getPaymentsByStatus(status, website);
+      setPayments(data);
     } catch (err) {
-      setError(`Failed to fetch ${status} payments`);
-      // Removed console.error('Error fetching payments by status:', err);
+      setError('Failed to fetch payments by status');
     } finally {
       setLoading(false);
     }
@@ -118,17 +88,16 @@ const AdminPayments = () => {
       setError(null);
       setSelectedStatus('ALL');
       setSearchSession('');
-      fetchPayments(); // Reset to all payments if input is empty
+      fetchPayments();
       return;
     }
-    setSelectedStatus('ALL'); // Reset status filter
-    setSearchSession(''); // Clear session search
+    setSelectedStatus('ALL');
+    setSearchSession('');
     try {
       setLoading(true);
       setError(null);
-      const data = await AdminPaymentService.searchByEmail(searchEmail.trim());
+      const data = await AdminPaymentService.searchByEmail(searchEmail.trim(), website);
       let result = Array.isArray(data) ? data : data ? [data] : [];
-      // If no results, try client-side substring match
       if (result.length === 0 && allPayments.length > 0) {
         const searchLower = searchEmail.trim().toLowerCase();
         result = allPayments.filter(p => p.customerEmail && p.customerEmail.toLowerCase().includes(searchLower));
@@ -139,7 +108,6 @@ const AdminPayments = () => {
       }
     } catch (err) {
       setError(`Failed to search for email: ${searchEmail}`);
-      // Removed console.error('Error searching by email:', err);
     } finally {
       setLoading(false);
     }
@@ -148,15 +116,12 @@ const AdminPayments = () => {
   // Search by session ID
   const searchBySession = async () => {
     if (!searchSession.trim()) return;
-    
     try {
       setLoading(true);
-      const data = await AdminPaymentService.searchBySession(searchSession);
-      // Backend returns single object for session search, not array
+      const data = await AdminPaymentService.searchBySession(searchSession, website);
       setPayments(data ? [data] : []);
     } catch (err) {
       setError('Failed to find payment session');
-      // Removed console.error('Error searching by session:', err);
     } finally {
       setLoading(false);
     }
@@ -165,12 +130,11 @@ const AdminPayments = () => {
   // Expire stale payments
   const expireStalePayments = async () => {
     try {
-      await AdminPaymentService.expireStalePayments();
+      await AdminPaymentService.expireStalePayments(website);
       alert(`Expired stale payments successfully`);
-      fetchPayments(); // Refresh the list
+      fetchPayments();
     } catch (err) {
       alert('Failed to expire stale payments');
-      // Removed console.error('Error expiring stale payments:', err);
     }
   };
 
@@ -178,30 +142,30 @@ const AdminPayments = () => {
   useEffect(() => {
     fetchStats();
     fetchPayments();
-  }, []);
+    // eslint-disable-next-line
+  }, [website]);
 
   // Handle status filter change
   useEffect(() => {
     fetchPaymentsByStatus(selectedStatus);
+    // eslint-disable-next-line
   }, [selectedStatus]);
 
   // Format currency helper
-  const formatCurrency = (amount: number, currency: string = 'EUR') => {
+  const formatCurrency = (amount, currency = 'EUR') => {
     if (!amount && amount !== 0) return 'N/A';
-    
     try {
       return new Intl.NumberFormat('en-EU', {
         style: 'currency',
         currency: currency.toUpperCase(),
       }).format(amount);
     } catch (error) {
-      // Fallback if currency is invalid
       return `€${amount.toFixed(2)}`;
     }
   };
 
   // Show payment details modal
-  const showPaymentDetails = (payment: PaymentRecord) => {
+  const showPaymentDetails = (payment) => {
     setSelectedPayment(payment);
     setShowModal(true);
   };
@@ -213,14 +177,14 @@ const AdminPayments = () => {
   };
 
   // Format date
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
 
+
   return (
     <div className="min-h-screen bg-black text-white">
-      <Sidebar />
-      
+      <Sidebar website={website} setWebsite={setWebsite} />
       <main className="ml-64 p-8">
         {/* Header */}
         <header className="mb-8">
@@ -277,7 +241,7 @@ const AdminPayments = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-green-300 mb-2">Filter by Status</label>
+              <label className="block text-sm font-medium text-green-300 mb-2">Status</label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
@@ -291,7 +255,6 @@ const AdminPayments = () => {
                 <option value="EXPIRED">Expired</option>
               </select>
             </div>
-
             {/* Email Search */}
             <div>
               <label className="block text-sm font-medium text-green-300 mb-2">Search by Email</label>
@@ -307,120 +270,42 @@ const AdminPayments = () => {
                     if (e.key === 'Enter') searchByEmail();
                   }}
                   placeholder="customer@example.com"
-                  className="flex-1 bg-[#2a2a2a] border border-green-600 rounded-l-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
-                  disabled={loading}
+                  className="w-full bg-[#2a2a2a] border border-green-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
                 <button
                   onClick={searchByEmail}
-                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors flex items-center gap-1"
-                  disabled={loading}
+                  className="ml-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-black rounded-lg flex items-center justify-center"
                   title="Search by Email"
                 >
                   <FaSearch />
                 </button>
               </div>
             </div>
-
-            {/* Session Search */}
-            <div>
-              <label className="block text-sm font-medium text-green-300 mb-2">Search by Session ID</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  value={searchSession}
-                  onChange={(e) => setSearchSession(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      searchBySession();
-                    }
-                  }}
-                  placeholder="cs_test_..."
-                  className="flex-1 bg-[#2a2a2a] border border-green-600 rounded-l-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
-                />
-                <button
-                  onClick={searchBySession}
-                  className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-r-lg transition-colors flex items-center gap-1"
-                  title="Search by Session ID"
-                >
-                  <FaSearch />
-                </button>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div>
-              <label className="block text-sm font-medium text-green-300 mb-2">Actions</label>
-              <div className="space-y-2">
-                <button
-                  onClick={() => fetchPayments()}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <FaSyncAlt /> Refresh
-                </button>
-                <button
-                  onClick={expireStalePayments}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <FaClock /> Expire Stale
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Error Display */}
-        {error && (
-          <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 mb-6 flex items-center gap-2">
-            <FaExclamationCircle className="text-red-400 text-xl" />
-            <p className="text-red-400">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="ml-4 text-sm text-red-300 hover:text-red-100"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
-        {/* Loading */}
-        {loading && (
-          <div className="text-center py-12">
-            <FaSpinner className="animate-spin text-green-400 text-5xl mx-auto mb-4" />
-            <p className="mt-4 text-gray-400">Loading payments...</p>
-          </div>
-        )}
-
-        {/* Payment Records Table */}
-        {!loading && payments.length > 0 && (
-          <div className="bg-[#1a1a1a] border border-green-600 rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-[#2a2a2a]">
+        {/* Table and Results */}
+        <div className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6 mb-8">
+          {loading ? (
+            <div className="text-center py-8">
+              <FaSpinner className="animate-spin text-3xl text-green-400 mx-auto mb-2" />
+              <p className="text-green-300">Loading payments...</p>
+            </div>
+          ) : payments.length > 0 ? (
+            <>
+              <table className="min-w-full divide-y divide-green-800">
+                <thead>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Payment ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Customer Details</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Amount & Currency</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Session Info</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Session ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
-                  {payments.map((payment) => (
-                    <tr key={payment.id} className="hover:bg-[#2a2a2a] transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <div className="text-white font-bold">#{payment.id}</div>
-                        {payment.paymentIntentId && (
-                          <div className="text-xs text-blue-300 mt-1">
-                            Intent: {payment.paymentIntentId.substring(0, 20)}...
-                          </div>
-                        )}
-                        {payment.pricingConfigId && (
-                          <div className="text-xs text-purple-300 mt-1">
-                            Config: #{payment.pricingConfigId}
-                          </div>
-                        )}
-                      </td>
+                <tbody className="bg-[#181818] divide-y divide-green-900">
+                  {payments.map((payment: PaymentRecord) => (
+                    <tr key={payment.id}>
                       <td className="px-6 py-4 text-sm">
                         <div className="text-white font-medium">{payment.customerEmail}</div>
                         {payment.customerName && (
@@ -431,6 +316,16 @@ const AdminPayments = () => {
                         )}
                         {payment.customerCountry && (
                           <div className="text-xs text-blue-300 mt-1">{payment.customerCountry}</div>
+                        )}
+                        {payment.paymentIntentId && (
+                          <div className="text-xs text-blue-300 mt-1">
+                            Intent: {payment.paymentIntentId.substring(0, 20)}...
+                          </div>
+                        )}
+                        {payment.pricingConfigId && (
+                          <div className="text-xs text-purple-300 mt-1">
+                            Config: #{payment.pricingConfigId}
+                          </div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -459,9 +354,6 @@ const AdminPayments = () => {
                           {payment.status === 'EXPIRED' && <FaClock className="mr-1" />}
                           {payment.status}
                         </div>
-                        <div className="text-xs text-gray-300">
-                          Stripe: {payment.paymentStatus}
-                        </div>
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="text-white font-mono text-xs mb-1">
@@ -489,18 +381,7 @@ const AdminPayments = () => {
                           </button>
                           <button
                             onClick={() => {
-                              const fullDetails = `
-PAYMENT DETAILS #${payment.id}
-Session: ${payment.sessionId}
-Customer: ${payment.customerEmail}
-Amount: ${formatCurrency(payment.amountTotalEuros, payment.currency)}
-Status: ${payment.status}
-Stripe Status: ${payment.paymentStatus}
-Created: ${formatDate(payment.createdAt)}
-${payment.customerName ? `Customer Name: ${payment.customerName}` : ''}
-${payment.customerInstitute ? `Institute: ${payment.customerInstitute}` : ''}
-${payment.paymentIntentId ? `Payment Intent: ${payment.paymentIntentId}` : ''}
-                              `;
+                              const fullDetails = `\nPAYMENT DETAILS #${payment.id}\nSession: ${payment.sessionId}\nCustomer: ${payment.customerEmail}\nAmount: ${formatCurrency(payment.amountTotalEuros, payment.currency)}\nStatus: ${payment.status}\nStripe Status: ${payment.paymentStatus}\nCreated: ${formatDate(payment.createdAt)}\n${payment.customerName ? `Customer Name: ${payment.customerName}` : ''}\n${payment.customerInstitute ? `Institute: ${payment.customerInstitute}` : ''}\n${payment.paymentIntentId ? `Payment Intent: ${payment.paymentIntentId}` : ''}`;
                               navigator.clipboard.writeText(fullDetails);
                               alert('Payment details copied to clipboard!');
                             }}
@@ -515,50 +396,46 @@ ${payment.paymentIntentId ? `Payment Intent: ${payment.paymentIntentId}` : ''}
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            {/* Results Info */}
-            <div className="bg-[#2a2a2a] px-6 py-3 flex items-center justify-between">
-              <div className="text-sm text-gray-400">
-                Showing {payments.length} payment{payments.length !== 1 ? 's' : ''}
+              {/* Results Info */}
+              <div className="bg-[#2a2a2a] px-6 py-3 flex items-center justify-between">
+                <div className="text-sm text-gray-400">
+                  Showing {payments.length} payment{payments.length !== 1 ? 's' : ''}
+                </div>
+                <button
+                  onClick={fetchPayments}
+                  className="px-3 py-1 rounded-lg bg-green-500 hover:bg-green-600 text-black transition-colors"
+                >
+                  Refresh
+                </button>
               </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-xl">No payment records found</p>
               <button
-                onClick={fetchPayments}
-                className="px-3 py-1 rounded-lg bg-green-500 hover:bg-green-600 text-black transition-colors"
+                onClick={() => {
+                  setSelectedStatus('ALL');
+                  setSearchEmail('');
+                  setSearchSession('');
+                  fetchPayments();
+                }}
+                className="mt-4 bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg transition-colors"
               >
-                Refresh
+                Reset Filters
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* No Results */}
-        {!loading && payments.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-xl">No payment records found</p>
-            <button
-              onClick={() => {
-                setSelectedStatus('ALL');
-                setSearchEmail('');
-                setSearchSession('');
-                fetchPayments();
-              }}
-              className="mt-4 bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg transition-colors"
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
+        {/* Payment Details Modal */}
+        <PaymentDetailsModal
+          payment={selectedPayment}
+          isOpen={showModal}
+          onClose={closeModal}
+        />
       </main>
-
-      {/* Payment Details Modal */}
-      <PaymentDetailsModal
-        payment={selectedPayment}
-        isOpen={showModal}
-        onClose={closeModal}
-      />
     </div>
   );
-};
+}
 
 export default AdminPayments;

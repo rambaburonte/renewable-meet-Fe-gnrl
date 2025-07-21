@@ -1,7 +1,87 @@
+
 import { PAYMENT_API_URL } from '../config';
 
 // Admin Payment API Service
 export class AdminPaymentService {
+
+  // Per-vertical endpoints (no website param, use path)
+  static async getAllPaymentsOptics(): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/all/optics`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getAllPaymentsRenewable(): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/all/renewable`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getAllPaymentsNursing(): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/all/nursing`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getPaymentByIdOptics(id: number): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/session/optics/${id}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getPaymentByIdRenewable(id: number): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/session/renewable/${id}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getPaymentByIdNursing(id: number): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/session/nursing/${id}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
   private static readonly API_BASE = `${PAYMENT_API_URL}/api/payments`;
 
   private static getAuthToken(): string | null {
@@ -33,9 +113,12 @@ export class AdminPaymentService {
     return token;
   }
 
-  private static async apiCall(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private static async apiCall(endpoint: string, options: RequestInit = {}, website?: string): Promise<any> {
     const token = this.getAuthToken();
-    const response = await fetch(`${this.API_BASE}${endpoint}`, {
+    if (!website) throw new Error('Website/vertical is required for payment API calls');
+    // Insert website as a path segment: /api/payments/{website}/...
+    let url = `${PAYMENT_API_URL}/api/payments/${website}${endpoint}`;
+    const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -43,77 +126,70 @@ export class AdminPaymentService {
         ...options.headers,
       },
     });
-    
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
-    
     return response.json();
   }
 
-  // Get all payments - Fixed to match backend endpoint
-  static async getAllPayments(): Promise<any> {
-    return this.apiCall('/all');
+  // Get all payments
+  static async getAllPayments(website: string): Promise<any> {
+    return this.apiCall('/all', {}, website);
   }
 
-  // Get payment statistics - Fixed to match backend endpoint
-  static async getPaymentStats(): Promise<any> {
-    return this.apiCall('/statistics');
+  // Get payment statistics
+  static async getPaymentStats(website: string): Promise<any> {
+    return this.apiCall('/statistics', {}, website);
   }
 
   // Get payments by status
-  static async getPaymentsByStatus(status: string): Promise<any> {
-    return this.apiCall(`/status/${status}`);
+  static async getPaymentsByStatus(status: string, website: string): Promise<any> {
+    return this.apiCall(`/status/${status}`, {}, website);
   }
 
   // Search by customer email
-  static async searchByEmail(email: string): Promise<any> {
-    return this.apiCall(`/customer/${encodeURIComponent(email)}`);
+  static async searchByEmail(email: string, website: string): Promise<any> {
+    return this.apiCall(`/customer/${encodeURIComponent(email)}`, {}, website);
   }
 
   // Search by session ID
-  static async searchBySession(sessionId: string): Promise<any> {
-    return this.apiCall(`/session/${sessionId}`);
+  static async searchBySession(sessionId: string, website: string): Promise<any> {
+    return this.apiCall(`/session/${sessionId}`, {}, website);
   }
 
   // Get expired payments
-  static async getExpiredPayments(): Promise<any> {
-    return this.apiCall('/expired');
+  static async getExpiredPayments(website: string): Promise<any> {
+    return this.apiCall('/expired', {}, website);
   }
 
-  // Expire stale payments - Fixed HTTP method
-  static async expireStalePayments(): Promise<any> {
-    return this.apiCall('/expire-stale', { method: 'GET' });
+  // Expire stale payments
+  static async expireStalePayments(website: string): Promise<any> {
+    return this.apiCall('/expire-stale', { method: 'GET' }, website);
   }
 
-  // Get recent payments - Fixed to match backend endpoint
-  static async getRecentPayments(): Promise<any> {
-    return this.apiCall('/recent');
+  // Get recent payments
+  static async getRecentPayments(website: string): Promise<any> {
+    return this.apiCall('/recent', {}, website);
   }
 
-  // Get payment dashboard data - Removed (not implemented in backend)
-  // static async getDashboardData(): Promise<any> {
-  //   return this.apiCall('/admin/dashboard');
-  // }
-
-  // Get payment by ID - Added to match backend endpoint
-  static async getPaymentById(id: number): Promise<any> {
-    return this.apiCall(`/${id}`);
+  // Get payment by ID
+  static async getPaymentById(id: number, website: string): Promise<any> {
+    return this.apiCall(`/${id}`, {}, website);
   }
 
-  // Get completed payments with registrations - Added to match backend endpoint
-  static async getCompletedPaymentsWithRegistrations(): Promise<any> {
-    return this.apiCall('/completed-with-registrations');
+  // Get completed payments with registrations
+  static async getCompletedPaymentsWithRegistrations(website: string): Promise<any> {
+    return this.apiCall('/completed-with-registrations', {}, website);
   }
 
   // Test admin authentication
-  static async testAdminAuth(): Promise<any> {
-    return this.apiCall('/admin/test');
+  static async testAdminAuth(website: string): Promise<any> {
+    return this.apiCall('/admin/test', {}, website);
   }
 
   // Health check
-  static async healthCheck(): Promise<any> {
-    return this.apiCall('/admin/health');
+  static async healthCheck(website: string): Promise<any> {
+    return this.apiCall('/admin/health', {}, website);
   }
 }
 

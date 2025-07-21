@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
@@ -64,7 +65,17 @@ type PaymentDetails = {
   stripeCreatedAt?: string;
   stripeExpiresAt?: string;
 };
+
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
 const AdminBookings = () => {
+  // Remove all URL param logic, use only state and sidebar
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [allPayments, setAllPayments] = useState<PaymentDetails[]>([]); // For revenue calculation
   const [loading, setLoading] = useState(true);
@@ -84,43 +95,43 @@ const AdminBookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        // Fetch bookings
-        const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/registration-forms`, {
+        // Fetch bookings for the selected website
+        const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/registration-forms/${website}`, {
           method: 'POST',
           body: JSON.stringify({}),
         });
         if (!res.ok) throw new Error('Failed to fetch bookings');
         const data = await res.json();
         setBookings(data);
-        
+
         // Fetch ALL payments for revenue calculation consistency
         try {
-          const allPaymentsData = await AdminPaymentService.getAllPayments();
+          const allPaymentsData = await AdminPaymentService.getAllPayments(website);
           setAllPayments(Array.isArray(allPaymentsData) ? allPaymentsData : []);
         } catch (err) {
           console.error('Failed to fetch all payments for revenue calculation:', err);
         }
-        
+
         // Fetch payment statuses for all bookings with payment records
         const paymentStatusPromises = data
           .filter((booking: Booking) => booking.paymentRecord?.id)
           .map(async (booking: Booking) => {
             try {
-              const paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id);
+              const paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id, website);
               return { bookingId: booking.id, paymentData };
             } catch (err) {
               console.error(`Failed to fetch payment for booking ${booking.id}:`, err);
               return { bookingId: booking.id, paymentData: null };
             }
           });
-        
+
         const paymentResults = await Promise.all(paymentStatusPromises);
         const statusMap: {[key: number]: PaymentDetails | null} = {};
         paymentResults.forEach(result => {
           statusMap[result.bookingId] = result.paymentData;
         });
         setBookingPaymentStatuses(statusMap);
-        
+
       } catch (err: any) {
         setError(err.message || 'Error fetching bookings');
       } finally {
@@ -129,7 +140,7 @@ const AdminBookings = () => {
     };
 
     fetchBookings();
-  }, []);
+  }, [website]);
 
   // Handle clicking on booking to show payment details
   const handleBookingClick = async (booking: Booking, event?: React.MouseEvent) => {
@@ -301,10 +312,12 @@ const AdminBookings = () => {
   return (
   <div className="min-h-screen bg-gray-950 text-white">
     {/* Sidebar */}
-    <Sidebar />
+    <Sidebar website={website} setWebsite={setWebsite} />
 
     {/* Main content */}
     <main className="ml-64 p-8 overflow-y-auto">
+      {/* Website/vertical selector */}
+      {/* Website/vertical selector removed, now handled by sidebar */}
       <h1 className="text-4xl font-bold text-green-400 mb-6 text-center">All Registrations</h1>
 
       {/* Summary Statistics */}

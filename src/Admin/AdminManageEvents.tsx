@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './AdminSidebar';
+// import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
@@ -13,7 +14,16 @@ interface Session {
   description: string;
 }
 
+
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
 const AdminManageEvents = () => {
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   const [sessions, setSessions] = useState<Session[]>([]);
   const [title, setTitle] = useState('');
   const [speaker, setSpeaker] = useState('');
@@ -22,7 +32,7 @@ const AdminManageEvents = () => {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/form-submission/get-session-options`);
+      const res = await fetch(`${BASE_URL}/api/form-submission/get-session-options?website=${website}`);
       const data = await res.json();
       setSessions(data);
     } catch (err) {
@@ -32,27 +42,27 @@ const AdminManageEvents = () => {
 
   useEffect(() => {
     fetchSessions();
-  }, []);
+  }, [website]);
 
   const addSession = async () => {
-  if (!title.trim()) return;
+    if (!title.trim()) return;
 
-  try {
-    const res = await fetchWithAuth(`${BASE_URL}/admin/sessions`, {
-      method: 'POST',
-      body: JSON.stringify({ sessionOption: title }), // send only the sessionOption
-    });
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/admin/sessions?website=${website}`, {
+        method: 'POST',
+        body: JSON.stringify({ sessionOption: title }), // send only the sessionOption
+      });
 
-    if (res.ok) {
-      setTitle('');
-      fetchSessions(); // refresh sessions list if needed
-    } else {
-      await res.text(); // Remove unused variable assignment
-    }
-  } catch (err) {
+      if (res.ok) {
+        setTitle('');
+        fetchSessions(); // refresh sessions list if needed
+      } else {
+        await res.text(); // Remove unused variable assignment
+      }
+    } catch (err) {
       console.error('Network error:', err);
-  }
-};
+    }
+  };
 
 
   // Role check: block access if not admin
@@ -71,11 +81,13 @@ const AdminManageEvents = () => {
     <div className="min-h-screen flex bg-black text-white">
       {/* Sidebar */}
       <div className="w-64 bg-[#0e0e0e] border-r border-green-700">
-        <Sidebar />
+        <Sidebar website={website} setWebsite={setWebsite} />
       </div>
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-auto">
+        {/* Website/vertical selector */}
+        {/* Website/vertical selector removed, now handled by sidebar */}
         <h1 className="text-3xl font-bold text-green-400 mb-6">Manage Event Sessions</h1>
 
         {/* Add Session Form */}

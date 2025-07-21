@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
@@ -59,7 +60,15 @@ interface PaymentDetails {
   stripeExpiresAt?: string;
 }
 
-const AdminCombos = () => {
+
+const AdminAccommodations = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+        const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
+
+
   const [accommodations, setAccommodations] = useState<AccommodationOption[]>([]);
   const [registrationForms, setRegistrationForms] = useState<RegistrationForm[]>([]);
   const [nights, setNights] = useState('');
@@ -82,7 +91,7 @@ const AdminCombos = () => {
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/api/registration/get-all-accommodation-options`);
+      const response = await fetch(`${BASE_URL}/api/registration/get-all-accommodation-options/${website}`);
       if (!response.ok) throw new Error('Failed to fetch accommodations');
       const data = await response.json();
       setAccommodations(data);
@@ -96,7 +105,7 @@ const AdminCombos = () => {
   // Fetch all registration forms with payment data
   const fetchRegistrationForms = async () => {
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/registration-forms`, {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/registration-forms/${website}`, {
         method: 'POST'
       });
       if (!response.ok) throw new Error('Failed to fetch registration forms');
@@ -176,7 +185,7 @@ const AdminCombos = () => {
       await fetchRegistrationForms();
     };
     loadData();
-  }, []);
+  }, [website]);
 
   // Add combo (always at top, only for adding)
   const addCombo = async () => {
@@ -185,7 +194,7 @@ const AdminCombos = () => {
       return;
     }
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation`, {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/${website}`, {
         method: 'POST',
         body: JSON.stringify({
           nights: parseInt(nights),
@@ -212,7 +221,7 @@ const AdminCombos = () => {
       return;
     }
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/edit/${selectedAccommodation.id}`, {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/edit/${website}/${selectedAccommodation.id}`, {
         method: 'POST',
         body: JSON.stringify({
           nights: parseInt(nights),
@@ -242,7 +251,7 @@ const AdminCombos = () => {
   // Confirm delete
   const confirmDelete = async () => {
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/delete/${selectedAccommodation.id}`, {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/delete/${website}/${selectedAccommodation.id}`, {
         method: 'POST',
       });
       if (!response.ok) throw new Error('Failed to delete combo');
@@ -271,7 +280,7 @@ const AdminCombos = () => {
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <div className="w-[250px] fixed top-0 left-0 h-full">
-        <Sidebar />
+        <Sidebar website={website} setWebsite={setWebsite} />
       </div>
       {/* Main Content */}
       <div className="flex-1 ml-[250px] p-6">
@@ -564,4 +573,4 @@ const AdminCombos = () => {
   );
 };
 
-export default AdminCombos;
+export default AdminAccommodations;

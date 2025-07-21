@@ -4,6 +4,7 @@ import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
 
+
 interface AbstractSubmission {
   id: number;
   titlePrefix: string;
@@ -17,14 +18,27 @@ interface AbstractSubmission {
   abstractFilePath: string;
 }
 
+
 const AdminAbstractSubmissions = () => {
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   const [submissions, setSubmissions] = useState<AbstractSubmission[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/abstract-submissions`);
+        let endpoint = '';
+        if (website === 'optics') {
+          endpoint = '/admin/api/admin/abstract-submissions/optics';
+        } else if (website === 'renewable') {
+          endpoint = '/admin/api/admin/abstract-submissions/renewable';
+        } else if (website === 'nursing') {
+          endpoint = '/admin/api/admin/abstract-submissions/nursing';
+        } else {
+          throw new Error('Invalid website selection');
+        }
+        const response = await fetchWithAuth(`${BASE_URL}${endpoint}`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         setSubmissions(data);
@@ -32,9 +46,8 @@ const AdminAbstractSubmissions = () => {
         setError(err.message);
       }
     };
-
     fetchSubmissions();
-  }, []);
+  }, [website]);
 
   // Role check: block access if not admin
   if (!isAdmin()) {
@@ -52,7 +65,7 @@ const AdminAbstractSubmissions = () => {
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <div className="w-[250px] fixed top-0 left-0 h-full">
-        <Sidebar />
+        <Sidebar website={website} setWebsite={setWebsite} />
       </div>
 
       {/* Main Content */}
@@ -114,6 +127,6 @@ const AdminAbstractSubmissions = () => {
       </div>
     </div>
   );
-};
 
+}
 export default AdminAbstractSubmissions;

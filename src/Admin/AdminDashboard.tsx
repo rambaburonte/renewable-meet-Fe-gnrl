@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidebar from './AdminSidebar';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { isAdmin } from '../lib/authUtils';
 import { FaCreditCard, FaClipboardList, FaCalendarAlt, FaListAlt, FaBed, FaFileAlt } from 'react-icons/fa';
 
@@ -14,9 +14,19 @@ const panelIcons = {
   'Registration Types': <FaListAlt className="text-2xl mr-3 text-green-300" />,
 };
 
+
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   // Role check: block access if not admin
   if (!isAdmin()) {
     return (
@@ -29,21 +39,31 @@ const AdminDashboard = () => {
     );
   }
 
+  // Handle website change
+  const handleWebsiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newWebsite = e.target.value;
+    setWebsite(newWebsite);
+  };
+
   return (
     <div className="min-h-screen flex bg-black text-white">
-      {/* Sidebar */}
-      <Sidebar />
+      {/* Sidebar with website context */}
+      <Sidebar website={website} setWebsite={setWebsite} />
 
       {/* Main Content */}
       <main className="ml-64 p-8">
         {/* Header */}
-        <header className="mb-10">
-          <h1 className="text-4xl font-bold text-green-400">Admin Dashboard</h1>
-          <p className="text-gray-400">Manage bookings, events, and more.</p>
+        <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-green-400">Admin Dashboard</h1>
+            <p className="text-gray-400">Manage bookings, events, and more.</p>
+          </div>
+          {/* Website selection dropdown removed; now handled only in sidebar */}
         </header>
 
         {/* Dashboard Panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Each panel navigates with website param for API context */}
           {[
             {
               title: 'Payment Records',
@@ -92,7 +112,7 @@ const AdminDashboard = () => {
               <p className="text-gray-300 mb-4">{panel.desc}</p>
               <button
                 className="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-md transition-all"
-                onClick={() => navigate(panel.href)}
+                onClick={() => window.location.href = `${panel.href}`}
               >
                 {panel.title.includes('Manage') ? 'Manage' : panel.title === 'Payment Records' ? 'View Payments' : 'View'} {panel.title.split(' ')[0]}
               </button>

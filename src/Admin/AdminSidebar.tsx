@@ -15,17 +15,35 @@ const navItems = [
   // { label: 'Payment API Test', path: '/admin-payment-test' },
 ];
 
-const AdminSidebar = () => {
+
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
+interface AdminSidebarProps {
+  website: string;
+  setWebsite: (website: string) => void;
+}
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ website, setWebsite }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user: adminUser, sessionInfo } = useEnterpriseSession();
+
+  // Update website state and persist in localStorage
+  const handleWebsiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newWebsite = e.target.value;
+    setWebsite(newWebsite);
+    localStorage.setItem('adminWebsite', newWebsite);
+  };
 
   const handleLogout = async () => {
     try {
       await logout();
       navigate('/admin-login');
     } catch (error) {
-      // Force navigation even if logout fails
       navigate('/admin-login');
     }
   };
@@ -34,21 +52,37 @@ const AdminSidebar = () => {
     <aside className="fixed left-0 top-0 w-64 bg-gray-900 p-6 flex flex-col justify-between h-screen border-r border-green-700 overflow-y-auto z-40">
       <div>
         <h2 className="text-2xl font-bold text-green-400 mb-6">Admin Panel</h2>
+        {/* Website Selection Dropdown */}
+        <div className="mb-6">
+          <label htmlFor="sidebar-website-select" className="text-green-300 font-semibold block mb-2">Website:</label>
+          <select
+            id="sidebar-website-select"
+            value={website}
+            onChange={handleWebsiteChange}
+            className="bg-[#1a1a1a] border border-green-600 rounded-lg px-3 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            {WEBSITE_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
         <nav className="space-y-2">
-          {navItems.map(({ label, path }) => (
-            <button
-              key={path}
-              className={`block w-full text-left py-2 px-3 rounded-lg font-medium ${
-                location.pathname === path
-                  ? 'bg-green-600 text-black'
-                  : 'text-white hover:bg-green-500 hover:text-black'
-              }`}
-              onClick={() => navigate(path)}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>      </div>      {/* User Info */}
+            {navItems.map(({ label, path }) => (
+              <button
+                key={path}
+                className={`block w-full text-left py-2 px-3 rounded-lg font-medium ${
+                  location.pathname === path
+                    ? 'bg-green-600 text-black'
+                    : 'text-white hover:bg-green-500 hover:text-black'
+                }`}
+                onClick={() => window.location.href = path}
+              >
+                {label}
+              </button>
+            ))}
+        </nav>
+      </div>
+      {/* User Info */}
       <div className="mt-auto">
         {adminUser && (
           <div className="mb-4 p-3 bg-gray-800 rounded-lg">
@@ -62,7 +96,6 @@ const AdminSidebar = () => {
             )}
           </div>
         )}
-        
         <button
           onClick={handleLogout}
           className="w-full py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"

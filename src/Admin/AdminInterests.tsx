@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './AdminSidebar';
+// import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
 
+const WEBSITE_OPTIONS = [
+  { label: 'Optics', value: 'optics' },
+  { label: 'Renewable', value: 'renewable' },
+  { label: 'Nursing', value: 'nursing' },
+];
+
 const AdminInterests = () => {
+  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+
   const [interests, setInterests] = useState<string[]>([]);
   const [newInterest, setNewInterest] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch interests on component mount
+  // Fetch interests on website change
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/api/form-submission/get-interested-in-options`, {
+        const response = await fetch(`${BASE_URL}/api/form-submission/get-interested-in-options/${website}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -37,12 +46,12 @@ const AdminInterests = () => {
       }
     };
     fetchInterests();
-  }, []);
+  }, [website]);
 
   const addInterest = async () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
       try {
-        const response = await fetchWithAuth(`${BASE_URL}/admin/interested-in`, {
+        const response = await fetchWithAuth(`${BASE_URL}/admin/interested-in/${website}`, {
           method: 'POST',
           body: JSON.stringify({ interestedInOption: newInterest.trim() }),
         });
@@ -75,10 +84,12 @@ const AdminInterests = () => {
   return (
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar website={website} setWebsite={setWebsite} />
 
       {/* Main content */}
       <div className="flex-1 p-6 ml-[250px]">
+        {/* Website/vertical selector */}
+        {/* Website/vertical selector removed, now handled by sidebar */}
         <h1 className="text-3xl font-bold text-green-400 mb-6">Manage Interests</h1>
 
         {error && (
