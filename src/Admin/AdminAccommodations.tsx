@@ -141,7 +141,8 @@ const AdminAccommodations = () => {
   // Fetch payment details for a specific payment record ID
   const fetchPaymentDetails = async (paymentRecordId: number) => {
     try {
-      const paymentData = await AdminPaymentService.getPaymentById(paymentRecordId);
+      // Pass website to ensure correct vertical endpoint is used
+      const paymentData = await AdminPaymentService.getPaymentById(paymentRecordId, website);
       return paymentData;
     } catch (err) {
       console.error('Error fetching payment details:', err);

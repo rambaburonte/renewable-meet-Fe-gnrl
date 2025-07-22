@@ -161,7 +161,8 @@ const AdminBookings = () => {
     if (booking.paymentRecord?.id) {
       setLoadingPayment(true);
       try {
-        const paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id);
+        // Pass website to ensure correct vertical endpoint is used
+        const paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id, website);
         console.log('Payment data received:', paymentData);
         setPaymentDetails(paymentData);
       } catch (error) {
