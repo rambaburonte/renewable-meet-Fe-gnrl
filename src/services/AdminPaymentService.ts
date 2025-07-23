@@ -46,7 +46,7 @@ export class AdminPaymentService {
 
   static async getPaymentByIdOptics(id: number): Promise<any> {
     const token = this.getAuthToken();
-    const url = `${this.API_BASE}/session/optics/${id}`;
+    const url = `${this.API_BASE}/optics/${id}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export class AdminPaymentService {
 
   static async getPaymentByIdRenewable(id: number): Promise<any> {
     const token = this.getAuthToken();
-    const url = `${this.API_BASE}/session/renewable/${id}`;
+    const url = `${this.API_BASE}/renewable/${id}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export class AdminPaymentService {
 
   static async getPaymentByIdNursing(id: number): Promise<any> {
     const token = this.getAuthToken();
-    const url = `${this.API_BASE}/session/nursing/${id}`;
+    const url = `${this.API_BASE}/nursing/${id}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -174,7 +174,17 @@ export class AdminPaymentService {
 
   // Get payment by ID
   static async getPaymentById(id: number, website: string): Promise<any> {
-    return this.apiCall(`/${id}`, {}, website);
+    switch (website) {
+      case 'optics':
+        return this.getPaymentByIdOptics(id);
+      case 'renewable':
+        return this.getPaymentByIdRenewable(id);
+      case 'nursing':
+        return this.getPaymentByIdNursing(id);
+      default:
+        // fallback to generic apiCall if website is not recognized
+        return this.apiCall(`/${id}`, {}, website);
+    }
   }
 
   // Get completed payments with registrations

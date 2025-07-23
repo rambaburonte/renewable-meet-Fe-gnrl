@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './AdminSidebar';
+import { WebsiteContext } from '../Context/WebsiteContext';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
 import AdminPaymentService from '../services/AdminPaymentService';
-import { FaBed, FaUserFriends, FaEuroSign, FaCheckCircle, FaInfoCircle, FaMoneyBillWave, FaEdit, FaSave, FaTrashAlt, FaTimesCircle } from 'react-icons/fa';
+import { FaBed, FaUserFriends, FaEuroSign, FaCheckCircle, FaInfoCircle, FaMoneyBillWave, FaEdit, FaSave, FaTrashAlt, FaTimesCircle, FaPlus } from 'react-icons/fa';
 
 // Types based on the actual API response
 interface AccommodationOption {
@@ -65,7 +66,8 @@ const AdminAccommodations = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-        const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
 
 
 
@@ -85,13 +87,24 @@ const AdminAccommodations = () => {
 
   // Modal state for edit/delete
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  // Fetch all accommodations and registration data
+  // Fetch all accommodations (admin endpoint, vertical aware)
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/api/registration/get-all-accommodation-options/${website}`);
+      let url = '';
+      if (website === 'optics') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/optics`;
+      } else if (website === 'renewable') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/renewable`;
+      } else if (website === 'nursing') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/nursing`;
+      } else {
+        url = `${BASE_URL}/admin/api/admin/accommodation/${website}`;
+      }
+      const response = await fetchWithAuth(url, { method: 'GET' });
       if (!response.ok) throw new Error('Failed to fetch accommodations');
       const data = await response.json();
       setAccommodations(data);
@@ -188,14 +201,24 @@ const AdminAccommodations = () => {
     loadData();
   }, [website]);
 
-  // Add combo (always at top, only for adding)
+  // Add combo (admin endpoint, vertical aware)
   const addCombo = async () => {
     if (!nights || !guests || !price) {
       setError('All fields are required.');
       return;
     }
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/${website}`, {
+      let url = '';
+      if (website === 'optics') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/optics`;
+      } else if (website === 'renewable') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/renewable`;
+      } else if (website === 'nursing') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/nursing`;
+      } else {
+        url = `${BASE_URL}/admin/api/admin/accommodation/${website}`;
+      }
+      const response = await fetchWithAuth(url, {
         method: 'POST',
         body: JSON.stringify({
           nights: parseInt(nights),
@@ -215,14 +238,24 @@ const AdminAccommodations = () => {
     }
   };
 
-  // Save edit
+  // Save edit (admin endpoint, vertical aware)
   const saveEdit = async () => {
     if (!nights || !guests || !price) {
       setError('All fields are required.');
       return;
     }
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/edit/${website}/${selectedAccommodation.id}`, {
+      let url = '';
+      if (website === 'optics') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/edit/optics/${selectedAccommodation.id}`;
+      } else if (website === 'renewable') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/edit/renewable/${selectedAccommodation.id}`;
+      } else if (website === 'nursing') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/edit/nursing/${selectedAccommodation.id}`;
+      } else {
+        url = `${BASE_URL}/admin/api/admin/accommodation/edit/${website}/${selectedAccommodation.id}`;
+      }
+      const response = await fetchWithAuth(url, {
         method: 'POST',
         body: JSON.stringify({
           nights: parseInt(nights),
@@ -249,10 +282,20 @@ const AdminAccommodations = () => {
     setDeleteModalOpen(true);
   };
 
-  // Confirm delete
+  // Confirm delete (admin endpoint, vertical aware)
   const confirmDelete = async () => {
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/accommodation/delete/${website}/${selectedAccommodation.id}`, {
+      let url = '';
+      if (website === 'optics') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/delete/optics/${selectedAccommodation.id}`;
+      } else if (website === 'renewable') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/delete/renewable/${selectedAccommodation.id}`;
+      } else if (website === 'nursing') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/delete/nursing/${selectedAccommodation.id}`;
+      } else {
+        url = `${BASE_URL}/admin/api/admin/accommodation/delete/${website}/${selectedAccommodation.id}`;
+      }
+      const response = await fetchWithAuth(url, {
         method: 'POST',
       });
       if (!response.ok) throw new Error('Failed to delete combo');
@@ -281,7 +324,7 @@ const AdminAccommodations = () => {
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <div className="w-[250px] fixed top-0 left-0 h-full">
-        <Sidebar website={website} setWebsite={setWebsite} />
+        <Sidebar />
       </div>
       {/* Main Content */}
       <div className="flex-1 ml-[250px] p-6">
@@ -340,149 +383,126 @@ const AdminAccommodations = () => {
           </div>
         </div>
 
-        {/* Accommodation List */}
-        <div className="overflow-x-auto bg-[#1a1a1a] border border-green-600 rounded-xl">
-          <table className="min-w-full table-auto text-left text-sm">
-            <thead>
-              <tr className="bg-green-800 text-black">
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaBed className="mr-1" /> Nights</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaUserFriends className="mr-1" /> Guests</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaEuroSign className="mr-1" /> Price</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaMoneyBillWave className="mr-1" /> Revenue</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaCheckCircle className="mr-1" /> Paid</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaInfoCircle className="mr-1" /> Details</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaEdit className="mr-1" /> Edit</span></th>
-                <th className="px-4 py-3"><span className="inline-flex items-center"><FaTrashAlt className="mr-1" /> Delete</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {accommodations.map((acc) => {
-                const details = getAccommodationBookingDetails(acc.id);
-                return (
-                  <tr
-                    key={acc.id}
-                    className="border-t border-green-700 hover:bg-green-900/10"
-                  >
-                    <td className="px-4 py-3">{acc.nights}</td>
-                    <td className="px-4 py-3">{acc.guests}</td>
-                    <td className="px-4 py-3">€{acc.price}</td>
-                    <td className="px-4 py-3"><span className="inline-flex items-center"><FaMoneyBillWave className="text-green-400 mr-1" /> €{details.totalRevenue}</span></td>
-                    <td className="px-4 py-3"><span className="inline-flex items-center"><FaCheckCircle className="text-green-400 mr-1" /> {details.paidBookings}</span></td>
-                    <td className="px-4 py-3"><span className="inline-flex items-center"><FaInfoCircle className="text-blue-400 mr-1" /> {details.totalBookings}</span></td>
-                    <td className="px-4 py-3">
-                      <button
-                        className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded flex items-center gap-1 text-xs"
-                        title="Edit Accommodation"
-                        onClick={() => {
-                          setSelectedAccommodation(acc);
-                          setNights(acc.nights.toString());
-                          setGuests(acc.guests.toString());
-                          setPrice(acc.price.toString());
-                          setEditModalOpen(true);
-                        }}
-                      >
-                        <FaEdit /> Edit
-                      </button>
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 text-xs"
-                        title="Delete Accommodation"
-                        onClick={() => {
-                          setSelectedAccommodation(acc);
-                          setDeleteModalOpen(true);
-                        }}
-                      >
-                        <FaTrashAlt /> Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        {/* Add Combo Button */}
+        <div className="flex justify-end mb-2">
+          <button
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-1"
+            onClick={() => {
+              setNights('');
+              setGuests('');
+              setPrice('');
+              setAddModalOpen(true);
+            }}
+          >
+            <FaPlus /> Add Combo
+          </button>
         </div>
-
-        {/* Accommodation Details Modal */}
-        {showDetailsModal && selectedAccommodation && (
+        {/* Add Combo Modal */}
+        {addModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
             <div className="bg-[#1a1a1a] text-white p-2 rounded-lg border border-green-600 shadow-lg w-[95%] max-w-lg max-h-[60vh] overflow-y-auto relative">
               <button
                 className="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl"
-                onClick={() => setShowDetailsModal(false)}
+                onClick={() => setAddModalOpen(false)}
                 title="Close"
               >
                 ×
               </button>
-              <h2 className="text-2xl font-bold text-green-400 mb-2 flex items-center gap-2">
-                <FaInfoCircle /> Accommodation Details
+              <h2 className="text-xl font-bold text-green-400 mb-2 flex items-center gap-2">
+                <FaPlus className="mr-1" /> Add Combo
               </h2>
-              {/* Details content here, e.g. list of bookings for this accommodation */}
-              <div className="overflow-x-auto">
-                <table className="min-w-full table-auto text-left text-sm">
-                  <thead>
-                    <tr className="bg-green-800 text-black">
-                      <th className="px-2 py-1">Name</th>
-                      <th className="px-2 py-1">Email</th>
-                      <th className="px-2 py-1">Amount Paid</th>
-                      <th className="px-2 py-1">Status</th>
-                      <th className="px-2 py-1">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {getAccommodationBookingDetails(selectedAccommodation.id).bookings.map((booking: any) => (
-                      <tr key={booking.id} className="border-t border-green-700">
-                        <td className="px-2 py-1">{booking.name}</td>
-                        <td className="px-2 py-1">{booking.email}</td>
-                        <td className="px-2 py-1">€{booking.amountPaid}</td>
-                        <td className="px-2 py-1">
-                          {booking.paymentRecord?.id ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-green-700 text-green-100 gap-1">
-                              <FaCheckCircle className="text-green-300" /> Paid
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-gray-700 text-gray-200 gap-1">
-                              <FaTimesCircle className="text-gray-400" /> Unpaid
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-2 py-1 flex gap-2">
-                          <button
-                            className="bg-yellow-500 hover:bg-yellow-600 text-black px-2 py-1 rounded flex items-center gap-1 text-xs"
-                            title="Edit Booking"
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              setSelectedAccommodation(selectedAccommodation); // keep modal open
-                              setNights(booking.pricingConfig?.accommodationOption?.nights?.toString() || '');
-                              setGuests(booking.pricingConfig?.accommodationOption?.guests?.toString() || '');
-                              setPrice(booking.pricingConfig?.accommodationOption?.price?.toString() || '');
-                              setEditModalOpen(true);
-                            }}
-                          >
-                            <FaEdit /> Edit
-                          </button>
-                          <button
-                            className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded flex items-center gap-1 text-xs"
-                            title="Delete Booking"
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              setSelectedAccommodation(selectedAccommodation); // keep modal open
-                              setDeleteModalOpen(true);
-                            }}
-                          >
-                            <FaTrashAlt /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="mb-2 grid grid-cols-1 gap-2">
+                <input
+                  type="number"
+                  placeholder="Nights"
+                  value={nights}
+                  onChange={e => setNights(e.target.value)}
+                  className="bg-[#222] border border-green-600 rounded-lg px-4 py-2 text-white"
+                />
+                <input
+                  type="number"
+                  placeholder="Guests"
+                  value={guests}
+                  onChange={e => setGuests(e.target.value)}
+                  className="bg-[#222] border border-green-600 rounded-lg px-4 py-2 text-white"
+                />
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={price}
+                  onChange={e => setPrice(e.target.value)}
+                  className="bg-[#222] border border-green-600 rounded-lg px-4 py-2 text-white"
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => setAddModalOpen(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    await addCombo();
+                    setAddModalOpen(false);
+                  }}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center gap-1"
+                >
+                  <FaSave /> Save
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Edit Modal */}
+        <div className="overflow-x-auto bg-[#1a1a1a] border border-green-600 rounded-xl">
+          <table className="min-w-full table-auto text-left text-sm">
+            <thead>
+              <tr className="bg-green-800 text-black">
+                <th className="px-4 py-3">Nights</th>
+                <th className="px-4 py-3">Guests</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Edit</th>
+                <th className="px-4 py-3">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {accommodations.map((acc) => (
+                <tr key={acc.id} className="border-t border-green-700 hover:bg-green-900/10">
+                  <td className="px-4 py-3">{acc.nights}</td>
+                  <td className="px-4 py-3">{acc.guests}</td>
+                  <td className="px-4 py-3">€{acc.price}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded flex items-center gap-1 text-xs"
+                      title="Edit Combo"
+                      onClick={() => {
+                        setSelectedAccommodation(acc);
+                        setNights(acc.nights.toString());
+                        setGuests(acc.guests.toString());
+                        setPrice(acc.price.toString());
+                        setEditModalOpen(true);
+                      }}
+                    >
+                      <FaEdit /> Edit
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 text-xs"
+                      title="Delete Combo"
+                      onClick={() => handleDelete(acc)}
+                    >
+                      <FaTrashAlt /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Edit Combo Modal */}
         {editModalOpen && selectedAccommodation && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
             <div className="bg-[#1a1a1a] text-white p-2 rounded-lg border border-green-600 shadow-lg w-[95%] max-w-lg max-h-[60vh] overflow-y-auto relative">
@@ -494,7 +514,7 @@ const AdminAccommodations = () => {
                 ×
               </button>
               <h2 className="text-xl font-bold text-green-400 mb-2 flex items-center gap-2">
-                <FaEdit className="mr-1" /> Edit Accommodation
+                <FaEdit className="mr-1" /> Edit Combo
               </h2>
               <div className="mb-2 grid grid-cols-1 gap-2">
                 <input
@@ -527,7 +547,9 @@ const AdminAccommodations = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={saveEdit}
+                  onClick={async () => {
+                    await saveEdit();
+                  }}
                   className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md flex items-center gap-1"
                 >
                   <FaSave /> Save
@@ -536,7 +558,6 @@ const AdminAccommodations = () => {
             </div>
           </div>
         )}
-
         {/* Delete Modal */}
         {deleteModalOpen && selectedAccommodation && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
@@ -560,7 +581,10 @@ const AdminAccommodations = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={confirmDelete}
+                  onClick={async () => {
+                    await confirmDelete();
+                    setDeleteModalOpen(false);
+                  }}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-1"
                 >
                   <FaTrashAlt /> Delete

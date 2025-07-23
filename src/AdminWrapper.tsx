@@ -9,8 +9,10 @@ import AdminPayments from './Admin/AdminPayments';
 import AdminAccommodations from './Admin/AdminAccommodations';
 import AdminBookings from './Admin/AdminBookings';
 import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
-import AdminManageEvents from './Admin/AdminManageEvents';
+import AdminManageEvents from './Admin/AdminParticipationtype';
 import AdminInterests from './Admin/AdminInterests';
+
+import { WebsiteProvider } from './Context/WebsiteContext';
 import AdminRegistrationTypes from './Admin/AdminRegistrationTypes';
 
 const AdminWrapper = () => {
@@ -61,21 +63,23 @@ const AdminWrapper = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/admin-payments" element={<AdminPayments />} />
-          <Route path="/admin-accommodations" element={<AdminAccommodations />} />
-          <Route path="/admin-bookings" element={<AdminBookings />} />
-          <Route path="/admin-abstract-submissions" element={<AdminAbstractSubmissions />} />
-          <Route path="/admin-manage-events" element={<AdminManageEvents />} />
-          <Route path="/admin-interests" element={<AdminInterests />} />
-          <Route path="/admin-registration-types" element={<AdminRegistrationTypes />} />
-        </Routes>
-      </main>
-    </div>
+    <WebsiteProvider>
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/admin-payments" element={<AdminPayments />} />
+            <Route path="/admin-accommodations" element={<AdminAccommodations />} />
+            <Route path="/admin-bookings" element={<AdminBookings />} />
+            <Route path="/admin-abstract-submissions" element={<AdminAbstractSubmissions />} />
+            <Route path="/admin-sessions" element={<AdminManageEvents />} />
+            <Route path="/admin-interests" element={<AdminInterests />} />
+            <Route path="/admin-registration-types" element={<AdminRegistrationTypes />} />
+          </Routes>
+        </main>
+      </div>
+    </WebsiteProvider>
   );
 };
 

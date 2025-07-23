@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { WebsiteContext } from '../Context/WebsiteContext';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
@@ -20,7 +21,8 @@ interface AbstractSubmission {
 
 
 const AdminAbstractSubmissions = () => {
-  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
 
   const [submissions, setSubmissions] = useState<AbstractSubmission[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +67,7 @@ const AdminAbstractSubmissions = () => {
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <div className="w-[250px] fixed top-0 left-0 h-full">
-        <Sidebar website={website} setWebsite={setWebsite} />
+        <Sidebar />
       </div>
 
       {/* Main Content */}

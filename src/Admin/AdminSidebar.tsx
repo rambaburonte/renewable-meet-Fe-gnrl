@@ -1,13 +1,16 @@
-import React from 'react';
+
+import React, { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEnterpriseSession } from '../Context/EnterpriseSessionContext';
 import { BASE_URL } from '../config';
+import { WebsiteContext } from '../Context/WebsiteContext';
+
 
 const navItems = [
   { label: 'Dashboard', path: '/admin-dashboard' },
   { label: 'Bookings', path: '/admin-bookings' },
   { label: 'Payments', path: '/admin-payments' },
-  { label: 'Manage Events', path: '/admin-manage-events' },
+  { label: 'Sessions', path: '/admin-sessions' },
   { label: 'Interest Options', path: '/admin-interests' },
   { label: 'Accommodation Combos', path: '/admin-accommodations' },
   { label: 'Abstract Submissions', path: '/admin-abstract-submissions' },
@@ -16,27 +19,25 @@ const navItems = [
 ];
 
 
+
+
+
+
 const WEBSITE_OPTIONS = [
   { label: 'Optics', value: 'optics' },
   { label: 'Renewable', value: 'renewable' },
   { label: 'Nursing', value: 'nursing' },
 ];
 
-interface AdminSidebarProps {
-  website: string;
-  setWebsite: (website: string) => void;
-}
-
-const AdminSidebar: React.FC<AdminSidebarProps> = ({ website, setWebsite }) => {
+const AdminSidebar: React.FC = () => {
+  const { website, setWebsite } = useContext(WebsiteContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user: adminUser, sessionInfo } = useEnterpriseSession();
 
-  // Update website state and persist in localStorage
   const handleWebsiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newWebsite = e.target.value;
     setWebsite(newWebsite);
-    localStorage.setItem('adminWebsite', newWebsite);
   };
 
   const handleLogout = async () => {
@@ -67,19 +68,19 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ website, setWebsite }) => {
           </select>
         </div>
         <nav className="space-y-2">
-            {navItems.map(({ label, path }) => (
-              <button
-                key={path}
-                className={`block w-full text-left py-2 px-3 rounded-lg font-medium ${
-                  location.pathname === path
-                    ? 'bg-green-600 text-black'
-                    : 'text-white hover:bg-green-500 hover:text-black'
-                }`}
-                onClick={() => window.location.href = path}
-              >
-                {label}
-              </button>
-            ))}
+          {navItems.map(({ label, path }) => (
+            <button
+              key={path}
+              className={`block w-full text-left py-2 px-3 rounded-lg font-medium ${
+                location.pathname === path
+                  ? 'bg-green-600 text-black'
+                  : 'text-white hover:bg-green-500 hover:text-black'
+              }`}
+              onClick={() => window.location.href = path}
+            >
+              {label}
+            </button>
+          ))}
         </nav>
       </div>
       {/* User Info */}

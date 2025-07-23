@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './AdminSidebar';
+import { WebsiteContext } from '../Context/WebsiteContext';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
@@ -73,8 +74,9 @@ const WEBSITE_OPTIONS = [
 ];
 
 const AdminBookings = () => {
-  // Remove all URL param logic, use only state and sidebar
-  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+  // Use website from context
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [allPayments, setAllPayments] = useState<PaymentDetails[]>([]); // For revenue calculation
@@ -105,11 +107,46 @@ const AdminBookings = () => {
         setBookings(data);
 
         // Fetch ALL payments for revenue calculation consistency
+        let allPaymentsData: any[] = [];
         try {
-          const allPaymentsData = await AdminPaymentService.getAllPayments(website);
-          setAllPayments(Array.isArray(allPaymentsData) ? allPaymentsData : []);
+          allPaymentsData = await AdminPaymentService.getAllPayments(website);
         } catch (err) {
           console.error('Failed to fetch all payments for revenue calculation:', err);
+        }
+        // If no payments, fallback to correct external API per vertical
+        if (!Array.isArray(allPaymentsData) || allPaymentsData.length === 0) {
+          try {
+            let fallbackUrl = '';
+            switch (website) {
+              case 'optics':
+                fallbackUrl = 'https://events.markmarketing.xyz/api/payments/all/optics';
+                break;
+              case 'renewable':
+                fallbackUrl = 'https://events.markmarketing.xyz/api/payments/all/renewable';
+                break;
+              case 'nursing':
+                fallbackUrl = 'https://events.markmarketing.xyz/api/payments/all/nursing';
+                break;
+              default:
+                fallbackUrl = '';
+            }
+            if (fallbackUrl) {
+              const fallbackRes = await fetch(fallbackUrl);
+              if (fallbackRes.ok) {
+                const fallbackPayments = await fallbackRes.json();
+                setAllPayments(Array.isArray(fallbackPayments) ? fallbackPayments : []);
+              } else {
+                setAllPayments([]);
+              }
+            } else {
+              setAllPayments([]);
+            }
+          } catch (err) {
+            console.error('Fallback payment API failed:', err);
+            setAllPayments([]);
+          }
+        } else {
+          setAllPayments(allPaymentsData);
         }
 
         // Fetch payment statuses for all bookings with payment records
@@ -117,7 +154,21 @@ const AdminBookings = () => {
           .filter((booking: Booking) => booking.paymentRecord?.id)
           .map(async (booking: Booking) => {
             try {
-              const paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id, website);
+              // Use new endpoints for each vertical
+              let paymentData = null;
+              switch (website) {
+                case 'optics':
+                  paymentData = await AdminPaymentService.getPaymentByIdOptics(booking.paymentRecord.id);
+                  break;
+                case 'renewable':
+                  paymentData = await AdminPaymentService.getPaymentByIdRenewable(booking.paymentRecord.id);
+                  break;
+                case 'nursing':
+                  paymentData = await AdminPaymentService.getPaymentByIdNursing(booking.paymentRecord.id);
+                  break;
+                default:
+                  paymentData = await AdminPaymentService.getPaymentById(booking.paymentRecord.id, website);
+              }
               return { bookingId: booking.id, paymentData };
             } catch (err) {
               console.error(`Failed to fetch payment for booking ${booking.id}:`, err);
@@ -313,7 +364,7 @@ const AdminBookings = () => {
   return (
   <div className="min-h-screen bg-gray-950 text-white">
     {/* Sidebar */}
-    <Sidebar website={website} setWebsite={setWebsite} />
+    <Sidebar />
 
     {/* Main content */}
     <main className="ml-64 p-8 overflow-y-auto">

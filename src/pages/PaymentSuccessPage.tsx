@@ -6,36 +6,18 @@ const PaymentSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [paymentData, setPaymentData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Get session_id from URL parameters
     const sessionId = searchParams.get('session_id');
-    
-    if (sessionId) {
-      setPaymentData({ sessionId });
-      
-      // Check if there's a pending registration to complete
-      const pendingRegistration = localStorage.getItem('pendingRegistration');
-      if (pendingRegistration) {
-        
-        // Try to complete the registration
-        fetch(`${BASE_URL}/api/registration/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: pendingRegistration,
-        })
-        .then(response => {
-          if (response.ok) {
-            localStorage.removeItem('pendingRegistration');
-          } 
-        })
-        .catch(error => {
-        });
-      }
+    if (!sessionId) {
+      setError('Invalid payment session. Please do not refresh or access this page directly.');
+      setLoading(false);
+      return;
     }
-    
+    setPaymentData({ sessionId });
+
     setLoading(false);
   }, [searchParams]);
 
@@ -45,6 +27,23 @@ const PaymentSuccessPage: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black mx-auto"></div>
           <p className="mt-4 text-lg text-gray-600">Processing your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-red-700 mb-4">Payment Session Error</h1>
+          <p className="text-lg text-gray-700 mb-6">{error}</p>
+          <Link to="/" className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">Back to Home</Link>
         </div>
       </div>
     );

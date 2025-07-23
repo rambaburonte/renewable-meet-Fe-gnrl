@@ -1,46 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from './AdminSidebar';
-// import { useLocation, useNavigate } from 'react-router-dom';
+import { WebsiteContext } from '../Context/WebsiteContext';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
 import { BASE_URL } from '../config';
 import { isAdmin } from '../lib/authUtils';
 
-const WEBSITE_OPTIONS = [
-  { label: 'Optics', value: 'optics' },
-  { label: 'Renewable', value: 'renewable' },
-  { label: 'Nursing', value: 'nursing' },
-];
-
 const AdminInterests = () => {
-  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
-
-  const [interests, setInterests] = useState<string[]>([]);
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
+  // Store interests as objects for future edit/delete
+  const [interests, setInterests] = useState<{id: number, name: string}[]>([]);
   const [newInterest, setNewInterest] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedInterest, setSelectedInterest] = useState<{id: number, name: string} | null>(null);
+  const [editInterest, setEditInterest] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  // Edit interest
+  const handleEdit = (interest: {id: number, name: string}) => {
+    setSelectedInterest(interest);
+    setEditInterest(interest.name);
+    setError(null);
+    setEditModalOpen(true);
+  };
 
-  // Fetch interests on website change
+
+
+  const saveEdit = async () => {
+    if (!editInterest.trim()) {
+      setError('Interest name cannot be empty.');
+      return;
+    }
+    setEditLoading(true);
+    try {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/edit/${website}/${selectedInterest?.id}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ interestedInOption: editInterest.trim() })
+        });
+      if (!response.ok) throw new Error('Failed to update interest');
+      // Update the local state instead of refetching all
+      setInterests(prev => prev.map(i => i.id === selectedInterest?.id ? { ...i, name: editInterest.trim() } : i));
+      setEditModalOpen(false);
+      setSelectedInterest(null);
+      setEditInterest('');
+      setError(null);
+    } catch (err: any) {
+      setError(`Failed to update interest: ${err.message}`);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  // Delete interest
+  const handleDelete = (interest: {id: number, name: string}) => {
+    setSelectedInterest(interest);
+    setError(null);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    setDeleteLoading(true);
+    try {
+      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/delete/${website}/${selectedInterest?.id}`,
+        { method: 'POST' });
+      if (!response.ok) throw new Error('Failed to delete interest');
+      // Remove from local state
+      setInterests(prev => prev.filter(i => i.id !== selectedInterest?.id));
+      setDeleteModalOpen(false);
+      setSelectedInterest(null);
+      setError(null);
+    } catch (err: any) {
+      setError(`Failed to delete interest: ${err.message}`);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/api/form-submission/get-interested-in-options/${website}`, {
+        // Use admin endpoint for interests
+        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const data = await response.json();
-
         if (!Array.isArray(data)) {
           throw new Error('Response is not an array');
         }
-
-        setInterests(data.map(item => item.option_name).filter(Boolean));
+        // Expecting array of objects with id and option_name
+        setInterests(data.map((item: any) => ({ id: item.id, name: item.option_name })).filter(i => i.name));
       } catch (err: any) {
         setError(`Failed to fetch interests: ${err.message}`);
       }
@@ -49,20 +105,30 @@ const AdminInterests = () => {
   }, [website]);
 
   const addInterest = async () => {
-    if (newInterest.trim() && !interests.includes(newInterest.trim())) {
+    if (newInterest.trim() && !interests.some(i => i.name === newInterest.trim())) {
       try {
-        const response = await fetchWithAuth(`${BASE_URL}/admin/interested-in/${website}`, {
+        // Use admin endpoint for adding interest
+        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
           method: 'POST',
           body: JSON.stringify({ interestedInOption: newInterest.trim() }),
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        setInterests([...interests, newInterest.trim()]);
+        // Get the new interest from response if available, else just refetch
+        const data = await response.json();
+        if (data && data.id && data.interestedInOption) {
+          setInterests([...interests, { id: data.id, name: data.interestedInOption }]);
+        } else {
+          // fallback: refetch all
+          const refetch = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, { method: 'GET' });
+          if (refetch.ok) {
+            const all = await refetch.json();
+            setInterests(all.map((item: any) => ({ id: item.id, name: item.option_name })).filter((i: {id: number, name: string}) => i.name));
+          }
+        }
         setNewInterest('');
-        setShowModal(true); // Show confirmation modal
+        setShowModal(true);
       } catch (err: any) {
         setError(`Failed to add interest: ${err.message}`);
       }
@@ -84,7 +150,7 @@ const AdminInterests = () => {
   return (
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
-      <Sidebar website={website} setWebsite={setWebsite} />
+      <Sidebar />
 
       {/* Main content */}
       <div className="flex-1 p-6 ml-[250px]">
@@ -115,24 +181,99 @@ const AdminInterests = () => {
           </button>
         </div>
 
-        {/* Interest list */}
-        <ul className="space-y-3">
-          {interests.map((interest, idx) => (
+        {/* Admin API Interests */}
+     
+        <ul className="space-y-3 mb-6">
+          {interests.map((interest) => (
             <li
-              key={idx}
+              key={interest.id}
               className="flex justify-between items-center bg-[#1a1a1a] border border-green-700 p-4 rounded-lg"
             >
-              <span>{interest}</span>
-              {/* Uncomment if you want remove functionality */}
-              {/* <button
-                onClick={() => removeInterest(interest)}
-                className="text-red-400 hover:text-red-600"
-              >
-                Remove
-              </button> */}
+              <span>{interest.name}</span>
+              <div className="flex gap-2">
+                <button
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded text-xs"
+                  onClick={() => handleEdit(interest)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                  onClick={() => handleDelete(interest)}
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
+
+        {/* Public API Interests removed: now only using admin API */}
+
+
+      {/* Edit Modal */}
+      {editModalOpen && selectedInterest && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-yellow-600 shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold text-yellow-400 mb-4">Edit Interest</h2>
+            <input
+              type="text"
+              className="bg-[#222] border border-yellow-600 rounded-lg px-4 py-2 text-white w-full mb-4"
+              value={editInterest}
+              onChange={e => setEditInterest(e.target.value)}
+              disabled={editLoading}
+            />
+            {error && (
+              <div className="bg-red-600 text-white p-2 rounded mb-2 text-sm">{error}</div>
+            )}
+            <div className="flex gap-2 justify-end">
+              <button
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                onClick={() => { setEditModalOpen(false); setSelectedInterest(null); setEditInterest(''); setError(null); }}
+                disabled={editLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className={`bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md ${editLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                onClick={saveEdit}
+                disabled={editLoading}
+              >
+                {editLoading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {deleteModalOpen && selectedInterest && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+          <div className="bg-[#1a1a1a] text-white p-6 rounded-lg border border-red-600 shadow-lg w-[90%] max-w-md">
+            <h2 className="text-xl font-bold text-red-400 mb-4">Delete Interest</h2>
+            <p>Are you sure you want to delete "{selectedInterest.name}"?</p>
+            {error && (
+              <div className="bg-red-600 text-white p-2 rounded mb-2 text-sm">{error}</div>
+            )}
+            <div className="flex gap-2 justify-end mt-4">
+              <button
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                onClick={() => { setDeleteModalOpen(false); setSelectedInterest(null); setError(null); }}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className={`bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md ${deleteLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                onClick={confirmDelete}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
 
       {/* Success Modal */}

@@ -1,4 +1,12 @@
 import { useState, useEffect } from 'react';
+// Payment statistics type
+interface PaymentStats {
+  totalRecords: number;
+  completedPayments: number;
+  pendingPayments: number;
+  failedPayments: number;
+  expiredPayments: number;
+}
 // PaymentRecord type for TypeScript
 interface PaymentRecord {
   id: string;
@@ -29,15 +37,15 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   // Keep setWebsite in sync with local state
   useEffect(() => { if (setWebsite) setWebsite(website); }, [website, setWebsite]);
   // State variables
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState<PaymentStats | null>(null);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [allPayments, setAllPayments] = useState<PaymentRecord[]>([]);
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchEmail, setSearchEmail] = useState('');
   const [searchSession, setSearchSession] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   // Fetch payment statistics
@@ -54,7 +62,42 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const data = await AdminPaymentService.getAllPayments(website);
+      let data = [];
+      let apiUrl = '';
+      switch (website) {
+        case 'optics':
+          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/optics';
+          break;
+        case 'renewable':
+          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/renewable';
+          break;
+        case 'nursing':
+          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/nursing';
+          break;
+        default:
+          apiUrl = '';
+      }
+      if (apiUrl) {
+        try {
+          const response = await fetch(apiUrl, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`,
+            },
+          });
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            // fallback to AdminPaymentService if API fails
+            data = await AdminPaymentService.getAllPayments(website);
+          }
+        } catch (err) {
+          // fallback to AdminPaymentService if fetch throws
+          data = await AdminPaymentService.getAllPayments(website);
+        }
+      } else {
+        data = await AdminPaymentService.getAllPayments(website);
+      }
       const paymentsArray = Array.isArray(data) ? data : [];
       setPayments(paymentsArray);
       setAllPayments(paymentsArray);
@@ -66,7 +109,7 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   };
 
   // Fetch payments by status
-  const fetchPaymentsByStatus = async (status) => {
+  const fetchPaymentsByStatus = async (status: string) => {
     if (status === 'ALL') {
       fetchPayments();
       return;
@@ -74,7 +117,7 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
     try {
       setLoading(true);
       const data = await AdminPaymentService.getPaymentsByStatus(status, website);
-      setPayments(data);
+      setPayments(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to fetch payments by status');
     } finally {
@@ -97,7 +140,7 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
       setLoading(true);
       setError(null);
       const data = await AdminPaymentService.searchByEmail(searchEmail.trim(), website);
-      let result = Array.isArray(data) ? data : data ? [data] : [];
+      let result: PaymentRecord[] = Array.isArray(data) ? data : data ? [data] : [];
       if (result.length === 0 && allPayments.length > 0) {
         const searchLower = searchEmail.trim().toLowerCase();
         result = allPayments.filter(p => p.customerEmail && p.customerEmail.toLowerCase().includes(searchLower));
@@ -114,29 +157,10 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   };
 
   // Search by session ID
-  const searchBySession = async () => {
-    if (!searchSession.trim()) return;
-    try {
-      setLoading(true);
-      const data = await AdminPaymentService.searchBySession(searchSession, website);
-      setPayments(data ? [data] : []);
-    } catch (err) {
-      setError('Failed to find payment session');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Removed unused searchBySession function
 
   // Expire stale payments
-  const expireStalePayments = async () => {
-    try {
-      await AdminPaymentService.expireStalePayments(website);
-      alert(`Expired stale payments successfully`);
-      fetchPayments();
-    } catch (err) {
-      alert('Failed to expire stale payments');
-    }
-  };
+  // Removed unused expireStalePayments function
 
   // Initial data load
   useEffect(() => {
@@ -152,20 +176,20 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   }, [selectedStatus]);
 
   // Format currency helper
-  const formatCurrency = (amount, currency = 'EUR') => {
-    if (!amount && amount !== 0) return 'N/A';
+  const formatCurrency = (amount: number | undefined, currency: string = 'EUR') => {
+    if (amount === null || amount === undefined) return 'N/A';
     try {
       return new Intl.NumberFormat('en-EU', {
         style: 'currency',
         currency: currency.toUpperCase(),
       }).format(amount);
     } catch (error) {
-      return `€${amount.toFixed(2)}`;
+      return `€${amount?.toFixed(2)}`;
     }
   };
 
   // Show payment details modal
-  const showPaymentDetails = (payment) => {
+  const showPaymentDetails = (payment: PaymentRecord) => {
     setSelectedPayment(payment);
     setShowModal(true);
   };
@@ -177,7 +201,8 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
   };
 
   // Format date
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '';
     return new Date(dateString).toLocaleString();
   };
 

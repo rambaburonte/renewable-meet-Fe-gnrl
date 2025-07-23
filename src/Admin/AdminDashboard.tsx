@@ -15,17 +15,13 @@ const panelIcons = {
 };
 
 
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { WebsiteContext } from '../Context/WebsiteContext';
 
-const WEBSITE_OPTIONS = [
-  { label: 'Optics', value: 'optics' },
-  { label: 'Renewable', value: 'renewable' },
-  { label: 'Nursing', value: 'nursing' },
-];
 
 const AdminDashboard = () => {
-  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
 
   // Role check: block access if not admin
   if (!isAdmin()) {
@@ -39,16 +35,11 @@ const AdminDashboard = () => {
     );
   }
 
-  // Handle website change
-  const handleWebsiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newWebsite = e.target.value;
-    setWebsite(newWebsite);
-  };
 
   return (
     <div className="min-h-screen flex bg-black text-white">
       {/* Sidebar with website context */}
-      <Sidebar website={website} setWebsite={setWebsite} />
+      <Sidebar />
 
       {/* Main Content */}
       <main className="ml-64 p-8">
