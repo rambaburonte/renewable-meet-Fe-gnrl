@@ -9,7 +9,7 @@ import AdminPayments from './Admin/AdminPayments';
 import AdminAccommodations from './Admin/AdminAccommodations';
 import AdminBookings from './Admin/AdminBookings';
 import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
-import AdminManageEvents from './Admin/AdminParticipationtype';
+import AdminManageEvents from './Admin/AdminSessionoptions';
 import AdminInterests from './Admin/AdminInterests';
 
 import { WebsiteProvider } from './Context/WebsiteContext';

@@ -65,6 +65,7 @@ const AdminInterests = () => {
   const confirmDelete = async () => {
     setDeleteLoading(true);
     try {
+      // Use correct admin endpoint for deleting interest
       const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/delete/${website}/${selectedInterest?.id}`,
         { method: 'POST' });
       if (!response.ok) throw new Error('Failed to delete interest');
@@ -84,7 +85,7 @@ const AdminInterests = () => {
   useEffect(() => {
     const fetchInterests = async () => {
       try {
-        // Use admin endpoint for interests
+        // Use correct admin GET endpoint for interests
         const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
           method: 'GET',
         });
@@ -107,21 +108,26 @@ const AdminInterests = () => {
   const addInterest = async () => {
     if (newInterest.trim() && !interests.some(i => i.name === newInterest.trim())) {
       try {
-        // Use admin endpoint for adding interest
-        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
+        // Use correct admin endpoint for adding interest
+        const response = await fetchWithAuth(`${BASE_URL}/admin/interested-in/${website}`, {
           method: 'POST',
           body: JSON.stringify({ interestedInOption: newInterest.trim() }),
         });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        // Get the new interest from response if available, else just refetch
-        const data = await response.json();
+        // Try to parse JSON, fallback if fails
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (jsonErr) {
+          // Not JSON, ignore
+        }
         if (data && data.id && data.interestedInOption) {
           setInterests([...interests, { id: data.id, name: data.interestedInOption }]);
         } else {
           // fallback: refetch all
-          const refetch = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, { method: 'GET' });
+          const refetch = await fetchWithAuth(`${BASE_URL}/admin/interested-in/${website}`, { method: 'GET' });
           if (refetch.ok) {
             const all = await refetch.json();
             setInterests(all.map((item: any) => ({ id: item.id, name: item.option_name })).filter((i: {id: number, name: string}) => i.name));
