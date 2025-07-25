@@ -396,10 +396,39 @@ const AdminBookings = () => {
               <h3 className="text-lg font-semibold text-purple-300 mb-2 flex items-center gap-2"><FaMoneyBillWave /> Total Revenue</h3>
               <p className="text-2xl font-bold text-purple-400">
                 {(() => {
-                  const completedRevenue = allPayments
-                    .filter(payment => payment.status === 'COMPLETED')
-                    .reduce((total, payment) => total + (payment.amountTotalEuros || 0), 0);
-                  return formatCurrency(completedRevenue, 'EUR');
+                  // Use bookingPaymentStatuses for paid payments
+                  const paidBookings = bookings.filter(b => {
+                    const paymentStatus = bookingPaymentStatuses[b.id];
+                    return paymentStatus?.status === 'COMPLETED';
+                  });
+                  const totalPaid = paidBookings.reduce((sum, b) => {
+                    const paymentStatus = bookingPaymentStatuses[b.id];
+                    return sum + (paymentStatus?.amountTotalEuros || paymentStatus?.amountTotal || b.pricingConfig.totalPrice || b.amountPaid || 0);
+                  }, 0);
+
+                  // Split by with-accommodation and without-accommodation
+                  const paidWithAcc = paidBookings.filter(b => b.pricingConfig?.accommodationOption);
+                  const paidWithoutAcc = paidBookings.filter(b => !b.pricingConfig?.accommodationOption);
+
+                  const totalWithAcc = paidWithAcc.reduce((sum, b) => {
+                    const paymentStatus = bookingPaymentStatuses[b.id];
+                    return sum + (paymentStatus?.amountTotalEuros || paymentStatus?.amountTotal || b.pricingConfig.totalPrice || b.amountPaid || 0);
+                  }, 0);
+                  const totalWithoutAcc = paidWithoutAcc.reduce((sum, b) => {
+                    const paymentStatus = bookingPaymentStatuses[b.id];
+                    return sum + (paymentStatus?.amountTotalEuros || paymentStatus?.amountTotal || b.pricingConfig.totalPrice || b.amountPaid || 0);
+                  }, 0);
+
+                  return (
+                    <span>
+                      {formatCurrency(totalPaid, 'EUR')}<br />
+                      <span className="text-xs text-blue-300">With Accommodation: {formatCurrency(totalWithAcc, 'EUR')}</span><br />
+                      <span className="text-xs text-purple-300">Without Accommodation: {formatCurrency(totalWithoutAcc, 'EUR')}</span>
+                      {totalPaid === 0 && (
+                        <><br /><span className="text-xs text-red-400">Debug: Paid bookings found: {paidBookings.length}. Sample: {JSON.stringify(bookingPaymentStatuses[paidBookings[0]?.id] || {}, null, 2)}</span></>
+                      )}
+                    </span>
+                  );
                 })()}
               </p>
               <p className="text-xs text-gray-400">Only completed payments</p>

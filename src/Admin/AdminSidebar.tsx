@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Dashboard', path: '/admin-dashboard' },
   { label: 'Bookings', path: '/admin-bookings' },
   { label: 'Payments', path: '/admin-payments' },
+  { label: 'Discounts', path: '/admin-discounts' },
   { label: 'Sessions', path: '/admin-sessions' },
   { label: 'Interest Options', path: '/admin-interests' },
   { label: 'Accommodation Combos', path: '/admin-accommodations' },

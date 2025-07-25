@@ -11,7 +11,7 @@ import AdminBookings from './Admin/AdminBookings';
 import AdminAbstractSubmissions from './Admin/AdminAbstractSubmissions';
 import AdminManageEvents from './Admin/AdminSessionoptions';
 import AdminInterests from './Admin/AdminInterests';
-
+import AdminDiscounts from './Admin/AdminDiscounts';
 import { WebsiteProvider } from './Context/WebsiteContext';
 import AdminRegistrationTypes from './Admin/AdminRegistrationTypes';
 
@@ -76,6 +76,8 @@ const AdminWrapper = () => {
             <Route path="/admin-sessions" element={<AdminManageEvents />} />
             <Route path="/admin-interests" element={<AdminInterests />} />
             <Route path="/admin-registration-types" element={<AdminRegistrationTypes />} />
+            <Route path="/admin-discounts" element={<AdminDiscounts />} />
+            {/* Add other admin routes as needed */}
           </Routes>
         </main>
       </div>

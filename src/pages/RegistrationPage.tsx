@@ -1053,6 +1053,19 @@ const Register: React.FC<{
             </svg>
             <h4 className="text-lg font-semibold text-blue-900">Accommodation Options</h4>
           </div>
+          {/* Posh clarification message */}
+          <div className="mb-4 p-4 bg-gradient-to-r from-blue-100 to-blue-50 border-l-4 border-blue-400 rounded-lg shadow">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3"/></svg>
+              <span className="text-blue-900 font-medium text-base">
+                {registerFormData.guests === 0
+                  ? 'Accommodation will be provided for you only.'
+                  : `Accommodation will be provided for you and ${registerFormData.guests} additional guest${registerFormData.guests > 1 ? 's' : ''}.`
+                }
+              </span>
+            </div>
+            <p className="text-xs text-blue-700 mt-2">Select the number of guests to clarify your accommodation needs. <br /> <span className="font-semibold">0</span> means only you, <span className="font-semibold">1</span> or more means you plus that number of guests.</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Number of Guests</label>
@@ -1062,8 +1075,8 @@ const Register: React.FC<{
                 onChange={handleInputChange}
                 className="form-select"
               >
-                {[...Array(10)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>{i + 1} Guest{i + 1 > 1 ? 's' : ''}</option>
+                {[...Array(11)].map((_, i) => (
+                  <option key={i} value={i}>{i === 0 ? '0 (Just Me)' : `${i} Guest${i > 1 ? 's' : ''}`}</option>
                 ))}
               </select>
             </div>
@@ -1087,7 +1100,7 @@ const Register: React.FC<{
             <p className="font-medium text-gray-900 mb-1">Accommodation Details:</p>
             <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
             <p>• Location: Deira Tokyo, Japan</p>
-            <p>• Selected: {registerFormData.guests} guest{registerFormData.guests > 1 ? 's' : ''} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
+            <p>• Selected: {registerFormData.guests === 0 ? 'Just you' : `${registerFormData.guests} guest${registerFormData.guests > 1 ? 's' : ''} + you`} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
             <p>• Dates: May 29, 2026 – {(() => {
               const start = new Date(2026, 4, 29); // May is month 4 (0-based)
               const end = new Date(start);
