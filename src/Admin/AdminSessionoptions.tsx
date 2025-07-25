@@ -54,10 +54,10 @@ const AdminSessions = () => {
     if (!newSession.trim()) return;
     setError(null);
     try {
-      // POST /admin/sessions/{vertical}
-      const res = await fetchWithAuth(`${BASE_URL}/admin/sessions/${apiSuffix}`, {
+      // POST /admin/api/admin/sessions/{vertical}
+      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}`, {
         method: 'POST',
-        body: JSON.stringify({ sessionOption: newSession }),
+        body: JSON.stringify({ sessionName: newSession }),
         headers: { 'Content-Type': 'application/json' },
       });
       if (!res.ok) throw new Error('Failed to add session option');
@@ -83,10 +83,10 @@ const AdminSessions = () => {
         setError('Session option cannot be empty');
         return;
       }
-      // POST /admin/api/admin/sessions/{vertical}/{id}/edit
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${editId}/edit`, {
-        method: 'POST',
-        body: JSON.stringify({ sessionOption: editValue }),
+      // PUT /admin/api/admin/sessions/{vertical}/{id}
+      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${editId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ sessionName: editValue }),
         headers: { 'Content-Type': 'application/json' },
       });
       if (!res.ok) throw new Error('Failed to update session option');
@@ -102,9 +102,9 @@ const AdminSessions = () => {
   const deleteSession = async (id: number) => {
     setError(null);
     try {
-      // POST /admin/api/admin/sessions/{vertical}/{id}/delete
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${id}/delete`, {
-        method: 'POST',
+      // DELETE /admin/api/admin/sessions/{vertical}/{id}
+      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${id}`, {
+        method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete session option');
       fetchSessions();

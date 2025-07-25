@@ -525,19 +525,24 @@ const Register: React.FC<{
       return;
     }
 
-    // Option 1: Try registration first (original flow)
+    // Only send the selected presentationType (Listener or Delegate) to backend
     try {
+      // Only allow Listener or Delegate for backend submission
+      const selectedType = registerFormData.presentationType;
+      if (selectedType !== 'listener' && selectedType !== 'delegate') {
+        alert('Please select either Listener or Delegate as Presentation Type to proceed.');
+        return;
+      }
       const registrationData = {
-        // Exclude title field as RegistrationForm doesn't have it
         name: registerFormData.name,
         phone: registerFormData.phone,
         email: registerFormData.email,
-        instituteOrUniversity: registerFormData.institute, // Map institute to instituteOrUniversity
+        instituteOrUniversity: registerFormData.institute,
         country: registerFormData.country,
         registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
           ? 'REGISTRATION_AND_ACCOMMODATION'
           : 'REGISTRATION_ONLY',
-        presentationType: registerFormData.presentationType.toUpperCase(),
+        presentationType: selectedType.toUpperCase(),
       };
 
       const response = await fetch(`${BASE_URL}/api/registration/register`, {
@@ -550,8 +555,15 @@ const Register: React.FC<{
 
       if (response.ok) {
         // Registration successful, now create payment session
-        const pricingConfigId = pricing[0].id;
-        await createPaymentSession(pricingConfigId);
+        // Find the correct pricing config for selected type
+        const selectedConfig = pricing.find(
+          (p) => p.presentationType.type.toLowerCase() === selectedType.toLowerCase()
+        );
+        if (!selectedConfig) {
+          alert('Pricing configuration not found for selected type.');
+          return;
+        }
+        await createPaymentSession(selectedConfig.id);
       } else {
         // Registration failed, let's try direct payment approach
         // Store registration data in localStorage for later processing
@@ -564,34 +576,48 @@ const Register: React.FC<{
           registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
             ? 'REGISTRATION_AND_ACCOMMODATION'
             : 'REGISTRATION_ONLY',
-          presentationType: registerFormData.presentationType.toUpperCase(),
+          presentationType: selectedType.toUpperCase(),
         };
         localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
-        
         // Proceed directly to payment
-        const pricingConfigId = pricing[0].id;
-        await createPaymentSession(pricingConfigId);
+        const selectedConfig = pricing.find(
+          (p) => p.presentationType.type.toLowerCase() === selectedType.toLowerCase()
+        );
+        if (!selectedConfig) {
+          alert('Pricing configuration not found for selected type.');
+          return;
+        }
+        await createPaymentSession(selectedConfig.id);
       }
     } catch (error) {
       // If registration API fails completely, try direct payment
-      try {      // Store registration data for later processing
-      const registrationDataForStorage = {
-        name: registerFormData.name,
-        phone: registerFormData.phone,
-        email: registerFormData.email,
-        instituteOrUniversity: registerFormData.institute,
-        country: registerFormData.country,
-        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
-          ? 'REGISTRATION_AND_ACCOMMODATION'
-          : 'REGISTRATION_ONLY',
-        presentationType: registerFormData.presentationType.toUpperCase(),
-      };
-      
-      localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
-        
+      try {
+        const selectedType = registerFormData.presentationType;
+        if (selectedType !== 'listener' && selectedType !== 'delegate') {
+          alert('Please select either Listener or Delegate as Presentation Type to proceed.');
+          return;
+        }
+        const registrationDataForStorage = {
+          name: registerFormData.name,
+          phone: registerFormData.phone,
+          email: registerFormData.email,
+          instituteOrUniversity: registerFormData.institute,
+          country: registerFormData.country,
+          registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+            ? 'REGISTRATION_AND_ACCOMMODATION'
+            : 'REGISTRATION_ONLY',
+          presentationType: selectedType.toUpperCase(),
+        };
+        localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
         // Proceed to payment
-        const pricingConfigId = pricing[0].id;
-        await createPaymentSession(pricingConfigId);
+        const selectedConfig = pricing.find(
+          (p) => p.presentationType.type.toLowerCase() === selectedType.toLowerCase()
+        );
+        if (!selectedConfig) {
+          alert('Pricing configuration not found for selected type.');
+          return;
+        }
+        await createPaymentSession(selectedConfig.id);
       } catch (paymentError) {
         alert(`Unable to process registration and payment: ${paymentError instanceof Error ? paymentError.message : 'Unknown error'}`);
       }
