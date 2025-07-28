@@ -394,10 +394,28 @@ const Register: React.FC<{
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setRegisterFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-    }));
+    setRegisterFormData((prev) => {
+      // If registrationType is changed to registrationAndAccommodation, reset guests to 0
+      if (name === 'registrationType' && value === 'registrationAndAccommodation') {
+        return {
+          ...prev,
+          [name]: value,
+          guests: 0,
+        };
+      }
+      // If registrationType is changed to registrationOnly, reset guests to 1
+      if (name === 'registrationType' && value === 'registrationOnly') {
+        return {
+          ...prev,
+          [name]: value,
+          guests: 1,
+        };
+      }
+      return {
+        ...prev,
+        [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      };
+    });
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -525,14 +543,8 @@ const Register: React.FC<{
       return;
     }
 
-    // Only send the selected presentationType (Listener or Delegate) to backend
     try {
-      // Only allow Listener or Delegate for backend submission
       const selectedType = registerFormData.presentationType;
-      if (selectedType !== 'listener' && selectedType !== 'delegate') {
-        alert('Please select either Listener or Delegate as Presentation Type to proceed.');
-        return;
-      }
       const registrationData = {
         name: registerFormData.name,
         phone: registerFormData.phone,
@@ -593,10 +605,6 @@ const Register: React.FC<{
       // If registration API fails completely, try direct payment
       try {
         const selectedType = registerFormData.presentationType;
-        if (selectedType !== 'listener' && selectedType !== 'delegate') {
-          alert('Please select either Listener or Delegate as Presentation Type to proceed.');
-          return;
-        }
         const registrationDataForStorage = {
           name: registerFormData.name,
           phone: registerFormData.phone,
@@ -1105,7 +1113,7 @@ const Register: React.FC<{
               const start = new Date(2026, 4, 29); // May is month 4 (0-based)
               const end = new Date(start);
               end.setDate(start.getDate() + registerFormData.nights);
-              const options = { month: 'long', day: 'numeric', year: 'numeric' };
+              const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
               return end.toLocaleDateString('en-US', options);
             })()}</p>
           </div>
@@ -1226,7 +1234,7 @@ const Register: React.FC<{
                         const start = new Date(2026, 4, 29);
                         const end = new Date(start);
                         end.setDate(start.getDate() + config.accommodationOption.nights);
-                        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                        const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
                         return end.toLocaleDateString('en-US', options);
                       })()}</p>
                     </div>
@@ -1288,7 +1296,7 @@ const RegistrationPage: React.FC = () => {
     country: '',
     registrationType: '',
     presentationType: '',
-    guests: 1,
+    guests: 0, // Default to 0 (Just Me)
     nights: 1,
     accompanyingPerson: false,
     extraNights: 0,
@@ -1315,7 +1323,7 @@ const RegistrationPage: React.FC = () => {
       country: '',
       registrationType: '',
       presentationType: '',
-      guests: 1,
+      guests: 0, // Default to 0 (Just Me)
       nights: 1,
       accompanyingPerson: false,
       extraNights: 0,
