@@ -53,14 +53,14 @@ const DiscountRegistrationPage = () => {
     try {
       // Prepare request body as per backend DTO, but send discountAmount as-is (no cents conversion)
       const reqBody = {
-        productName: "Discount Registration",
-        description: form.description,
+        productName: "RENEWABLE 2025 DISCOUNT REGISTRATION",
+        description: `RENEWABLE 2025 DISCOUNT REQUEST: ${form.description}`,
         orderReference: `DISCOUNT-${Date.now()}`,
         unitAmount: form.discountAmount, // send as entered
         quantity: 1,
         currency: "eur",
-        successUrl: window.location.origin + "/discount-success",
-        cancelUrl: window.location.origin + "/discount-cancel",
+        successUrl: window.location.origin + "/payment-success?session_id={CHECKOUT_SESSION_ID}",
+        cancelUrl: window.location.origin + "/payment-cancel",
         customerEmail: form.email,
         name: form.name,
         phone: form.phone,
