@@ -91,6 +91,11 @@ const AdminDashboard = () => {
               desc: 'View and edit registration/presentation types and their prices.',
               href: '/admin-registration-types',
             },
+            {
+              title: 'Manage Speakers',
+              desc: 'Add, edit, and delete speakers for all conferences.',
+              href: '/admin-speakers-manager',
+            }
           ].map((panel, idx) => (
             <div
               key={idx}

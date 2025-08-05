@@ -14,7 +14,7 @@ import AdminInterests from './Admin/AdminInterests';
 import AdminDiscounts from './Admin/AdminDiscounts';
 import { WebsiteProvider } from './Context/WebsiteContext';
 import AdminRegistrationTypes from './Admin/AdminRegistrationTypes';
-
+import AdminSpeakersManager from './Admin/AdminSpeakersManager';
 const AdminWrapper = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,6 +77,7 @@ const AdminWrapper = () => {
             <Route path="/admin-interests" element={<AdminInterests />} />
             <Route path="/admin-registration-types" element={<AdminRegistrationTypes />} />
             <Route path="/admin-discounts" element={<AdminDiscounts />} />
+            <Route path="/admin-speakers-manager" element={<AdminSpeakersManager />} />
             {/* Add other admin routes as needed */}
           </Routes>
         </main>

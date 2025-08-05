@@ -16,6 +16,7 @@ const navItems = [
   { label: 'Accommodation Combos', path: '/admin-accommodations' },
   { label: 'Abstract Submissions', path: '/admin-abstract-submissions' },
   { label: 'Registration Types', path: '/admin-registration-types' },
+  { label: 'Manage Speakers', path: '/admin-speakers-manager' },
   // { label: 'Payment API Test', path: '/admin-payment-test' },
 ];
 

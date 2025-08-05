@@ -22,9 +22,18 @@ const AdminDiscounts: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem('jwt');
+    if (!token || token === 'null' || token === '') {
+      setError('Session expired. Please log in again.');
+      setLoading(false);
+      return;
+    }
     fetch(`${API_BASE}/${website}`, {
       method: 'GET',
-      credentials: 'include', // Ensure JWT cookie is sent
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      credentials: 'include',
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch discounts');

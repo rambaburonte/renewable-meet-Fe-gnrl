@@ -68,7 +68,7 @@ const AdminLogin = () => {
       }
 
       // Store token in localStorage for admin pages
-      localStorage.setItem('adminToken', accessToken);
+      localStorage.setItem('jwt', accessToken);
 
       // Use enterprise session manager to set the session
       await login(adminData, accessToken, refreshToken);
