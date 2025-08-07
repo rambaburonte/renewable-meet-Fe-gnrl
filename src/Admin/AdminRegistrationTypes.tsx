@@ -11,14 +11,10 @@ interface PresentationType {
 }
 
 
-const WEBSITE_OPTIONS = [
-  { label: 'Optics', value: 'optics' },
-  { label: 'Renewable', value: 'renewable' },
-  { label: 'Nursing', value: 'nursing' },
-];
+
 
 const AdminRegistrationTypes: React.FC = () => {
-  const [website, setWebsite] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
+  const [website] = useState(() => localStorage.getItem('adminWebsite') || 'optics');
 
   const [types, setTypes] = useState<PresentationType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +47,8 @@ const AdminRegistrationTypes: React.FC = () => {
         endpoint = '/admin/api/admin/presentation-types/renewable';
       } else if (website === 'nursing') {
         endpoint = '/admin/api/admin/presentation-types/nursing';
+      } else if (website === 'polymers') {
+        endpoint = '/admin/api/admin/presentation-types/polymers';
       } else {
         throw new Error('Invalid website selection');
       }
@@ -92,6 +90,8 @@ const AdminRegistrationTypes: React.FC = () => {
         endpoint = `/admin/api/admin/presentation-type/edit/renewable/${id}/${editPrice}`;
       } else if (website === 'nursing') {
         endpoint = `/admin/api/admin/presentation-type/edit/nursing/${id}/${editPrice}`;
+      } else if (website === 'polymers') {
+        endpoint = `/admin/api/admin/presentation-type/edit/polymers/${id}/${editPrice}`;
       } else {
         throw new Error('Invalid website selection');
       }
@@ -120,7 +120,7 @@ const AdminRegistrationTypes: React.FC = () => {
   return (
     <div className="min-h-screen flex bg-black text-white">
       {/* Sidebar */}
-      <Sidebar website={website} setWebsite={setWebsite} />
+      <Sidebar />
       <main className="ml-64 p-8 w-full max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-green-400 mb-2">Registration Types</h1>
         <p className="text-gray-400 mb-8">Manage and update the prices for all available registration/presentation types.</p>

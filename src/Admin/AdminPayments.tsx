@@ -1,4 +1,11 @@
 import { useState, useEffect } from 'react';
+import Sidebar from './AdminSidebar';
+import PaymentDetailsModal from './PaymentDetailsModal';
+import { isAdmin } from '../lib/authUtils';
+import AdminPaymentService from '../services/AdminPaymentService';
+import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaSyncAlt, FaClipboard, FaCopy, FaExclamationCircle } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
+import { BASE_URL } from '../config';
 // Payment statistics type
 interface PaymentStats {
   totalRecords: number;
@@ -24,12 +31,6 @@ interface PaymentRecord {
   sessionId: string;
   createdAt?: string;
 }
-import Sidebar from './AdminSidebar';
-import PaymentDetailsModal from './PaymentDetailsModal';
-import { isAdmin } from '../lib/authUtils';
-import AdminPaymentService from '../services/AdminPaymentService';
-import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaSyncAlt, FaClipboard, FaCopy, FaExclamationCircle } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
 
 // Define the component
 const AdminPayments = ({ website: propWebsite, setWebsite }) => {
@@ -66,13 +67,16 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
       let apiUrl = '';
       switch (website) {
         case 'optics':
-          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/optics';
+          apiUrl = `${BASE_URL}/api/payments/all/optics`;
           break;
         case 'renewable':
-          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/renewable';
+          apiUrl = `${BASE_URL}/api/payments/all/renewable`;
           break;
         case 'nursing':
-          apiUrl = 'https://events.markmarketing.xyz/api/payments/all/nursing';
+          apiUrl = `${BASE_URL}/api/payments/all/nursing`;
+          break;
+        case 'polymers':
+          apiUrl = `${BASE_URL}/api/payments/all/polymers`;
           break;
         default:
           apiUrl = '';

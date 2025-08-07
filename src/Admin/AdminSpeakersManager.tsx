@@ -88,16 +88,10 @@ const AdminSpeakersManager = () => {
       setLoading(false);
       return;
     }
-    // Unified logic for Add and Edit
-    const formData = new FormData();
-    let apiUrl = '';
-    let method = '';
-    let speakerObj: Speaker | null = null;
     if (editSpeaker) {
-      // Edit mode
-      apiUrl = `${API_BASE}/${website}/edit`;
-      method = 'put';
-      speakerObj = {
+      // For edit, send 'speaker' part as JSON and 'image' as file
+      const formData = new FormData();
+      const speakerObj: Speaker = {
         id: editSpeaker.id,
         name: (form.elements.namedItem('name') as HTMLInputElement)?.value || '',
         university: (form.elements.namedItem('university') as HTMLInputElement)?.value || '',
@@ -105,31 +99,39 @@ const AdminSpeakersManager = () => {
         type: (form.elements.namedItem('type') as HTMLInputElement)?.value || ''
       };
       formData.append('speaker', JSON.stringify(speakerObj));
+      const imageInput = form.elements.namedItem('image') as HTMLInputElement;
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
+      }
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      try {
+        await axios.put(`${API_BASE}/${website}/edit`, formData, config);
+        setShowForm(false);
+        setEditSpeaker(null);
+        fetchSpeakers();
+      } catch (e) {
+        setError('Save failed');
+      }
     } else {
-      // Add mode
-      apiUrl = `${API_BASE}/${website}/add`;
-      method = 'post';
+      // For add, send fields as before
+      const formData = new FormData();
       formData.append('name', (form.elements.namedItem('name') as HTMLInputElement)?.value || '');
       formData.append('university', (form.elements.namedItem('university') as HTMLInputElement)?.value || '');
       formData.append('bio', (form.elements.namedItem('bio') as HTMLTextAreaElement)?.value || '');
       formData.append('type', (form.elements.namedItem('type') as HTMLInputElement)?.value || '');
-    }
-    const imageInput = form.elements.namedItem('image') as HTMLInputElement;
-    if (imageInput && imageInput.files && imageInput.files[0]) {
-      formData.append('image', imageInput.files[0]);
-    }
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    try {
-      if (method === 'put') {
-        await axios.put(apiUrl, formData, config);
-      } else {
-        await axios.post(apiUrl, formData, config);
+      const imageInput = form.elements.namedItem('image') as HTMLInputElement;
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
       }
-      setShowForm(false);
-      setEditSpeaker(null);
-      fetchSpeakers();
-    } catch (e) {
-      setError('Save failed');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      try {
+        await axios.post(`${API_BASE}/${website}/add`, formData, config);
+        setShowForm(false);
+        setEditSpeaker(null);
+        fetchSpeakers();
+      } catch (e) {
+        setError('Save failed');
+      }
     }
     setLoading(false);
   };

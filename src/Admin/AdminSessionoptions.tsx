@@ -18,6 +18,7 @@ const getApiSuffix = (website: string) => {
   if (website === 'optics') return 'optics';
   if (website === 'renewable') return 'renewable';
   if (website === 'nursing') return 'nursing';
+  if (website === 'polymers') return 'polymers';
   return 'optics';
 };
 

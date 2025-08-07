@@ -101,6 +101,8 @@ const AdminAccommodations = () => {
         url = `${BASE_URL}/admin/api/admin/accommodation/renewable`;
       } else if (website === 'nursing') {
         url = `${BASE_URL}/admin/api/admin/accommodation/nursing`;
+      } else if (website === 'polymers') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/polymers`;
       } else {
         url = `${BASE_URL}/admin/api/admin/accommodation/${website}`;
       }
@@ -215,6 +217,8 @@ const AdminAccommodations = () => {
         url = `${BASE_URL}/admin/api/admin/accommodation/renewable`;
       } else if (website === 'nursing') {
         url = `${BASE_URL}/admin/api/admin/accommodation/nursing`;
+      } else if (website === 'polymers') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/polymers`;
       } else {
         url = `${BASE_URL}/admin/api/admin/accommodation/${website}`;
       }
@@ -252,6 +256,8 @@ const AdminAccommodations = () => {
         url = `${BASE_URL}/admin/api/admin/accommodation/edit/renewable/${selectedAccommodation.id}`;
       } else if (website === 'nursing') {
         url = `${BASE_URL}/admin/api/admin/accommodation/edit/nursing/${selectedAccommodation.id}`;
+      } else if (website === 'polymers') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/edit/polymers/${selectedAccommodation.id}`;
       } else {
         url = `${BASE_URL}/admin/api/admin/accommodation/edit/${website}/${selectedAccommodation.id}`;
       }
@@ -292,6 +298,8 @@ const AdminAccommodations = () => {
         url = `${BASE_URL}/admin/api/admin/accommodation/delete/renewable/${selectedAccommodation.id}`;
       } else if (website === 'nursing') {
         url = `${BASE_URL}/admin/api/admin/accommodation/delete/nursing/${selectedAccommodation.id}`;
+      } else if (website === 'polymers') {
+        url = `${BASE_URL}/admin/api/admin/accommodation/delete/polymers/${selectedAccommodation.id}`;
       } else {
         url = `${BASE_URL}/admin/api/admin/accommodation/delete/${website}/${selectedAccommodation.id}`;
       }

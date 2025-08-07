@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useEnterpriseSession } from '../Context/EnterpriseSessionContext';
 import { BASE_URL } from '../config';
 import { WebsiteContext } from '../Context/WebsiteContext';
+import { Label } from 'react-aria-components';
 
 
 const navItems = [
@@ -29,6 +30,7 @@ const WEBSITE_OPTIONS = [
   { label: 'Optics', value: 'optics' },
   { label: 'Renewable', value: 'renewable' },
   { label: 'Nursing', value: 'nursing' },
+  { label: 'Polymers', value: 'polymers' },
 ];
 
 const AdminSidebar: React.FC = () => {
