@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Sidebar from './AdminSidebar';
 import { WebsiteContext } from '../Context/WebsiteContext';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
@@ -19,6 +19,50 @@ const AdminInterests = () => {
   const [editInterest, setEditInterest] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Fetch interests (admin endpoint)
+  const fetchInterests = async () => {
+    try {
+      // GET all interested-in options
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/interested-in/${website}`,
+        { method: 'GET' }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch interests: ${res.status}`);
+      const data = await res.json();
+      setInterests(
+        data.map((item: any) => ({ id: item.id, name: item.option_name || item.interestedInOption || '' }))
+      );
+    } catch (err: any) {
+      setError(`Failed to fetch interests: ${err.message}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchInterests();
+  }, [website]);
+
+  const addInterest = async () => {
+    if (newInterest.trim() && !interests.some(i => i.name === newInterest.trim())) {
+      try {
+        const res = await fetchWithAuth(
+          `${BASE_URL}/admin/interested-in/${website}`,
+           {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ interestedInOption: newInterest.trim() }),
+           }
+         );
+        if (!res.ok) throw new Error(`Failed to add interest: ${res.status}`);
+        await fetchInterests();
+        setNewInterest('');
+        setShowModal(true);
+      } catch (err: any) {
+        setError(`Failed to add interest: ${err.message}`);
+      }
+    }
+  };
+
   // Edit interest
   const handleEdit = (interest: {id: number, name: string}) => {
     setSelectedInterest(interest);
@@ -27,8 +71,6 @@ const AdminInterests = () => {
     setEditModalOpen(true);
   };
 
-
-
   const saveEdit = async () => {
     if (!editInterest.trim()) {
       setError('Interest name cannot be empty.');
@@ -36,14 +78,16 @@ const AdminInterests = () => {
     }
     setEditLoading(true);
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/edit/${website}/${selectedInterest?.id}`,
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/interested-in/edit/${website}/${selectedInterest?.id}`,
         {
           method: 'POST',
-          body: JSON.stringify({ interestedInOption: editInterest.trim() })
-        });
-      if (!response.ok) throw new Error('Failed to update interest');
-      // Update the local state instead of refetching all
-      setInterests(prev => prev.map(i => i.id === selectedInterest?.id ? { ...i, name: editInterest.trim() } : i));
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ interestedInOption: editInterest.trim() }),
+        }
+      );
+      if (!res.ok) throw new Error(`Failed to update interest: ${res.status}`);
+      await fetchInterests();
       setEditModalOpen(false);
       setSelectedInterest(null);
       setEditInterest('');
@@ -65,11 +109,12 @@ const AdminInterests = () => {
   const confirmDelete = async () => {
     setDeleteLoading(true);
     try {
-      const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/delete/${website}/${selectedInterest?.id}`,
-        { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to delete interest');
-      // Remove from local state
-      setInterests(prev => prev.filter(i => i.id !== selectedInterest?.id));
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/interested-in/delete/${website}/${selectedInterest?.id}`,
+        { method: 'POST' }
+      );
+      if (!res.ok) throw new Error(`Failed to delete interest: ${res.status}`);
+      await fetchInterests();
       setDeleteModalOpen(false);
       setSelectedInterest(null);
       setError(null);
@@ -77,61 +122,6 @@ const AdminInterests = () => {
       setError(`Failed to delete interest: ${err.message}`);
     } finally {
       setDeleteLoading(false);
-    }
-  };
-
-
-  useEffect(() => {
-    const fetchInterests = async () => {
-      try {
-        // Use admin endpoint for interests
-        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
-          method: 'GET',
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (!Array.isArray(data)) {
-          throw new Error('Response is not an array');
-        }
-        // Expecting array of objects with id and option_name
-        setInterests(data.map((item: any) => ({ id: item.id, name: item.option_name })).filter(i => i.name));
-      } catch (err: any) {
-        setError(`Failed to fetch interests: ${err.message}`);
-      }
-    };
-    fetchInterests();
-  }, [website]);
-
-  const addInterest = async () => {
-    if (newInterest.trim() && !interests.some(i => i.name === newInterest.trim())) {
-      try {
-        // Use admin endpoint for adding interest
-        const response = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, {
-          method: 'POST',
-          body: JSON.stringify({ interestedInOption: newInterest.trim() }),
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        // Get the new interest from response if available, else just refetch
-        const data = await response.json();
-        if (data && data.id && data.interestedInOption) {
-          setInterests([...interests, { id: data.id, name: data.interestedInOption }]);
-        } else {
-          // fallback: refetch all
-          const refetch = await fetchWithAuth(`${BASE_URL}/admin/api/admin/interested-in/${website}`, { method: 'GET' });
-          if (refetch.ok) {
-            const all = await refetch.json();
-            setInterests(all.map((item: any) => ({ id: item.id, name: item.option_name })).filter((i: {id: number, name: string}) => i.name));
-          }
-        }
-        setNewInterest('');
-        setShowModal(true);
-      } catch (err: any) {
-        setError(`Failed to add interest: ${err.message}`);
-      }
     }
   };
 

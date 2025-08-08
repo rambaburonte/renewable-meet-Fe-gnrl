@@ -1,7 +1,5 @@
-
-
 // --- AdminSessions page ---
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import Sidebar from './AdminSidebar';
 import { WebsiteContext } from '../Context/WebsiteContext';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
@@ -35,7 +33,10 @@ const AdminSessions = () => {
   // Fetch session options (admin endpoint)
   const fetchSessions = async () => {
     try {
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/session-options/${apiSuffix}`);
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/session-options/${apiSuffix}`,
+        { method: 'GET' }
+      );
       if (!res.ok) throw new Error('Failed to fetch session options');
       const data = await res.json();
       // Normalize to SessionOption[] with id and sessionName
@@ -55,12 +56,15 @@ const AdminSessions = () => {
     if (!newSession.trim()) return;
     setError(null);
     try {
-      // POST /admin/api/admin/sessions/{vertical}
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}`, {
-        method: 'POST',
-        body: JSON.stringify({ sessionName: newSession }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      // Add session option
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/sessions/${apiSuffix}`,
+         {
+           method: 'POST',
+           body: JSON.stringify({ sessionOption: newSession }),
+           headers: { 'Content-Type': 'application/json' },
+         }
+       );
       if (!res.ok) throw new Error('Failed to add session option');
       setNewSession('');
       fetchSessions();
@@ -84,12 +88,15 @@ const AdminSessions = () => {
         setError('Session option cannot be empty');
         return;
       }
-      // PUT /admin/api/admin/sessions/{vertical}/{id}
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${editId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ sessionName: editValue }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      // Update session option
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${editId}/edit`,
+         {
+           method: 'POST',
+           body: JSON.stringify({ sessionOption: editValue }),
+           headers: { 'Content-Type': 'application/json' },
+         },
+       );
       if (!res.ok) throw new Error('Failed to update session option');
       setEditId(null);
       setEditValue('');
@@ -103,10 +110,13 @@ const AdminSessions = () => {
   const deleteSession = async (id: number) => {
     setError(null);
     try {
-      // DELETE /admin/api/admin/sessions/{vertical}/{id}
-      const res = await fetchWithAuth(`${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${id}`, {
-        method: 'DELETE',
-      });
+      // Remove session option
+      const res = await fetchWithAuth(
+        `${BASE_URL}/admin/api/admin/sessions/${apiSuffix}/${id}/delete`,
+        {
+          method: 'POST',
+        }
+      );
       if (!res.ok) throw new Error('Failed to delete session option');
       fetchSessions();
     } catch (err: any) {
