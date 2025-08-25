@@ -1109,13 +1109,7 @@ const Register: React.FC<{
             <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
             <p>• Location: Deira Tokyo, Japan</p>
             <p>• Selected: {registerFormData.guests === 0 ? 'Just you' : `${registerFormData.guests} guest${registerFormData.guests > 1 ? 's' : ''} + you`} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
-            <p>• Dates: May 29, 2026 – {(() => {
-              const start = new Date(2026, 4, 29); // May is month 4 (0-based)
-              const end = new Date(start);
-              end.setDate(start.getDate() + registerFormData.nights);
-              const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric', year: 'numeric' };
-              return end.toLocaleDateString('en-US', options);
-            })()}</p>
+            {/* <p>• Dates: May 29, 2026 – [dynamic end date removed]</p> */}
           </div>
         </div>
       )}
