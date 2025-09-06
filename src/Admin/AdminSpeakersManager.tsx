@@ -89,16 +89,13 @@ const AdminSpeakersManager = () => {
       return;
     }
     if (editSpeaker) {
-      // For edit, send 'speaker' part as JSON and 'image' as file
+      // For edit, send fields as individual form data, same as add
       const formData = new FormData();
-      const speakerObj: Speaker = {
-        id: editSpeaker.id,
-        name: (form.elements.namedItem('name') as HTMLInputElement)?.value || '',
-        university: (form.elements.namedItem('university') as HTMLInputElement)?.value || '',
-        bio: (form.elements.namedItem('bio') as HTMLTextAreaElement)?.value || '',
-        type: (form.elements.namedItem('type') as HTMLInputElement)?.value || ''
-      };
-      formData.append('speaker', JSON.stringify(speakerObj));
+      formData.append('id', editSpeaker.id?.toString() || '');
+      formData.append('name', (form.elements.namedItem('name') as HTMLInputElement)?.value || '');
+      formData.append('university', (form.elements.namedItem('university') as HTMLInputElement)?.value || '');
+      formData.append('bio', (form.elements.namedItem('bio') as HTMLTextAreaElement)?.value || '');
+      formData.append('type', (form.elements.namedItem('type') as HTMLInputElement)?.value || '');
       const imageInput = form.elements.namedItem('image') as HTMLInputElement;
       if (imageInput && imageInput.files && imageInput.files[0]) {
         formData.append('image', imageInput.files[0]);
