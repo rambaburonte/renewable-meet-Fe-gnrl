@@ -59,7 +59,7 @@ const DiscountRegistrationPage = () => {
         unitAmount: form.discountAmount, // send as entered
         quantity: 1,
         currency: "eur",
-        successUrl: window.location.origin + "/payment-success?session_id={CHECKOUT_SESSION_ID}",
+        successUrl: window.location.origin + "/payment-success",
         cancelUrl: window.location.origin + "/payment-cancel",
         customerEmail: form.email,
         name: form.name,

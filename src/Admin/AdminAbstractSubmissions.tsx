@@ -37,6 +37,8 @@ const AdminAbstractSubmissions = () => {
           endpoint = '/admin/api/admin/abstract-submissions/renewable';
         } else if (website === 'nursing') {
           endpoint = '/admin/api/admin/abstract-submissions/nursing';
+        } else if (website === 'polymers') {
+          endpoint = '/admin/api/admin/abstract-submissions/polymers';
         } else {
           throw new Error('Invalid website selection');
         }

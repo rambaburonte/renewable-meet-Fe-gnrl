@@ -160,9 +160,9 @@ const FeaturedSpeakers: React.FC = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="px-4 mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
+        {/* <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
           Featured Speakers 2026
-        </h2>
+        </h2> */}
         <Speakers />
       </div>
     </section>

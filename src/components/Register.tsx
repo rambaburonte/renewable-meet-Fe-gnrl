@@ -289,6 +289,7 @@ const Register: React.FC<{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Origin': 'https://globalrenewablemeet.com',
         },
         body: JSON.stringify({
           registrationType: registerFormData.registrationType === 'registrationAndAccommodation'

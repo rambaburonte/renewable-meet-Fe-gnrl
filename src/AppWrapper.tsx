@@ -20,10 +20,8 @@ import AdminWrapper from './AdminWrapper';
 import { EnterpriseSessionProvider } from './Context/EnterpriseSessionContext';
 import SessionMonitor from './components/SessionMonitor';
 import DiscountRegistrationPage from './pages/DiscountsRegistartion';
-import DiscountSuccess from './pages/DiscountSuccess';
-import DiscountCancel from './pages/DiscountCancel';
+
 import PaymentCancel from './pages/PaymentCancel';
-import ProtectedPaymentRoute from './pages/ProtectedPaymentRoute';
 
 const AppWrapper = () => {
   const location = useLocation();
@@ -59,10 +57,9 @@ const AppWrapper = () => {
           <Route path="/abstract-submission" element={<AbstractSubmissionPage />} />
           <Route path="/previous-edition" element={<PreviousEdition />} />
           <Route path="/discount-registration" element={<DiscountRegistrationPage />} />
-          <Route path="/discount-success" element={<ProtectedPaymentRoute><DiscountSuccess /></ProtectedPaymentRoute>} />
-          <Route path="/discount-cancel" element={<ProtectedPaymentRoute><DiscountCancel /></ProtectedPaymentRoute>} />
-          <Route path="/payment-cancel" element={<ProtectedPaymentRoute><PaymentCancel /></ProtectedPaymentRoute>} />
-          <Route path="/payment-success" element={<ProtectedPaymentRoute><PaymentSuccessPage /></ProtectedPaymentRoute>} />
+          
+          <Route path="/payment-cancel" element={<PaymentCancel />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path='*' element={<Home />} /> {/* Fallback route */}
         </Routes>
       </main>
