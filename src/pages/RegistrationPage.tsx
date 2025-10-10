@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSyncAlt } from 'react-icons/fa';
 import { BASE_URL, PAYMENT_API_URL } from '../config';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 interface RegisterFormData {
   title: string; // Frontend only field for user experience
@@ -308,7 +310,9 @@ const Register: React.FC<{
   const [pricingError, setPricingError] = useState<string>('');
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
   const [paymentError, setPaymentError] = useState<string>('');
+  const [paypalMessage, setPaypalMessage] = useState<string>('');
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal'>('stripe');
 
   // Add refs for error fields
   const nameRef = useRef<HTMLInputElement>(null);
@@ -533,6 +537,229 @@ const Register: React.FC<{
     }
   };
 
+  const createPayPalOrder = async (pricingConfigId: number): Promise<{ orderId: string; approvalUrl: string }> => {
+    setIsProcessingPayment(true);
+    setPaymentError('');
+    setPaypalMessage('');
+
+    try {
+      const selectedPricing = pricing?.find(p => p.id === pricingConfigId);
+      if (!selectedPricing) {
+        throw new Error('Selected pricing configuration not found');
+      }
+
+      if (isNaN(selectedPricing.totalPrice)) {
+        throw new Error('Invalid price amount');
+      }
+
+      // Create PayPal order request matching backend expectations
+      const paypalRequest = {
+        customerEmail: registerFormData.email,
+        customerName: registerFormData.name,
+        phone: registerFormData.phone,
+        country: registerFormData.country,
+        instituteOrUniversity: registerFormData.institute,
+        amount: selectedPricing.totalPrice,
+        currency: 'EUR',
+        pricingConfigId: pricingConfigId,
+        successUrl: `${window.location.origin}/payment-success`,
+        cancelUrl: `${window.location.origin}/register`,
+      };
+
+      console.log('Creating PayPal order with request:', paypalRequest);
+
+      const response = await fetch(`${PAYMENT_API_URL}/api/payment/paypal/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paypalRequest),
+      });
+
+      console.log('PayPal create response status:', response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('PayPal create response data:', data);
+        if (data.orderId && data.approvalUrl) {
+          // Return both orderId and approvalUrl
+          return { orderId: data.orderId, approvalUrl: data.approvalUrl };
+        } else if (data.orderId) {
+          // Fallback: construct approval URL if not provided
+          const approvalUrl = `https://www.sandbox.paypal.com/checkoutnow?token=${data.orderId}`;
+          return { orderId: data.orderId, approvalUrl: approvalUrl };
+        } else {
+          throw new Error('Invalid response from PayPal service - no orderId');
+        }
+      } else {
+        const errorData = await response.json();
+        console.error('PayPal create error response:', errorData);
+        throw new Error(errorData.message || 'Failed to create PayPal order');
+      }
+    } catch (error) {
+      console.error('PayPal order creation error:', error);
+      setPaymentError(`PayPal error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw error;
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
+  const handlePayment = async (paymentFunction: (pricingConfigId: number) => Promise<void>) => {
+    if (!validate()) return;
+
+    if (!pricing || pricing.length === 0) {
+      setErrors((prev) => ({ ...prev, general: 'Please wait for pricing information to load or check your selection.' }));
+      return;
+    }
+
+    try {
+      const registrationData = {
+        name: registerFormData.name,
+        phone: registerFormData.phone,
+        email: registerFormData.email,
+        instituteOrUniversity: registerFormData.institute,
+        country: registerFormData.country,
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+          ? 'REGISTRATION_AND_ACCOMMODATION'
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+      };
+
+      const response = await fetch(`${BASE_URL}/api/registration/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
+
+      if (response.ok) {
+        const pricingConfigId = pricing[0].id;
+        await paymentFunction(pricingConfigId);
+      } else {
+        const registrationDataForStorage = {
+          name: registerFormData.name,
+          phone: registerFormData.phone,
+          email: registerFormData.email,
+          instituteOrUniversity: registerFormData.institute,
+          country: registerFormData.country,
+          registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+            ? 'REGISTRATION_AND_ACCOMMODATION'
+            : 'REGISTRATION_ONLY',
+          presentationType: registerFormData.presentationType.toUpperCase(),
+        };
+        localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
+
+        let errorMessage = 'Registration failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Registration failed: ${response.status} ${response.statusText}`;
+        }
+        setErrors((prev) => ({ ...prev, general: errorMessage }));
+
+        const pricingConfigId = pricing[0].id;
+        await paymentFunction(pricingConfigId);
+      }
+    } catch (error) {
+      // If registration API fails completely, try direct payment
+      try {
+        const registrationDataForStorage = {
+          name: registerFormData.name,
+          phone: registerFormData.phone,
+          email: registerFormData.email,
+          instituteOrUniversity: registerFormData.institute,
+          country: registerFormData.country,
+          registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+            ? 'REGISTRATION_AND_ACCOMMODATION'
+            : 'REGISTRATION_ONLY',
+          presentationType: registerFormData.presentationType.toUpperCase(),
+        };
+        localStorage.setItem('pendingRegistration', JSON.stringify(registrationDataForStorage));
+        const pricingConfigId = pricing[0].id;
+        await paymentFunction(pricingConfigId);
+      } catch (paymentError) {
+        alert(`Unable to process registration and payment: ${paymentError instanceof Error ? paymentError.message : 'Unknown error'}`);
+      }
+    }
+  };
+
+  const handleStripePayment = async (pricingConfigId: number): Promise<void> => {
+    return createPaymentSession(pricingConfigId);
+  };
+
+  const handlePayPalPayment = async (): Promise<{ orderId: string; approvalUrl: string }> => {
+    if (!validate()) throw new Error('Validation failed');
+
+    if (!pricing || pricing.length === 0) {
+      throw new Error('Pricing information not available');
+    }
+
+    try {
+      // Create the PayPal order and return both orderId and approvalUrl
+      const pricingConfigId = pricing[0].id;
+      const orderResult = await createPayPalOrder(pricingConfigId);
+      return orderResult;
+    } catch (error) {
+      setPaymentError(`PayPal order creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw error;
+    }
+  };
+
+  const handlePayPalDirectPayment = async () => {
+    if (!validate()) return;
+
+    if (!pricing || pricing.length === 0) {
+      setErrors((prev) => ({ ...prev, general: 'Please wait for pricing information to load or check your selection.' }));
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setPaymentError('');
+    setPaypalMessage('Creating PayPal payment...');
+
+    try {
+      const pricingConfigId = pricing[0].id;
+      
+      // Create PayPal order via backend API
+      const orderResult = await createPayPalOrder(pricingConfigId);
+      
+      // Store registration data for completion after PayPal return
+      const registrationData = {
+        name: registerFormData.name,
+        phone: registerFormData.phone,
+        email: registerFormData.email,
+        instituteOrUniversity: registerFormData.institute,
+        country: registerFormData.country,
+        registrationType: registerFormData.registrationType === 'registrationAndAccommodation'
+          ? 'REGISTRATION_AND_ACCOMMODATION'
+          : 'REGISTRATION_ONLY',
+        presentationType: registerFormData.presentationType.toUpperCase(),
+        accompanyingPerson: registerFormData.accompanyingPerson,
+        extraNights: registerFormData.extraNights,
+        accommodationNights: pricing[0].accommodationOption ? pricing[0].accommodationOption.nights : 0,
+        accommodationGuests: pricing[0].accommodationOption ? pricing[0].accommodationOption.guests : 0,
+        orderId: orderResult.orderId,
+        pricingConfigId: pricingConfigId,
+        totalAmount: pricing[0].totalPrice
+      };
+      localStorage.setItem('paypalRegistration', JSON.stringify(registrationData));
+      
+      setPaypalMessage('Redirecting to PayPal...');
+      
+      // Redirect to PayPal using the approval URL from backend
+      window.location.href = orderResult.approvalUrl;
+      
+    } catch (error) {
+      setPaymentError(`PayPal payment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setPaypalMessage('');
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -575,7 +802,13 @@ const Register: React.FC<{
           alert('Pricing configuration not found for selected type.');
           return;
         }
-        await createPaymentSession(selectedConfig.id);
+        
+        // Use selected payment method
+        if (paymentMethod === 'paypal') {
+          await handlePayPalDirectPayment();
+        } else {
+          await createPaymentSession(selectedConfig.id);
+        }
       } else {
         // Registration failed, let's try direct payment approach
         // Store registration data in localStorage for later processing
@@ -599,7 +832,13 @@ const Register: React.FC<{
           alert('Pricing configuration not found for selected type.');
           return;
         }
-        await createPaymentSession(selectedConfig.id);
+        
+        // Use selected payment method
+        if (paymentMethod === 'paypal') {
+          await handlePayPalDirectPayment();
+        } else {
+          await createPaymentSession(selectedConfig.id);
+        }
       }
     } catch (error) {
       // If registration API fails completely, try direct payment
@@ -625,7 +864,13 @@ const Register: React.FC<{
           alert('Pricing configuration not found for selected type.');
           return;
         }
-        await createPaymentSession(selectedConfig.id);
+        
+        // Use selected payment method
+        if (paymentMethod === 'paypal') {
+          await handlePayPalDirectPayment();
+        } else {
+          await createPaymentSession(selectedConfig.id);
+        }
       } catch (paymentError) {
         alert(`Unable to process registration and payment: ${paymentError instanceof Error ? paymentError.message : 'Unknown error'}`);
       }
@@ -1244,7 +1489,7 @@ const Register: React.FC<{
               </svg>
               <div className="text-sm text-blue-800">
                 <p className="font-semibold mb-1">Secure Payment Process</p>
-                <p>After clicking "Register & Pay Now", you'll be redirected to our secure Stripe payment page to complete your registration payment in euros (EUR).</p>
+                <p>Choose your preferred payment method below. You'll be redirected to a secure payment page to complete your registration payment in euros (EUR).</p>
               </div>
             </div>
           </div>
@@ -1261,6 +1506,64 @@ const Register: React.FC<{
         </div>
       )}
 
+      {paypalMessage && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
+          <strong>PayPal:</strong> {paypalMessage}
+        </div>
+      )}
+
+      {/* Payment Method Selection */}
+      {pricing && pricing.length > 0 && (
+        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+          <label className="block text-sm font-medium text-gray-700 mb-3">Choose Payment Method *</label>
+          <div className="grid grid-cols-2 gap-4">
+            <div 
+              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                paymentMethod === 'stripe' 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-300 hover:border-blue-300'
+              }`}
+              onClick={() => setPaymentMethod('stripe')}
+            >
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="stripe"
+                  checked={paymentMethod === 'stripe'}
+                  onChange={() => setPaymentMethod('stripe')}
+                  className="text-blue-600"
+                />
+                <span className="font-medium text-gray-900">Credit Card</span>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">Pay securely with Stripe</p>
+            </div>
+            
+            <div 
+              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                paymentMethod === 'paypal' 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : 'border-gray-300 hover:border-blue-300'
+              }`}
+              onClick={() => setPaymentMethod('paypal')}
+            >
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="paypal"
+                  checked={paymentMethod === 'paypal'}
+                  onChange={() => setPaymentMethod('paypal')}
+                  className="text-blue-600"
+                />
+                <span className="font-medium text-gray-900">PayPal</span>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">Pay with your PayPal account</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-center">
         <button
           type="submit"
@@ -1271,7 +1574,12 @@ const Register: React.FC<{
               : 'bg-black text-white hover:bg-gray-800'
           }`}
         >
-          {isProcessingPayment ? 'Processing...' : 'Register & Pay Now'}
+          {isProcessingPayment 
+            ? 'Processing...' 
+            : paymentMethod === 'paypal' 
+              ? 'Register & Pay with PayPal'
+              : 'Register & Pay with Credit Card'
+          }
         </button>
       </div>
     </form>
@@ -1331,51 +1639,55 @@ const RegistrationPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="pt-20">
-      <Style />
-      <section className="bg-gradient-to-b from-gray-50 py-8 to-white">
-        <div className="container mx-auto px-4 py-16 max-w-4xl">
-          <div className="text-center mb-12">
-            <span className="inline-block px-3 py-1 text-sm font-semibold text-black bg-gray-200 rounded-full mb-4">
-              REGISTRATION OPEN
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-              Conference Registration
-            </h2>
-            <div className="w-24 h-1 bg-black mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Register for the Renewable Energy Summit 2026
-            </p>
-          </div>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-grow pt-20">
+        <Style />
+        <section className="bg-gradient-to-b from-gray-50 py-8 to-white">
+          <div className="container mx-auto px-4 py-16 max-w-4xl">
+            <div className="text-center mb-12">
+              <span className="inline-block px-3 py-1 text-sm font-semibold text-black bg-gray-200 rounded-full mb-4">
+                REGISTRATION OPEN
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                Conference Registration
+              </h2>
+              <div className="w-24 h-1 bg-black mx-auto mb-6"></div>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Register for the Renewable Energy Summit 2026
+              </p>
+            </div>
 
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-            <Register
-              captchaCode={captchaCode}
-              generateCaptcha={generateCaptcha}
-              setRegisterFormData={setRegisterFormData}
-              registerFormData={registerFormData}
-            />
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+              <Register
+                captchaCode={captchaCode}
+                generateCaptcha={generateCaptcha}
+                setRegisterFormData={setRegisterFormData}
+                registerFormData={registerFormData}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3 className="text-xl font-semibold mb-4">Registration Successful!</h3>
-            <p className="mb-4">Thank you for registering for the Renewable Energy Summit 2026.</p>
-            <button
-              className="modal-button"
-              onClick={() => {
-                setShowModal(false);
-                resetForm();
-              }}
-            >
-              Close
-            </button>
+        {showModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <h3 className="text-xl font-semibold mb-4">Registration Successful!</h3>
+              <p className="mb-4">Thank you for registering for the Renewable Energy Summit 2026.</p>
+              <button
+                className="modal-button"
+                onClick={() => {
+                  setShowModal(false);
+                  resetForm();
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <Footer />
     </div>
   );
 };
