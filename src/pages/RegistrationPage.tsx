@@ -1687,7 +1687,7 @@ const RegistrationPage: React.FC = () => {
           </div>
         )}
       </div>
-      <Footer />
+
     </div>
   );
 };

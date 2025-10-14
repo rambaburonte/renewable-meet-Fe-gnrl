@@ -302,11 +302,11 @@ const PaymentSuccessPage = () => {
 
                 {/* Main Success Message */}
                 <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {isDiscountPayment ? 'Discount Request Submitted!' : 'Registration Complete!'}
+                    {isDiscountPayment ? 'Discount Payment Success!' : 'Registration Complete!'}
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
                     {isDiscountPayment 
-                        ? 'Your discount request has been successfully submitted'
+                        ? 'Your discount payment has been successfully processed'
                         : 'Welcome to the Renewable Energy Summit 2026'
                     }
                 </p>
@@ -452,7 +452,7 @@ const PaymentSuccessPage = () => {
                     )}
                 </div>
             </main>
-            <Footer />
+           
         </div>
     );
 };

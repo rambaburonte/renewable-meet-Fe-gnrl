@@ -508,7 +508,7 @@ const DiscountRegistrationPage = () => {
                 </form>
             </div>
         </div>
-        <Footer />
+     
     </div>
   );
 };

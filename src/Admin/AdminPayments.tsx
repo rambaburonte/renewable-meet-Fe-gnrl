@@ -30,6 +30,7 @@ interface PaymentRecord {
   paymentStatus?: string;
   sessionId: string;
   createdAt?: string;
+  provider?: string;
 }
 
 // Define the component
@@ -327,6 +328,7 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Customer Details</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Amount & Currency</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Provider</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Session ID</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-green-300 uppercase tracking-wider">Actions</th>
@@ -367,6 +369,20 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
                             Config: €{payment.pricingConfigTotalPrice.toFixed(2)}
                           </div>
                         )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <div className={`text-white font-medium flex items-center gap-2 ${
+                          payment.provider === 'STRIPE' ? 'text-blue-300' : 
+                          payment.provider === 'PAYPAL' ? 'text-yellow-300' : 'text-gray-300'
+                        }`}>
+                          {payment.provider || 'UNKNOWN'}
+                          {payment.provider === 'STRIPE' && <span className="text-xs bg-blue-600 px-2 py-1 rounded">💳</span>}
+                          {payment.provider === 'PAYPAL' && <span className="text-xs bg-yellow-600 px-2 py-1 rounded">🔄</span>}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {payment.provider === 'STRIPE' ? 'Credit/Debit Card' : 
+                           payment.provider === 'PAYPAL' ? 'PayPal Account' : 'Online Payment'}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className={`px-3 py-1 rounded-full text-xs font-bold mb-2 flex items-center gap-1 ${
