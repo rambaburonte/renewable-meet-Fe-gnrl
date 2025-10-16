@@ -57,6 +57,19 @@ export class AdminPaymentService {
     return response.json();
   }
 
+  static async getAllPaymentsAqua(): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/all/aqua`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
   static async getPaymentByIdOptics(id: number): Promise<any> {
     const token = this.getAuthToken();
     const url = `${this.API_BASE}/optics/${id}`;
@@ -99,6 +112,19 @@ export class AdminPaymentService {
   static async getPaymentByIdPolymers(id: number): Promise<any> {
     const token = this.getAuthToken();
     const url = `${this.API_BASE}/polymers/${id}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    return response.json();
+  }
+
+  static async getPaymentByIdAqua(id: number): Promise<any> {
+    const token = this.getAuthToken();
+    const url = `${this.API_BASE}/aqua/${id}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -209,6 +235,8 @@ export class AdminPaymentService {
         return this.getPaymentByIdNursing(id);
       case 'polymers':
         return this.getPaymentByIdPolymers(id);
+      case 'aqua':
+        return this.getPaymentByIdAqua(id);
       default:
         // fallback to generic apiCall if website is not recognized
         return this.apiCall(`/${id}`, {}, website);

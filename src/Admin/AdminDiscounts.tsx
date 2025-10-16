@@ -1,20 +1,23 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { WebsiteContext } from '../Context/WebsiteContext';
+import { useEffect, useState, useContext } from 'react';
+import { WebsiteContext, Website } from '../Context/WebsiteContext';
 import Sidebar from './AdminSidebar';
 import { BASE_URL } from '../config';
 
 const API_BASE = `${BASE_URL}/admin/api/admin/discounts`;
 
-const columns = {
+const columns: Record<Website, string[]> = {
 optics: ["id", "name", "customerEmail", "amountTotal", "status", "createdAt"],
 renewable: ["id", "name", "customerEmail", "amountTotal", "status", "createdAt"],
 nursing: ["id", "name", "customerEmail", "amountTotal", "status", "createdAt"],
+polymers: ["id", "name", "customerEmail", "amountTotal", "status", "createdAt"],
+aqua: ["id", "name", "customerEmail", "amountTotal", "status", "createdAt"],
 };
 
 const AdminDiscounts: React.FC = () => {
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const { website } = useContext(WebsiteContext);
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

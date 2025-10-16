@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { WebsiteContext } from '../Context/WebsiteContext';
 import Sidebar from './AdminSidebar';
 import { fetchWithAuth } from '../lib/fetchWithAuth';
@@ -39,6 +39,8 @@ const AdminAbstractSubmissions = () => {
           endpoint = '/admin/api/admin/abstract-submissions/nursing';
         } else if (website === 'polymers') {
           endpoint = '/admin/api/admin/abstract-submissions/polymers';
+        } else if (website === 'aqua') {
+          endpoint = '/admin/api/admin/abstract-submissions/aqua';
         } else {
           throw new Error('Invalid website selection');
         }

@@ -17,6 +17,7 @@ const WEBSITES = [
   { key: 'renewable', label: 'Renewable' },
   { key: 'nursing', label: 'Nursing' },
   { key: 'polymers', label: 'Polymers' },
+  { key: 'aqua', label: 'Aqua' },
 ];
 
 const API_BASE = `${BASE_URL}/api/speakers`;

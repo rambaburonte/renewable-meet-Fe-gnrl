@@ -2,9 +2,7 @@
 import React, { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEnterpriseSession } from '../Context/EnterpriseSessionContext';
-import { BASE_URL } from '../config';
-import { WebsiteContext } from '../Context/WebsiteContext';
-import { Label } from 'react-aria-components';
+import { WebsiteContext, Website } from '../Context/WebsiteContext';
 
 
 const navItems = [
@@ -31,16 +29,17 @@ const WEBSITE_OPTIONS = [
   { label: 'Renewable', value: 'renewable' },
   { label: 'Nursing', value: 'nursing' },
   { label: 'Polymers', value: 'polymers' },
+  { label: 'Aqua', value: 'aqua' },
 ];
 
 const AdminSidebar: React.FC = () => {
-  const { website, setWebsite } = useContext(WebsiteContext);
+  const { website, setWebsite } = useContext(WebsiteContext)!;
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user: adminUser, sessionInfo } = useEnterpriseSession();
 
   const handleWebsiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newWebsite = e.target.value;
+    const newWebsite = e.target.value as Website;
     setWebsite(newWebsite);
   };
 

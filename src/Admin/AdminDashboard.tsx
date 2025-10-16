@@ -55,7 +55,7 @@ const AdminDashboard = () => {
         {/* Dashboard Panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Each panel navigates with website param for API context */}
-          {[
+          {([
             {
               title: 'Payment Records',
               desc: 'View and manage all payment transactions, statuses, and analytics.',
@@ -96,13 +96,13 @@ const AdminDashboard = () => {
               desc: 'Add, edit, and delete speakers for all conferences.',
               href: '/admin-speakers-manager',
             }
-          ].map((panel, idx) => (
+          ] as const).map((panel, idx) => (
             <div
               key={idx}
               className="bg-[#1a1a1a] border border-green-600 rounded-xl p-6 shadow-lg hover:scale-[1.02] transition-transform duration-300"
             >
               <div className="flex items-center mb-4">
-                {panelIcons[panel.title] || <FaClipboardList className="text-2xl mr-3 text-green-300" />}
+                {panelIcons[panel.title as keyof typeof panelIcons] || <FaClipboardList className="text-2xl mr-3 text-green-300" />}
                 <h2 className="text-xl font-semibold text-green-300">{panel.title}</h2>
               </div>
               <p className="text-gray-300 mb-4">{panel.desc}</p>

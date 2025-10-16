@@ -1,6 +1,6 @@
 import React, { createContext, useState, useMemo, ReactNode } from 'react';
 
-type Website = 'optics' | 'renewable' | 'nursing';
+export type Website = 'optics' | 'renewable' | 'nursing' | 'polymers' | 'aqua';
 
 interface WebsiteContextType {
   website: Website;

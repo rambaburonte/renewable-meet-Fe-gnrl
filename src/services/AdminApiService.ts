@@ -65,15 +65,15 @@ export class AdminApiService {
   }
 
   static async editSession(id: number, newSessionName: string, website: string): Promise<any> {
-    return this.apiCall(`/sessions/${website}/${id}`, {
-      method: 'PUT',
+    return this.apiCall(`/api/admin/sessions/${website}/${id}/edit`, {
+      method: 'POST',
       body: JSON.stringify({ sessionName: newSessionName }),
     });
   }
 
   static async deleteSession(id: number, website: string): Promise<any> {
-    return this.apiCall(`/sessions/${website}/${id}`, {
-      method: 'DELETE',
+    return this.apiCall(`/api/admin/sessions/${website}/${id}/delete`, {
+      method: 'POST',
     });
   }
 
@@ -90,15 +90,15 @@ export class AdminApiService {
   }
 
   static async editInterestedInOption(id: number, newOption: string, website: string): Promise<any> {
-    return this.apiCall(`/interested-in/${website}/${id}`, {
-      method: 'PUT',
+    return this.apiCall(`/api/admin/interested-in/edit/${website}/${id}`, {
+      method: 'POST',
       body: JSON.stringify({ option: newOption }),
     });
   }
 
   static async deleteInterestedInOption(id: number, website: string): Promise<any> {
-    return this.apiCall(`/interested-in/${website}/${id}`, {
-      method: 'DELETE',
+    return this.apiCall(`/api/admin/interested-in/delete/${website}/${id}`, {
+      method: 'POST',
     });
   }
 

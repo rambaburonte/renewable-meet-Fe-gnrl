@@ -49,6 +49,8 @@ const AdminRegistrationTypes: React.FC = () => {
         endpoint = '/admin/api/admin/presentation-types/nursing';
       } else if (website === 'polymers') {
         endpoint = '/admin/api/admin/presentation-types/polymers';
+      } else if (website === 'aqua') {
+        endpoint = '/admin/api/admin/presentation-types/aqua';
       } else {
         throw new Error('Invalid website selection');
       }
@@ -92,6 +94,8 @@ const AdminRegistrationTypes: React.FC = () => {
         endpoint = `/admin/api/admin/presentation-type/edit/nursing/${id}/${editPrice}`;
       } else if (website === 'polymers') {
         endpoint = `/admin/api/admin/presentation-type/edit/polymers/${id}/${editPrice}`;
+      } else if (website === 'aqua') {
+        endpoint = `/admin/api/admin/presentation-type/edit/aqua/${id}/${editPrice}`;
       } else {
         throw new Error('Invalid website selection');
       }

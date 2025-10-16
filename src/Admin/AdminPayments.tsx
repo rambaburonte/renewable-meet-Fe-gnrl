@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Sidebar from './AdminSidebar';
 import PaymentDetailsModal from './PaymentDetailsModal';
-import { isAdmin } from '../lib/authUtils';
 import AdminPaymentService from '../services/AdminPaymentService';
-import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaSyncAlt, FaClipboard, FaCopy, FaExclamationCircle } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
+import { FaMoneyBillWave, FaCheckCircle, FaSpinner, FaTimesCircle, FaClock, FaSearch, FaClipboard, FaCopy } from 'react-icons/fa';
 import { BASE_URL } from '../config';
+import { WebsiteContext } from '../Context/WebsiteContext';
+
 // Payment statistics type
 interface PaymentStats {
   totalRecords: number;
@@ -34,19 +34,19 @@ interface PaymentRecord {
 }
 
 // Define the component
-const AdminPayments = ({ website: propWebsite, setWebsite }) => {
-  const [website, setLocalWebsite] = useState(() => propWebsite || localStorage.getItem('adminWebsite') || 'optics');
-  // Keep setWebsite in sync with local state
-  useEffect(() => { if (setWebsite) setWebsite(website); }, [website, setWebsite]);
+const AdminPayments: React.FC = () => {
+  const websiteContext = useContext(WebsiteContext);
+  const website = websiteContext?.website || 'optics';
+
   // State variables
   const [stats, setStats] = useState<PaymentStats | null>(null);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [allPayments, setAllPayments] = useState<PaymentRecord[]>([]);
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchEmail, setSearchEmail] = useState('');
-  const [searchSession, setSearchSession] = useState('');
+  const [_searchSession, setSearchSession] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -78,6 +78,9 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
           break;
         case 'polymers':
           apiUrl = `${BASE_URL}/api/payments/all/polymers`;
+          break;
+        case 'aqua':
+          apiUrl = `${BASE_URL}/api/payments/all/aqua`;
           break;
         default:
           apiUrl = '';
@@ -214,7 +217,7 @@ const AdminPayments = ({ website: propWebsite, setWebsite }) => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Sidebar website={website} setWebsite={setWebsite} />
+      <Sidebar />
       <main className="ml-64 p-8">
         {/* Header */}
         <header className="mb-8">
