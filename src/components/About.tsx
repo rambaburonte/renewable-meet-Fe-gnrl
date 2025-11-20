@@ -84,7 +84,7 @@ const ConferenceInfo: React.FC = () => {
               },
               {
                 label: "Earlybird Registration",
-                value: "July 28, 2025",
+                value: "November 15, 2025",
                 icon: <Clock className="w-5 h-5 text-gray-500" />,
               },
               {
