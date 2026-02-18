@@ -810,7 +810,7 @@ const AbstractRegistration: React.FC<{
         </div>
         <div className="info-item">
           <label>Early Bird Registration:</label>
-          <p>November 15, 2025</p>
+          <p>December 19, 2025</p>
         </div>
       </div>
 

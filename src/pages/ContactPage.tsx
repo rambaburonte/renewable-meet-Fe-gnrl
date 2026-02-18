@@ -68,9 +68,9 @@ const ContactPage: React.FC = () => {
                   </a>
                 </p>
                 <p className="flex items-center text-gray-700">
-                  <span className="font-semibold mr-2">Phone:</span>
-                  <a href="tel:+17163749009" className="text-green-600 hover:underline">
-                    + (171) 637-49009
+                  <span className="font-semibold mr-2">WhatsApp:</span>
+                  <a href="tel:+447727493310" className="text-green-600 hover:underline">
+                    +44 7727 493310
                   </a>
                 </p>
               </div>
