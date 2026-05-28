@@ -273,7 +273,7 @@ const DiscountRegistrationPage = () => {
             <div className="bg-white shadow-2xl rounded-3xl w-full max-w-2xl p-10 border border-blue-100 relative">
                 <h2 className="text-3xl font-extrabold text-center text-blue-800 mb-2 tracking-tight">Renewable Energy Summit Discount Registration</h2>
                 <p className="text-center text-gray-500 mb-6">Fill in the form below to request a discount for your registration to the Renewable Energy Summit 2026.</p>
-                <div className="text-center text-gray-700 mb-6">Venue: DoubleTree by Hilton Tokyo Ariake <br/>Deira Tokyo, Japan</div>
+                {/* <div className="text-center text-gray-700 mb-6">Venue: DoubleTree by Hilton Tokyo Ariake <br/>Deira Tokyo, Japan</div> */}
                 
                 {success && (
                     <div className="mb-4 p-3 rounded bg-green-100 text-green-800 text-center font-medium animate-fade-in">

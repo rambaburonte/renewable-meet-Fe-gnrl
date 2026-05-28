@@ -57,10 +57,7 @@ const ContactPage: React.FC = () => {
                 Contact Information
               </h2>
               <div className="space-y-4">
-                <p className="flex items-center text-gray-700">
-                  <span className="font-semibold mr-2">Address:</span>
-                DoubleTree by Hilton Tokyo Ariake -  Tokyo Japan
-                </p>
+               ``
                 <p className="flex items-center text-gray-700">
                   <span className="font-semibold mr-2">Email:</span>
                   <a href="mailto:secretary@globalrenewablemeet.com" className="text-green-600 hover:underline">

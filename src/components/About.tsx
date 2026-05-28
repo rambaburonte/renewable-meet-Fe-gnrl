@@ -77,11 +77,7 @@ const ConferenceInfo: React.FC = () => {
                 value: "May 29-31, 2026",
                 icon: <Calendar className="w-5 h-5 text-gray-500" />,
               },
-              {
-                label: "Venue",
-                value: "DoubleTree by Hilton Tokyo Ariake",
-                icon: <MapPin className="w-5 h-5 text-gray-500" />,
-              },
+             
               {
                 label: "Earlybird Registration",
                 value: "December 19, 2025",

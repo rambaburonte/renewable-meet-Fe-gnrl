@@ -901,10 +901,10 @@ const Register: React.FC<{
           <label>Conference Date</label>
           <p>May 29-31, 2026</p>
         </div>
-        <div className="info-item">
+        {/* <div className="info-item">
           <label>Location</label>
           <p>DoubleTree by Hilton Tokyo Ariake - Deira Tokyo Japan</p>
-        </div>
+        </div> */}
         <div className="info-item">
           <label>Registration Deadline</label>
           <p>March 30, 2026</p>
@@ -1351,7 +1351,7 @@ const Register: React.FC<{
           
           <div className="mt-4 p-3 bg-white border border-blue-200 rounded text-sm text-gray-700">
             <p className="font-medium text-gray-900 mb-1">Accommodation Details:</p>
-            <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
+            {/* <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p> */}
             <p>• Location: Deira Tokyo, Japan</p>
             <p>• Selected: {registerFormData.guests === 0 ? 'Just you' : `${registerFormData.guests} guest${registerFormData.guests > 1 ? 's' : ''} + you`} for {registerFormData.nights} night{registerFormData.nights > 1 ? 's' : ''}</p>
             {/* <p>• Dates: May 29, 2026 – [dynamic end date removed]</p> */}
@@ -1464,7 +1464,7 @@ const Register: React.FC<{
                   <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded">
                     <div className="text-sm text-blue-800">
                       <p className="font-semibold">Accommodation Details:</p>
-                      <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p>
+                      {/* <p>• Hotel: DoubleTree by Hilton Tokyo Ariake</p> */}
                       <p>• Location: Deira Tokyo, Japan</p>
                       <p>• Duration: {config.accommodationOption.nights} night{config.accommodationOption.nights > 1 ? 's' : ''}</p>
                       <p>• Capacity: {config.accommodationOption.guests} guest{config.accommodationOption.guests > 1 ? 's' : ''}</p>
