@@ -1,23 +1,9 @@
-import React, { useEffect, useState } from 'react';
-
-const STORAGE_KEY = 'postponedDismissed_v1';
+import React, { useState } from 'react';
 
 const PostponedModal: React.FC = () => {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      const dismissed = localStorage.getItem(STORAGE_KEY);
-      if (!dismissed) setOpen(true);
-    } catch (e) {
-      setOpen(true);
-    }
-  }, []);
+  const [open, setOpen] = useState(true);
 
   const close = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, '1');
-    } catch (e) {}
     setOpen(false);
   };
 
