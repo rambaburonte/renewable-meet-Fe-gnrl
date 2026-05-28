@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import Card from "./ui/globe"; // Assuming this is the same globe component
-import { MapPin } from "lucide-react"; // Only import MapPin icon
+// removed MapPin and venue display per request
 import Typewriter from 'typewriter-effect';
 import { GradientButton } from "./ui/gradient-button";
 import { StarBorder } from "@/components/ui/star-border";
@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>World Renewable Energy Conference 2026 - Tokyo </title>
+        <title>World Renewable Energy Conference 2026</title>
       </Helmet>
 
       <section className="relative h-screen min-h-[600px] flex items-center justify-start overflow-hidden bg-black w-full">
@@ -46,25 +46,7 @@ const Hero: React.FC = () => {
                 Conference
               </h1>
 
-              {/* Location and Venue Card */}
-              <div className="bg-white/3 backdrop-blur-md rounded-lg p-6 mb-8 max-w-md shadow-lg border border-white/5 hover:bg-white/5 hover:border-white/30 transition-all duration-500 transform hover:scale-[1.02]">
-                <div className="flex items-center gap-4 mb-4">
-                  <MapPin className="w-5 h-5 text-green-400" />
-                  <p className="text-xl font-medium text-white">
-                  Tokyo Japan
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <a
-                    href="https://www.hilton.com/en/hotels/tyoardi-doubletree-tokyo-ariake/?SEO_id=GMB-APAC-DI-TYOARDI"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xl font-medium text-white underline hover:text-green-300 transition-colors"
-                  >
-                    DoubleTree by Hilton Tokyo Ariake
-                  </a>
-                </div>
-              </div>
+              {/* Location removed - display intentionally left blank per site update */}
 
               {/* Be Part Heading */}
               <StarBorder as="div" className="w-full max-w-2xl mx-auto mb-6">

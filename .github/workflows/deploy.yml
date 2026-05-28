@@ -1,0 +1,30 @@
+name: Deploy React App to Hostinger
+
+on:
+  push:
+    branches: [ "main" ]   # or "master" or "deploy"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: 217.196.55.155
+          username: u629132086.globalrenewablemeet.com
+          password: kMAK7syq9mdH2o?T
+          local-dir: dist/
+          server-dir: ./
+          # timeout: 30000
+          exclude: |
+              **/.htaccess
